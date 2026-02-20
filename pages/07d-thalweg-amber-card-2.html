@@ -428,6 +428,24 @@
       cursor: pointer;
     }
 
+    .render-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(220, 180, 100, 0.06);
+    }
+
+    .render-strip video {
+      width: 100%;
+      display: block;
+      opacity: 0.8;
+      transition: opacity 0.6s ease;
+    }
+
+    .render-strip video:hover {
+      opacity: 1;
+    }
+
     .contact-link:hover {
       color: rgba(220, 180, 100, 0.8);
       text-decoration-color: rgba(220, 180, 100, 0.5);
@@ -456,6 +474,10 @@
       .panel-content {
         max-width: 100%;
       }
+
+      .render-strip {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -475,13 +497,61 @@
       <button class="close-btn" id="closeBtn" aria-label="Close"></button>
       <div class="panel-content active" data-panel="001">
         <h2 class="panel-title">Drone Tracker</h2>
-        <div class="panel-subtitle">Crowdsourced Airspace Observation Network</div>
+        <div class="panel-subtitle">Turning Sightings Into Positions</div>
 
         <div class="section">
-          <div class="section-title">Concept</div>
+          <div class="section-title">The Problem</div>
           <p class="section-text">
-            Citizens report drone sightings using smartphone camera and sensor data. Multiple independent observations from different locations are combined to triangulate positions and reconstruct flight paths across monitored airspace.
+            In September 2025, unidentified drones flew over Copenhagen Airport, Aalborg Air Base, and other critical sites across Denmark. The police opened phone lines for the public to call in sightings. What they got was thousands of reports — many of which turned out to be stars, aircraft, or birds. No way to verify, no way to locate, no way to correlate.
           </p>
+        </div>
+
+        <div class="section">
+          <div class="section-title">The Idea</div>
+          <p class="section-text">
+            Drone Tracker is a mobile app. You see something in the sky, you point your phone at it and tap. The app captures a photo along with everything your phone already knows — GPS position, compass bearing, camera angle, field of view. That's one observation. When multiple people do this for the same object, the system triangulates a real position in 3D space.
+          </p>
+          <p class="section-text">
+            No phone calls. No guesswork. Just structured data that gets better with every observer.
+          </p>
+        </div>
+
+        <div class="section">
+          <svg viewBox="0 0 600 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:600px;">
+            <!-- ground line -->
+            <line x1="0" y1="220" x2="600" y2="220" stroke="rgba(220,180,100,0.3)" stroke-width="1"/>
+
+            <!-- observer A -->
+            <circle cx="120" cy="220" r="5" fill="rgba(220,180,100,0.8)"/>
+            <line x1="120" y1="220" x2="120" y2="230" stroke="rgba(220,180,100,0.6)" stroke-width="1"/>
+            <text x="120" y="250" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="rgba(220,180,100,0.55)" letter-spacing="0.5">A</text>
+
+            <!-- observer B -->
+            <circle cx="360" cy="220" r="5" fill="rgba(220,180,100,0.8)"/>
+            <line x1="360" y1="220" x2="360" y2="230" stroke="rgba(220,180,100,0.6)" stroke-width="1"/>
+            <text x="360" y="250" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="rgba(220,180,100,0.55)" letter-spacing="0.5">B</text>
+
+            <!-- observer C -->
+            <circle cx="500" cy="220" r="5" fill="rgba(220,180,100,0.8)"/>
+            <line x1="500" y1="220" x2="500" y2="230" stroke="rgba(220,180,100,0.6)" stroke-width="1"/>
+            <text x="500" y="250" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="rgba(220,180,100,0.55)" letter-spacing="0.5">C</text>
+
+            <!-- sighting lines to triangulated point -->
+            <line x1="120" y1="220" x2="310" y2="60" stroke="rgba(220,180,100,0.35)" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="360" y1="220" x2="310" y2="60" stroke="rgba(220,180,100,0.35)" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="500" y1="220" x2="310" y2="60" stroke="rgba(220,180,100,0.35)" stroke-width="1" stroke-dasharray="4 4"/>
+
+            <!-- triangulated position -->
+            <circle cx="310" cy="60" r="6" fill="none" stroke="rgba(220,180,100,0.7)" stroke-width="1">
+              <animate attributeName="r" values="6;10;6" dur="3s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="310" cy="60" r="2.5" fill="rgba(220,180,100,0.85)"/>
+
+            <!-- altitude line -->
+            <line x1="310" y1="68" x2="310" y2="220" stroke="rgba(220,180,100,0.15)" stroke-width="1" stroke-dasharray="2 6"/>
+            <text x="320" y="145" font-family="DM Mono,monospace" font-size="9" fill="rgba(220,180,100,0.4)" letter-spacing="0.5">alt</text>
+          </svg>
         </div>
 
         <div class="section">
@@ -490,76 +560,65 @@
             <div class="step">
               <div class="step-num">01</div>
               <div class="step-content">
-                <div class="step-title">Field Reporting</div>
+                <div class="step-title">Point and Report</div>
                 <div class="step-desc">
-                  Observers capture sightings through a mobile app that records video, GPS coordinates, compass bearing, and device orientation. Reports are timestamped and queued for submission.
+                  Aim your phone at the object, take a photo. The app records your location, the direction you're pointing, and the camera's angle — everything needed to draw a line from you to the object.
                 </div>
               </div>
             </div>
             <div class="step">
               <div class="step-num">02</div>
               <div class="step-content">
-                <div class="step-title">Triangulation</div>
+                <div class="step-title">Triangulate</div>
                 <div class="step-desc">
-                  Overlapping reports from multiple observers are correlated by time and bearing to compute 3D positions. Confidence increases with the number of independent sightings for each event.
+                  Two or more sightings of the same object from different positions give intersecting lines. Where they meet is a 3D coordinate — altitude, latitude, longitude.
                 </div>
               </div>
             </div>
             <div class="step">
               <div class="step-num">03</div>
               <div class="step-content">
-                <div class="step-title">Pattern Mapping</div>
+                <div class="step-title">Track</div>
                 <div class="step-desc">
-                  Reconstructed flight paths are aggregated over time to reveal recurring routes, activity hotspots, and temporal patterns across the observation network.
+                  Successive triangulations over time produce a flight path. Authorities access live data through a REST API — positions, trajectories, confidence levels, and imagery.
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="section">
-          <div class="section-title">Metrics</div>
-          <div class="stats-grid">
-            <div class="stat">
-              <div class="stat-value">3D</div>
-              <div class="stat-label">Triangulation</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">Nordic</div>
-              <div class="stat-label">Coverage</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">Live</div>
-              <div class="stat-label">Status</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="section">
-          <div class="section-title">Technology Stack</div>
-          <div class="tags">
-            <div class="tag">Flutter</div>
-            <div class="tag">FastAPI</div>
-            <div class="tag">PostGIS</div>
-            <div class="tag">Cloudflare R2</div>
-          </div>
-        </div>
-
         <div class="status-bar">
           <div class="status-dot"></div>
-          <div class="status-text">Active Development — Field Testing</div>
+          <div class="status-text">App Store Beta</div>
         </div>
       </div>
 
       <div class="panel-content" data-panel="002">
         <h2 class="panel-title">Audioreactive</h2>
-        <div class="panel-subtitle">Real-Time Audio-Reactive Visual Synthesis</div>
+        <div class="panel-subtitle">Visuals That Listen</div>
 
         <div class="section">
           <div class="section-title">Concept</div>
           <p class="section-text">
-            Live microphone input feeds into musical feature extraction, driving continuous navigation through a generative latent space. Bass frequencies control large-scale structure, mids drive composition and movement, highs modulate fine detail and texture.
+            A visual instrument that listens to music and generates art in real time. The system picks up what's playing — the weight of a kick drum, the shape of a melody, the shimmer of a hi-hat — and turns it into a continuous stream of images that feel like the music looks.
           </p>
+          <p class="section-text">
+            Built for live settings. Plug into a venue's sound system or a DJ mixer, and the visuals unfold on stage alongside the music. No pre-rendered loops, no manual triggering — the art responds to every moment as it happens.
+          </p>
+        </div>
+
+        <div class="section">
+          <div class="render-strip">
+            <div>
+              <video autoplay muted loop playsinline src="renders/render-1.mp4"></video>
+            </div>
+            <div>
+              <video autoplay muted loop playsinline src="renders/render-2.mp4"></video>
+            </div>
+            <div>
+              <video autoplay muted loop playsinline src="renders/render-3.mp4"></video>
+            </div>
+          </div>
         </div>
 
         <div class="section">
@@ -568,27 +627,27 @@
             <div class="step">
               <div class="step-num">01</div>
               <div class="step-content">
-                <div class="step-title">Audio Capture</div>
+                <div class="step-title">Listen</div>
                 <div class="step-desc">
-                  Live audio is captured from the microphone and decomposed into spectral features — chromagram, onset detection, and frequency band energy — updated each frame.
+                  A microphone or audio feed captures what's playing. The system breaks the sound down into its musical components — rhythm, pitch, energy — thirty times per second.
                 </div>
               </div>
             </div>
             <div class="step">
               <div class="step-num">02</div>
               <div class="step-content">
-                <div class="step-title">Feature Mapping</div>
+                <div class="step-title">Interpret</div>
                 <div class="step-desc">
-                  Extracted features are mapped to latent space coordinates using learned projections. Smooth interpolation between frames ensures visual continuity while preserving musical responsiveness.
+                  Those musical features steer the AI model through a vast space of possible images. Low frequencies move the big shapes, mids shift the composition, highs add texture and detail.
                 </div>
               </div>
             </div>
             <div class="step">
               <div class="step-num">03</div>
               <div class="step-content">
-                <div class="step-title">Generative Synthesis</div>
+                <div class="step-title">Generate</div>
                 <div class="step-desc">
-                  The generator network produces continuous visuals from the current latent position. Post-processing applies color grading and temporal blending to create fluid motion.
+                  The model produces a new image every frame. The result is a fluid, never-repeating visual stream that's musically coherent — it doesn't just react to beats, it follows the music.
                 </div>
               </div>
             </div>
@@ -596,37 +655,23 @@
         </div>
 
         <div class="section">
-          <div class="section-title">Metrics</div>
+          <div class="section-title">Built For</div>
           <div class="stats-grid">
             <div class="stat">
-              <div class="stat-value">30fps</div>
-              <div class="stat-label">Synthesis</div>
+              <div class="stat-value">Live</div>
+              <div class="stat-label">Performance</div>
             </div>
             <div class="stat">
-              <div class="stat-value">12-note</div>
-              <div class="stat-label">Chromagram</div>
+              <div class="stat-value">Real-time</div>
+              <div class="stat-label">Generation</div>
             </div>
             <div class="stat">
-              <div class="stat-value">Hot-reload</div>
-              <div class="stat-label">Config</div>
+              <div class="stat-value">Any genre</div>
+              <div class="stat-label">Audio Source</div>
             </div>
           </div>
         </div>
 
-        <div class="section">
-          <div class="section-title">Technology Stack</div>
-          <div class="tags">
-            <div class="tag">PyTorch</div>
-            <div class="tag">StyleGAN</div>
-            <div class="tag">librosa</div>
-            <div class="tag">pygame</div>
-          </div>
-        </div>
-
-        <div class="status-bar">
-          <div class="status-dot"></div>
-          <div class="status-text">Prototype — Performance Optimization</div>
-        </div>
       </div>
     </div>
   </div>
@@ -893,36 +938,17 @@
       pageWrapper.classList.remove('split');
     }
 
-    // Contact card: particle burst + clipboard copy
+    // Contact card: glow pulse + clipboard copy
     function handleContactClick(cell) {
       navigator.clipboard.writeText('inquiries@kinami.studio').catch(() => {});
 
-      const titleEl = cell.querySelector('.info-title');
-      const original = titleEl.textContent;
-      titleEl.textContent = 'Copied \u2713';
-      titleEl.style.transition = 'opacity 0.3s ease';
+      // Glow pulse
+      cell.style.transition = 'background 0.3s ease';
+      cell.style.background = 'rgba(220, 180, 100, 0.12)';
       setTimeout(() => {
-        titleEl.style.opacity = '0';
-        setTimeout(() => {
-          titleEl.textContent = original;
-          titleEl.style.opacity = '1';
-        }, 300);
-      }, 1200);
-
-      // Particle burst — push particles near bottom-center outward
-      const cx = width / 2;
-      const cy = height;
-      const burstRadius = 300;
-      particles.forEach(p => {
-        const dx = p.x - cx;
-        const dy = p.y - cy;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < burstRadius && dist > 0) {
-          const force = (1 - dist / burstRadius) * 8;
-          p.vx += (dx / dist) * force;
-          p.vy += (dy / dist) * force;
-        }
-      });
+        cell.style.transition = 'background 1s ease';
+        cell.style.background = '';
+      }, 300);
     }
 
     projectCells.forEach(cell => {
