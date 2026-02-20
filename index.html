@@ -927,15 +927,19 @@
 
     // Contact card: glow pulse + clipboard copy
     function handleContactClick(cell) {
-      navigator.clipboard.writeText('inquiries@kinami.studio').catch(() => {});
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText('inquiries@kinami.studio').catch(() => {});
+      }
 
-      // Glow pulse
-      cell.style.transition = 'background 0.3s ease';
-      cell.style.background = 'rgba(220, 180, 100, 0.12)';
-      setTimeout(() => {
-        cell.style.transition = 'background 1s ease';
-        cell.style.background = '';
-      }, 300);
+      // Glow pulse — flash bright then fade back
+      cell.style.transition = 'none';
+      cell.style.background = 'rgba(220, 180, 100, 0.15)';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          cell.style.transition = 'background 1.2s ease';
+          cell.style.background = 'rgba(12, 10, 4, 0.8)';
+        });
+      });
     }
 
     projectCells.forEach(cell => {
