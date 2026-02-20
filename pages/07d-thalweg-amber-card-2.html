@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kinami — Split Curtain Card</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0c0a04;
+      font-family: 'Cormorant Infant', serif;
+      color: rgba(220, 180, 100, 0.6);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .label {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      color: rgba(220, 180, 100, 0.3);
+      z-index: 100;
+      text-transform: uppercase;
+    }
+
+    .page-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 10;
+    }
+
+    .page-wrapper.split {
+      transform: translateX(0);
+    }
+
+    .left-side {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .page-wrapper.split .left-side {
+      width: 50vw;
+      cursor: pointer;
+    }
+
+    .title-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .page-wrapper.split .title-wrapper {
+      left: 25%;
+      transform: translate(-50%, -50%) scale(0.7);
+    }
+
+    h1 {
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      color: rgba(220, 180, 100, 0.5);
+      text-align: center;
+    }
+
+    .bottom-info {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(220, 180, 100, 0.06);
+      z-index: 20;
+      transform: translateY(100%);
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    .page-wrapper.split ~ .bottom-info {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(100%);
+      transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .scroll-hint {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 15;
+      pointer-events: none;
+    }
+
+    .scroll-hint-chevron {
+      width: 12px;
+      height: 12px;
+      border-right: 1px solid rgba(220, 180, 100, 0.5);
+      border-bottom: 1px solid rgba(220, 180, 100, 0.5);
+      transform: rotate(45deg);
+      animation: hint-bounce 2.5s ease-in-out infinite;
+    }
+
+    .scroll-hint-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(220, 180, 100, 0.55);
+    }
+
+    @keyframes hint-bounce {
+      0%, 100% { transform: rotate(45deg) translate(0, 0); }
+      50% { transform: rotate(45deg) translate(2px, 2px); }
+    }
+
+    .info-cell {
+      background: rgba(12, 10, 4, 0.8);
+      backdrop-filter: blur(8px);
+      padding: 24px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .info-cell:hover {
+      background: rgba(12, 10, 4, 0.95);
+    }
+
+    .info-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(220, 180, 100, 0.35);
+      margin-bottom: 8px;
+    }
+
+    .info-title {
+      font-size: 18px;
+      font-weight: 400;
+      color: rgba(220, 180, 100, 0.65);
+      margin-bottom: 4px;
+    }
+
+    .info-desc {
+      font-size: 14px;
+      color: rgba(220, 180, 100, 0.4);
+      line-height: 1.4;
+    }
+
+    .right-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 50vw;
+      height: 100vh;
+      background: rgba(12, 10, 4, 0.75);
+      backdrop-filter: blur(6px);
+      border-left: 1px solid rgba(220, 180, 100, 0.06);
+      z-index: 30;
+      transform: translateX(100%);
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto;
+      padding: 60px;
+    }
+
+    .page-wrapper.split .right-panel {
+      transform: translateX(0);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      z-index: 40;
+    }
+
+    .close-btn::before,
+    .close-btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 1px;
+      background: rgba(220, 180, 100, 0.4);
+      transition: background 0.3s ease;
+    }
+
+    .close-btn::before {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .close-btn::after {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    .close-btn:hover::before,
+    .close-btn:hover::after {
+      background: rgba(220, 180, 100, 0.7);
+    }
+
+    .panel-content {
+      max-width: 600px;
+      display: none;
+    }
+
+    .panel-content.active {
+      display: block;
+    }
+
+    .panel-title {
+      font-size: 36px;
+      font-weight: 400;
+      color: rgba(220, 180, 100, 0.92);
+      margin-bottom: 12px;
+    }
+
+    .panel-subtitle {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(220, 180, 100, 0.55);
+      margin-bottom: 32px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(220, 180, 100, 0.55);
+      margin-bottom: 16px;
+    }
+
+    .section-text {
+      font-size: 16px;
+      line-height: 1.6;
+      color: rgba(220, 180, 100, 0.82);
+      margin-bottom: 12px;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .step {
+      display: flex;
+      gap: 16px;
+    }
+
+    .step-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: rgba(220, 180, 100, 0.55);
+      flex-shrink: 0;
+    }
+
+    .step-content {
+      flex: 1;
+    }
+
+    .step-title {
+      font-size: 16px;
+      font-weight: 400;
+      color: rgba(220, 180, 100, 0.88);
+      margin-bottom: 6px;
+    }
+
+    .step-desc {
+      font-size: 14px;
+      line-height: 1.5;
+      color: rgba(220, 180, 100, 0.72);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 400;
+      color: rgba(220, 180, 100, 0.88);
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: rgba(220, 180, 100, 0.55);
+    }
+
+    .code-block {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(220, 180, 100, 0.06);
+      border-radius: 4px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+
+    .code-line {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: rgba(220, 180, 100, 0.72);
+    }
+
+    .code-keyword {
+      color: rgba(240, 200, 130, 0.75);
+    }
+
+    .code-string {
+      color: rgba(220, 180, 100, 0.55);
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      padding: 6px 12px;
+      background: rgba(220, 180, 100, 0.04);
+      border: 1px solid rgba(220, 180, 100, 0.1);
+      border-radius: 12px;
+      color: rgba(220, 180, 100, 0.72);
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 0;
+      border-top: 1px solid rgba(220, 180, 100, 0.06);
+      margin-top: 40px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(220, 180, 100, 0.6);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .status-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      color: rgba(220, 180, 100, 0.72);
+    }
+
+    .contact-link {
+      font-size: 14px;
+      color: rgba(220, 180, 100, 0.6);
+      text-decoration: underline;
+      text-decoration-color: rgba(220, 180, 100, 0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .contact-link:hover {
+      color: rgba(220, 180, 100, 0.8);
+      text-decoration-color: rgba(220, 180, 100, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      .page-wrapper.split .left-side {
+        width: 0;
+        opacity: 0;
+      }
+
+      .right-panel {
+        width: 100vw;
+        padding: 40px 24px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .bottom-info {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-content {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <div class="label">card::2::split-curtain</div>
+
+  <div class="page-wrapper" id="pageWrapper">
+    <div class="left-side">
+      <div class="title-wrapper">
+        <h1>kinami</h1>
+      </div>
+    </div>
+
+    <div class="right-panel" id="rightPanel">
+      <button class="close-btn" id="closeBtn" aria-label="Close"></button>
+      <div class="panel-content active" data-panel="001">
+        <h2 class="panel-title">Drone Tracker</h2>
+        <div class="panel-subtitle">Crowdsourced Airspace Observation Network</div>
+
+        <div class="section">
+          <div class="section-title">Concept</div>
+          <p class="section-text">
+            Citizens report drone sightings using smartphone camera and sensor data. Multiple independent observations from different locations are combined to triangulate positions and reconstruct flight paths across monitored airspace.
+          </p>
+        </div>
+
+        <div class="section">
+          <div class="section-title">How It Works</div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">01</div>
+              <div class="step-content">
+                <div class="step-title">Field Reporting</div>
+                <div class="step-desc">
+                  Observers capture sightings through a mobile app that records video, GPS coordinates, compass bearing, and device orientation. Reports are timestamped and queued for submission.
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">02</div>
+              <div class="step-content">
+                <div class="step-title">Triangulation</div>
+                <div class="step-desc">
+                  Overlapping reports from multiple observers are correlated by time and bearing to compute 3D positions. Confidence increases with the number of independent sightings for each event.
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">03</div>
+              <div class="step-content">
+                <div class="step-title">Pattern Mapping</div>
+                <div class="step-desc">
+                  Reconstructed flight paths are aggregated over time to reveal recurring routes, activity hotspots, and temporal patterns across the observation network.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Metrics</div>
+          <div class="stats-grid">
+            <div class="stat">
+              <div class="stat-value">3D</div>
+              <div class="stat-label">Triangulation</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">Nordic</div>
+              <div class="stat-label">Coverage</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">Live</div>
+              <div class="stat-label">Status</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Technology Stack</div>
+          <div class="tags">
+            <div class="tag">Flutter</div>
+            <div class="tag">FastAPI</div>
+            <div class="tag">PostGIS</div>
+            <div class="tag">Cloudflare R2</div>
+          </div>
+        </div>
+
+        <div class="status-bar">
+          <div class="status-dot"></div>
+          <div class="status-text">Active Development — Field Testing</div>
+        </div>
+      </div>
+
+      <div class="panel-content" data-panel="002">
+        <h2 class="panel-title">Audioreactive</h2>
+        <div class="panel-subtitle">Real-Time Audio-Reactive Visual Synthesis</div>
+
+        <div class="section">
+          <div class="section-title">Concept</div>
+          <p class="section-text">
+            Live microphone input feeds into musical feature extraction, driving continuous navigation through a generative latent space. Bass frequencies control large-scale structure, mids drive composition and movement, highs modulate fine detail and texture.
+          </p>
+        </div>
+
+        <div class="section">
+          <div class="section-title">How It Works</div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">01</div>
+              <div class="step-content">
+                <div class="step-title">Audio Capture</div>
+                <div class="step-desc">
+                  Live audio is captured from the microphone and decomposed into spectral features — chromagram, onset detection, and frequency band energy — updated each frame.
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">02</div>
+              <div class="step-content">
+                <div class="step-title">Feature Mapping</div>
+                <div class="step-desc">
+                  Extracted features are mapped to latent space coordinates using learned projections. Smooth interpolation between frames ensures visual continuity while preserving musical responsiveness.
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">03</div>
+              <div class="step-content">
+                <div class="step-title">Generative Synthesis</div>
+                <div class="step-desc">
+                  The generator network produces continuous visuals from the current latent position. Post-processing applies color grading and temporal blending to create fluid motion.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Metrics</div>
+          <div class="stats-grid">
+            <div class="stat">
+              <div class="stat-value">30fps</div>
+              <div class="stat-label">Synthesis</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">12-note</div>
+              <div class="stat-label">Chromagram</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">Hot-reload</div>
+              <div class="stat-label">Config</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Technology Stack</div>
+          <div class="tags">
+            <div class="tag">PyTorch</div>
+            <div class="tag">StyleGAN</div>
+            <div class="tag">librosa</div>
+            <div class="tag">pygame</div>
+          </div>
+        </div>
+
+        <div class="status-bar">
+          <div class="status-dot"></div>
+          <div class="status-text">Prototype — Performance Optimization</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-info">
+    <div class="info-cell" data-project="001">
+      <div class="info-label">Project 001</div>
+      <div class="info-title">Drone Tracker</div>
+      <div class="info-desc">Crowdsourced airspace observation</div>
+    </div>
+    <div class="info-cell" data-project="002">
+      <div class="info-label">Project 002</div>
+      <div class="info-title">Audioreactive</div>
+      <div class="info-desc">Live generative visuals from audio</div>
+    </div>
+    <div class="info-cell" data-project="contact">
+      <div class="info-label">Contact</div>
+      <div class="info-title">Get in Touch</div>
+      <div class="info-desc">inquiries@kinami.studio</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint" id="scrollHint">
+    <div class="scroll-hint-chevron"></div>
+    <div class="scroll-hint-text">scroll</div>
+  </div>
+
+  <script>
+    // Canvas noise functions
+    function hash(x, y) {
+      let n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
+      return n - Math.floor(n);
+    }
+
+    function noise2D(x, y) {
+      const ix = Math.floor(x), iy = Math.floor(y);
+      const fx = x - ix, fy = y - iy;
+      const sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy);
+      const a = hash(ix, iy), b = hash(ix + 1, iy);
+      const c = hash(ix, iy + 1), d = hash(ix + 1, iy + 1);
+      return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy;
+    }
+
+    function fbm(x, y) {
+      let v = 0, amp = 0.5, freq = 1;
+      for (let i = 0; i < 3; i++) {
+        v += noise2D(x * freq, y * freq) * amp;
+        amp *= 0.5;
+        freq *= 2;
+      }
+      return v;
+    }
+
+    // Canvas setup
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+    let mouse = { x: null, y: null };
+
+    const isMobile = window.innerWidth < 768;
+    const PARTICLE_COUNT = isMobile ? 500 : 1200;
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: 0,
+          vy: 0,
+          size: 0.5 + Math.random() * 0.5,
+          color: Math.random() > 0.5 ? 'rgba(220, 180, 100, 0.02)' : 'rgba(240, 200, 130, 0.04)'
+        });
+      }
+    }
+
+    function updateParticles() {
+      const time = Date.now() * 0.0001;
+
+      particles.forEach(p => {
+        // Flow field from curl noise
+        const angle = fbm(p.x * 0.003, p.y * 0.003 + time) * Math.PI * 2;
+        const speed = 0.3;
+        p.vx = Math.cos(angle) * speed;
+        p.vy = Math.sin(angle) * speed;
+
+        // Mouse warp — attracts particles toward cursor
+        if (mouse.x !== null && mouse.y !== null) {
+          const dx = mouse.x - p.x;
+          const dy = mouse.y - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const warpRadius = 200;
+
+          if (dist < warpRadius && dist > 0) {
+            const force = (1 - dist / warpRadius) * 0.5;
+            p.vx += (dx / dist) * force;
+            p.vy += (dy / dist) * force;
+          }
+        }
+
+        // Hint: particles near bottom drift gently downward
+        if (scrollCurrent < 0.1) {
+          const bottomRatio = p.y / height;
+          if (bottomRatio > 0.8) {
+            const depth = (bottomRatio - 0.8) / 0.2;
+            p.vy += depth * 0.4;
+            p.vx *= 1 - depth * 0.3;
+          }
+        }
+
+        // Update position
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap edges
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+      });
+    }
+
+    function drawParticles() {
+      ctx.fillStyle = 'rgba(12, 10, 4, 0.004)';
+      ctx.fillRect(0, 0, width, height);
+
+      particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    function animate() {
+      updateParticles();
+      drawParticles();
+      updateBottomBar();
+      requestAnimationFrame(animate);
+    }
+
+    // Mouse tracking
+    const bottomInfo = document.querySelector('.bottom-info');
+    const scrollHint = document.getElementById('scrollHint');
+    let hintReady = false;
+    let hintOpacity = 0;
+    setTimeout(() => { hintReady = true; }, 2000);
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    window.addEventListener('mouseleave', () => {
+      mouse.x = null;
+      mouse.y = null;
+    });
+
+    // Touch tracking (for particles)
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+      }
+    });
+
+    window.addEventListener('touchend', () => {
+      mouse.x = null;
+      mouse.y = null;
+    });
+
+    // Scroll-reveal system for bottom bar
+    let scrollTarget = 0;
+    let scrollCurrent = 0;
+    let scrollTouchStartY = null;
+    let wheelSnapTimer = null;
+
+    const SCROLL_SENSITIVITY = isMobile ? 0.005 : 0.003;
+    const LERP_FACTOR = 0.08;
+    const SNAP_THRESHOLD = 0.01;
+
+    window.addEventListener('wheel', (e) => {
+      if (pageWrapper.classList.contains('split')) return;
+      e.preventDefault();
+      scrollTarget += e.deltaY * SCROLL_SENSITIVITY;
+      scrollTarget = Math.max(0, Math.min(1, scrollTarget));
+
+      // Debounced snap
+      clearTimeout(wheelSnapTimer);
+      wheelSnapTimer = setTimeout(() => {
+        scrollTarget = scrollTarget < 0.4 ? 0 : 1;
+      }, 150);
+    }, { passive: false });
+
+    window.addEventListener('touchstart', (e) => {
+      scrollTouchStartY = e.touches[0].clientY;
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (scrollTouchStartY === null) return;
+      if (pageWrapper.classList.contains('split')) return;
+      const deltaY = scrollTouchStartY - e.touches[0].clientY;
+      scrollTarget += deltaY * 0.005;
+      scrollTarget = Math.max(0, Math.min(1, scrollTarget));
+      scrollTouchStartY = e.touches[0].clientY;
+    });
+
+    window.addEventListener('touchend', () => {
+      scrollTouchStartY = null;
+      if (!pageWrapper.classList.contains('split')) {
+        scrollTarget = scrollTarget < 0.5 ? 0 : 1;
+      }
+    });
+
+    function updateBottomBar() {
+      const isSplit = pageWrapper.classList.contains('split');
+
+      // Scroll hints — gentle fade-in after delay, fade-out on scroll
+      const hintTarget = (hintReady && !isSplit && scrollCurrent < 0.12) ? 1 : 0;
+      hintOpacity += (hintTarget - hintOpacity) * 0.03;
+      scrollHint.style.opacity = hintOpacity;
+
+      if (isSplit) {
+        scrollTarget = 0;
+        scrollCurrent = 0;
+        bottomInfo.style.transform = '';
+        bottomInfo.style.opacity = '';
+        return;
+      }
+
+      scrollCurrent += (scrollTarget - scrollCurrent) * LERP_FACTOR;
+
+      // Snap to exact values when close enough
+      if (Math.abs(scrollCurrent - scrollTarget) < SNAP_THRESHOLD) {
+        scrollCurrent = scrollTarget;
+      }
+
+      const progress = scrollCurrent;
+      bottomInfo.style.transform = `translateY(${(1 - progress) * 100}%)`;
+      bottomInfo.style.opacity = progress;
+      bottomInfo.style.pointerEvents = progress > 0.5 ? 'auto' : 'none';
+    }
+
+    // Panel interactions
+    const pageWrapper = document.getElementById('pageWrapper');
+    const closeBtn = document.getElementById('closeBtn');
+    const panelContents = document.querySelectorAll('.panel-content[data-panel]');
+    const projectCells = document.querySelectorAll('.info-cell[data-project]');
+
+    function openPanel(projectId) {
+      panelContents.forEach(p => p.classList.remove('active'));
+      const target = document.querySelector(`.panel-content[data-panel="${projectId}"]`);
+      if (target) target.classList.add('active');
+      pageWrapper.classList.add('split');
+    }
+
+    function closePanel() {
+      pageWrapper.classList.remove('split');
+    }
+
+    // Contact card: particle burst + clipboard copy
+    function handleContactClick(cell) {
+      navigator.clipboard.writeText('inquiries@kinami.studio').catch(() => {});
+
+      const titleEl = cell.querySelector('.info-title');
+      const original = titleEl.textContent;
+      titleEl.textContent = 'Copied \u2713';
+      titleEl.style.transition = 'opacity 0.3s ease';
+      setTimeout(() => {
+        titleEl.style.opacity = '0';
+        setTimeout(() => {
+          titleEl.textContent = original;
+          titleEl.style.opacity = '1';
+        }, 300);
+      }, 1200);
+
+      // Particle burst — push particles near bottom-center outward
+      const cx = width / 2;
+      const cy = height;
+      const burstRadius = 300;
+      particles.forEach(p => {
+        const dx = p.x - cx;
+        const dy = p.y - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < burstRadius && dist > 0) {
+          const force = (1 - dist / burstRadius) * 8;
+          p.vx += (dx / dist) * force;
+          p.vy += (dy / dist) * force;
+        }
+      });
+    }
+
+    projectCells.forEach(cell => {
+      cell.addEventListener('click', () => {
+        if (cell.dataset.project === 'contact') {
+          handleContactClick(cell);
+          return;
+        }
+        openPanel(cell.dataset.project);
+      });
+    });
+
+    closeBtn.addEventListener('click', closePanel);
+
+    // Click left side to close
+    const leftSide = document.querySelector('.left-side');
+    leftSide.addEventListener('click', () => {
+      if (pageWrapper.classList.contains('split')) {
+        closePanel();
+      }
+    });
+
+    // Escape key to close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closePanel();
+      }
+    });
+
+    // Initialize
+    resize();
+    initParticles();
+    animate();
+
+    window.addEventListener('resize', () => {
+      resize();
+      initParticles();
+    });
+  </script>
+</body>
+</html>
