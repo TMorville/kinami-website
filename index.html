@@ -578,6 +578,11 @@
           <div class="status-dot"></div>
           <div class="status-text">App Store Beta</div>
         </div>
+
+        <div class="section" style="margin-top: 24px;">
+          <a href="/dronetracker/privacy/" class="contact-link" style="margin-right: 16px;">Privacy Policy</a>
+          <a href="/dronetracker/terms/" class="contact-link">Terms of Service</a>
+        </div>
       </div>
 
       <div class="panel-content" data-panel="002">
@@ -914,15 +919,21 @@
     const panelContents = document.querySelectorAll('.panel-content[data-panel]');
     const projectCells = document.querySelectorAll('.info-cell[data-project]');
 
+    const panelHashMap = { '001': 'dronetracker', '002': 'audioreactive' };
+    const hashPanelMap = { 'dronetracker': '001', 'audioreactive': '002' };
+
     function openPanel(projectId) {
       panelContents.forEach(p => p.classList.remove('active'));
       const target = document.querySelector(`.panel-content[data-panel="${projectId}"]`);
       if (target) target.classList.add('active');
       pageWrapper.classList.add('split');
+      const slug = panelHashMap[projectId];
+      if (slug) history.replaceState(null, '', '/#' + slug);
     }
 
     function closePanel() {
       pageWrapper.classList.remove('split');
+      if (location.hash || location.pathname !== '/') history.replaceState(null, '', '/');
     }
 
     // Contact card: glow pulse + clipboard copy
@@ -973,6 +984,16 @@
     resize();
     initParticles();
     animate();
+
+    // Deep-link: open panel from hash or path (path handles SPA fallback)
+    const initialHash = location.hash.replace('#', '');
+    const initialPath = location.pathname.replace(/^\/|\/$/g, '');
+    const deepLinkPanel = hashPanelMap[initialHash] || hashPanelMap[initialPath];
+    if (deepLinkPanel) {
+      scrollTarget = 1;
+      scrollCurrent = 1;
+      openPanel(deepLinkPanel);
+    }
 
     window.addEventListener('resize', () => {
       resize();
