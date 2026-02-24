@@ -483,7 +483,7 @@
     <div class="right-panel" id="rightPanel">
       <button class="close-btn" id="closeBtn" aria-label="Close"></button>
       <div class="panel-content active" data-panel="001">
-        <h2 class="panel-title">Drone Tracker</h2>
+        <h2 class="panel-title">Drone Reporter</h2>
         <div class="panel-subtitle">Turning Sightings Into Positions</div>
 
         <div class="section">
@@ -496,7 +496,7 @@
         <div class="section">
           <div class="section-title">The Idea</div>
           <p class="section-text">
-            Drone Tracker is a mobile app. You see something in the sky, you point your phone at it and tap. The app captures a photo along with everything your phone already knows — GPS position, compass bearing, camera angle, field of view. That's one observation. When multiple people do this for the same object, the system triangulates a real position in 3D space.
+            Drone Reporter is a mobile app. You see something in the sky, you point your phone at it and tap. The app captures a photo along with everything your phone already knows — GPS position, compass bearing, camera angle, field of view. That's one observation. When multiple people do this for the same object, the system triangulates a real position in 3D space.
           </p>
           <p class="section-text">
             No phone calls. No guesswork. Just structured data that gets better with every observer.
@@ -580,8 +580,8 @@
         </div>
 
         <div class="section" style="margin-top: 24px;">
-          <a href="/dronetracker/privacy/" class="contact-link" style="margin-right: 16px;">Privacy Policy</a>
-          <a href="/dronetracker/terms/" class="contact-link">Terms of Service</a>
+          <a href="/dronereporter/privacy/" class="contact-link" style="margin-right: 16px;">Privacy Policy</a>
+          <a href="/dronereporter/terms/" class="contact-link">Terms of Service</a>
         </div>
       </div>
 
@@ -671,7 +671,7 @@
   <div class="bottom-info">
     <div class="info-cell" data-project="001">
       <div class="info-label">Project 001</div>
-      <div class="info-title">Drone Tracker</div>
+      <div class="info-title">Drone Reporter</div>
       <div class="info-desc">Crowdsourced airspace observation</div>
     </div>
     <div class="info-cell" data-project="002">
@@ -919,8 +919,8 @@
     const panelContents = document.querySelectorAll('.panel-content[data-panel]');
     const projectCells = document.querySelectorAll('.info-cell[data-project]');
 
-    const panelHashMap = { '001': 'dronetracker', '002': 'audioreactive' };
-    const hashPanelMap = { 'dronetracker': '001', 'audioreactive': '002' };
+    const panelHashMap = { '001': 'dronereporter', '002': 'audioreactive' };
+    const hashPanelMap = { 'dronereporter': '001', 'audioreactive': '002' };
 
     function openPanel(projectId) {
       panelContents.forEach(p => p.classList.remove('active'));
