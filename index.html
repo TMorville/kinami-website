@@ -99,6 +99,7 @@
       font-size: clamp(48px, 8vw, 96px) !important;
     }
 
+
     .bottom-info {
       position: fixed;
       bottom: 0;
@@ -777,6 +778,7 @@
 
   <script type="module">
     import { createLockup } from './lib/logo/lockup.js';
+    import { startHalvorsenBackground } from './lib/background/halvorsen-bg.js';
 
     const mount = document.getElementById('kinami-lockup-mount');
 
@@ -792,7 +794,9 @@
       probe.remove();
 
       mount.innerHTML = '';
-      mount.appendChild(createLockup({ wordmarkFontSize: fontSize }));
+      // 'splash' variant renders the mark on a transparent bg so the animated
+      // trace behind the lockup is visible through the mark canvas.
+      mount.appendChild(createLockup({ wordmarkFontSize: fontSize, variant: 'splash' }));
     }
 
     document.fonts.ready.then(buildLockup);
@@ -803,157 +807,23 @@
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(buildLockup, 150);
     });
+
+    // Splash background — live Halvorsen trace, same attractor as the mark.
+    startHalvorsenBackground(document.getElementById('canvas'));
   </script>
 
   <script>
-    // Canvas noise functions
-    function hash(x, y) {
-      let n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
-      return n - Math.floor(n);
-    }
-
-    function noise2D(x, y) {
-      const ix = Math.floor(x), iy = Math.floor(y);
-      const fx = x - ix, fy = y - iy;
-      const sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy);
-      const a = hash(ix, iy), b = hash(ix + 1, iy);
-      const c = hash(ix, iy + 1), d = hash(ix + 1, iy + 1);
-      return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy;
-    }
-
-    function fbm(x, y) {
-      let v = 0, amp = 0.5, freq = 1;
-      for (let i = 0; i < 3; i++) {
-        v += noise2D(x * freq, y * freq) * amp;
-        amp *= 0.5;
-        freq *= 2;
-      }
-      return v;
-    }
-
-    // Canvas setup
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    let width, height;
-    let particles = [];
-    let mouse = { x: null, y: null };
+    // Splash interactions: scroll-reveal bottom bar, panel open/close, lightbox.
+    // The animated background canvas is owned by lib/background/halvorsen-bg.js
+    // (started from the module script above).
 
     const isMobile = window.innerWidth < 768;
-    const PARTICLE_COUNT = isMobile ? 500 : 1200;
 
-    function resize() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    }
-
-    function initParticles() {
-      particles = [];
-      for (let i = 0; i < PARTICLE_COUNT; i++) {
-        particles.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          vx: 0,
-          vy: 0,
-          size: 0.5 + Math.random() * 0.5,
-          color: Math.random() > 0.5 ? 'rgba(220, 180, 100, 0.02)' : 'rgba(240, 200, 130, 0.04)'
-        });
-      }
-    }
-
-    function updateParticles() {
-      const time = Date.now() * 0.0001;
-
-      particles.forEach(p => {
-        // Flow field from curl noise
-        const angle = fbm(p.x * 0.003, p.y * 0.003 + time) * Math.PI * 2;
-        const speed = 0.3;
-        p.vx = Math.cos(angle) * speed;
-        p.vy = Math.sin(angle) * speed;
-
-        // Mouse warp — attracts particles toward cursor
-        if (mouse.x !== null && mouse.y !== null) {
-          const dx = mouse.x - p.x;
-          const dy = mouse.y - p.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const warpRadius = 200;
-
-          if (dist < warpRadius && dist > 0) {
-            const force = (1 - dist / warpRadius) * 0.5;
-            p.vx += (dx / dist) * force;
-            p.vy += (dy / dist) * force;
-          }
-        }
-
-        // Hint: particles near bottom drift gently downward
-        if (scrollCurrent < 0.1) {
-          const bottomRatio = p.y / height;
-          if (bottomRatio > 0.8) {
-            const depth = (bottomRatio - 0.8) / 0.2;
-            p.vy += depth * 0.4;
-            p.vx *= 1 - depth * 0.3;
-          }
-        }
-
-        // Update position
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Wrap edges
-        if (p.x < 0) p.x = width;
-        if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height;
-        if (p.y > height) p.y = 0;
-      });
-    }
-
-    function drawParticles() {
-      ctx.fillStyle = 'rgba(12, 10, 4, 0.004)';
-      ctx.fillRect(0, 0, width, height);
-
-      particles.forEach(p => {
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-      });
-    }
-
-    function animate() {
-      updateParticles();
-      drawParticles();
-      updateBottomBar();
-      requestAnimationFrame(animate);
-    }
-
-    // Mouse tracking
     const bottomInfo = document.querySelector('.bottom-info');
     const scrollHint = document.getElementById('scrollHint');
     let hintReady = false;
     let hintOpacity = 0;
     setTimeout(() => { hintReady = true; }, 2000);
-
-    window.addEventListener('mousemove', (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    });
-
-    window.addEventListener('mouseleave', () => {
-      mouse.x = null;
-      mouse.y = null;
-    });
-
-    // Touch tracking (for particles)
-    window.addEventListener('touchmove', (e) => {
-      if (e.touches.length > 0) {
-        mouse.x = e.touches[0].clientX;
-        mouse.y = e.touches[0].clientY;
-      }
-    });
-
-    window.addEventListener('touchend', () => {
-      mouse.x = null;
-      mouse.y = null;
-    });
 
     // Scroll-reveal system for bottom bar
     let scrollTarget = 0;
@@ -1094,10 +964,11 @@
       }
     });
 
-    // Initialize
-    resize();
-    initParticles();
-    animate();
+    // Bottom-bar animation loop — independent of the canvas background loop.
+    (function tickBottomBar() {
+      updateBottomBar();
+      requestAnimationFrame(tickBottomBar);
+    })();
 
     // Deep-link: open panel from hash or path (path handles SPA fallback)
     const initialHash = location.hash.replace('#', '');
@@ -1108,11 +979,6 @@
       scrollCurrent = 1;
       openPanel(deepLinkPanel);
     }
-
-    window.addEventListener('resize', () => {
-      resize();
-      initParticles();
-    });
 
     // Screenshot lightbox
     const lightbox = document.getElementById('lightbox');
