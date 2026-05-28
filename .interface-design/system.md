@@ -224,3 +224,52 @@ Inset surface (rgba(0,0,0,0.3)), whisper border, 4px radius, 16px padding. Code 
 ## Signature
 
 The particle canvas IS the product identity. Every page has it. The UI floats above it as translucent glass. The single-hue constraint — everything is amber at different opacities — is what makes kinami look like kinami. Adding a second color would break the identity.
+
+## Logo
+
+The Kinami mark is the **Halvorsen attractor**. Vertical lockup only — mark above, wordmark below. See `/Users/tomo/kinami/history/2026-05-27-kinami-logo-design.md` for the full design spec.
+
+### Lockup geometry
+
+| Rule | Value |
+|---|---|
+| `mark_canvas_size : wordmark_font_size` | `5 : 1` |
+| `gap : wordmark_font_size` | `0.25 : 1` |
+| Mark canvas | square |
+| Alignment | both centered on shared vertical axis |
+
+### Render specs
+
+| Spec | Value |
+|---|---|
+| Master resolution | `1024 × 1024 px` |
+| Padding | `0.85` of half-canvas radius |
+| Dot size | `2.5 px` (square fillRect) |
+| Alpha per dot | `0.168` (= `0.07 × 2.4` boost) |
+| Color (primary) | `rgba(220, 180, 100, 0.168)` |
+| Background (primary) | `#0c0a04` |
+| Display rendering | `drawImage` from master with `imageSmoothingQuality = 'high'` |
+
+### Wordmark
+
+Cormorant Infant 300, lowercase, `0.05em` letter-spacing, `rgba(220, 180, 100, 0.5)`. On the splash this is sized via `clamp(48px, 8vw, 96px)`.
+
+### Code
+
+| Module | Responsibility |
+|---|---|
+| `lib/logo/attractor.js` | Point cloud generator (deterministic) |
+| `lib/logo/constants.js` | Shared locked constants (render + lockup geometry) |
+| `lib/logo/render.js` | Browser canvas rendering (master + downsampled) |
+| `lib/logo/lockup.js` | DOM lockup component |
+| `lib/logo/export.js` | Node script for raster asset export |
+
+### Assets
+
+| File | Use |
+|---|---|
+| `assets/logo/mark-master.png` | 1024 px canonical master |
+| `assets/logo/mark-{16,32,64,128,256,512}.png` | Standard rasters |
+| `assets/logo/apple-touch-icon.png` | 180 px iOS home screen |
+| `assets/logo/og.png` | 1200 × 630 social card |
+| `assets/logo/favicon.ico` | Multi-resolution favicon (16/32/48) |
