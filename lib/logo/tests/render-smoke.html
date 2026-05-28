@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>render smoke test</title>
+  <style>body { background: #0c0a04; padding: 40px; }</style>
+</head>
+<body>
+  <canvas id="primary" width="360" height="360" style="border: 1px solid #444; margin: 12px;"></canvas>
+  <canvas id="inverted" width="360" height="360" style="border: 1px solid #444; margin: 12px;"></canvas>
+  <canvas id="mono" width="360" height="360" style="border: 1px solid #444; margin: 12px;"></canvas>
+  <script type="module">
+    import { renderScaled } from '../render.js';
+    renderScaled(document.getElementById('primary'), 'primary');
+    renderScaled(document.getElementById('inverted'), 'inverted');
+    renderScaled(document.getElementById('mono'), 'mono');
+  </script>
+</body>
+</html>
