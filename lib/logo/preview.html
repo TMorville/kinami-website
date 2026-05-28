@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>kinami lockup preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:wght@300&family=DM+Mono:wght@300&display=swap" rel="stylesheet">
+  <style>
+    body { background: #0c0a04; padding: 60px; font-family: 'DM Mono', monospace; color: rgba(220, 180, 100, 0.5); }
+    .row { display: flex; align-items: flex-end; gap: 64px; flex-wrap: wrap; margin-bottom: 80px; }
+    .item { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: rgba(220, 180, 100, 0.35); }
+    .variants { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .variant-tile { padding: 48px 24px; display: flex; align-items: center; justify-content: center; min-height: 280px; }
+    .v-primary  { background: #0c0a04; border: 1px solid rgba(220, 180, 100, 0.1); }
+    .v-inverted { background: rgba(220, 180, 100, 0.92); }
+    .v-mono     { background: #0c0a04; border: 1px solid rgba(220, 180, 100, 0.1); }
+  </style>
+</head>
+<body>
+  <h2 style="font-family: 'Cormorant Infant', serif; font-weight: 300; color: rgba(220, 180, 100, 0.92); font-size: 22px; margin-bottom: 48px;">Lockup preview</h2>
+
+  <div class="label">Size ladder · 96 / 56 / 36 / 24 / 16 px wordmark</div>
+  <div class="row" id="sizes"></div>
+
+  <div class="label">Variants · 56 px wordmark</div>
+  <div class="variants" id="variants"></div>
+
+  <script type="module">
+    import { createLockup } from './lockup.js';
+
+    document.fonts.ready.then(() => {
+      const sizes = [96, 56, 36, 24, 16];
+      const sizesRow = document.getElementById('sizes');
+      for (const s of sizes) {
+        const item = document.createElement('div');
+        item.className = 'item';
+        item.appendChild(createLockup({ wordmarkFontSize: s }));
+        const lab = document.createElement('div');
+        lab.className = 'label';
+        lab.textContent = `${s} px`;
+        item.appendChild(lab);
+        sizesRow.appendChild(item);
+      }
+
+      const variants = ['primary', 'inverted', 'mono'];
+      const variantsRow = document.getElementById('variants');
+      for (const v of variants) {
+        const tile = document.createElement('div');
+        tile.className = 'variant-tile v-' + v;
+        tile.appendChild(createLockup({ wordmarkFontSize: 56, variant: v }));
+        variantsRow.appendChild(tile);
+      }
+    });
+  </script>
+</body>
+</html>
