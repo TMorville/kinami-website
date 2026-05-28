@@ -40,15 +40,6 @@
       width: 100vw;
     }
 
-    #canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
-
     .page-wrapper {
       position: fixed;
       top: 0;
@@ -543,9 +534,6 @@
   </style>
 </head>
 <body>
-  <canvas id="canvas"></canvas>
-
-
   <div class="page-wrapper" id="pageWrapper">
     <div class="left-side">
       <div class="title-wrapper">
@@ -778,11 +766,15 @@
 
   <script type="module">
     import { createLockup } from './lib/logo/lockup.js';
-    import { startHalvorsenBackground } from './lib/background/halvorsen-bg.js';
+    import { startMarkAnimator } from './lib/logo/mark-animator.js';
 
     const mount = document.getElementById('kinami-lockup-mount');
+    let stopAnimator = null;
 
     function buildLockup() {
+      // Cancel the previous animator before throwing away its canvas.
+      if (stopAnimator) { stopAnimator(); stopAnimator = null; }
+
       // Read the responsive font-size from CSS so the mark stays proportional
       const probe = document.createElement('span');
       probe.className = 'kinami-lockup-word';
@@ -794,9 +786,12 @@
       probe.remove();
 
       mount.innerHTML = '';
-      // 'splash' variant renders the mark on a transparent bg so the animated
-      // trace behind the lockup is visible through the mark canvas.
+      // 'splash' variant leaves the canvas blank; startMarkAnimator paints it
+      // live from frame 1, drawing the attractor progressively from no pixels.
       mount.appendChild(createLockup({ wordmarkFontSize: fontSize, variant: 'splash' }));
+
+      const markCanvas = mount.querySelector('canvas');
+      if (markCanvas) stopAnimator = startMarkAnimator(markCanvas);
     }
 
     document.fonts.ready.then(buildLockup);
@@ -807,9 +802,6 @@
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(buildLockup, 150);
     });
-
-    // Splash background — live Halvorsen trace, same attractor as the mark.
-    startHalvorsenBackground(document.getElementById('canvas'));
   </script>
 
   <script>
