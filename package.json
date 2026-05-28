@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "canvas": "^3.2.3",
+    "png-to-ico": "^3.0.1",
     "vite": "^6.1.0"
   },
   "dependencies": {
