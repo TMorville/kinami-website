@@ -76,6 +76,8 @@
       transform: translate(-50%, -50%) scale(0.7);
     }
 
+    /* !important overrides the inline font-size set by createLockup, so the wordmark
+       tracks viewport continuously while the canvas mark updates on resize debounce. */
     .kinami-lockup-word {
       font-size: clamp(48px, 8vw, 96px) !important;
     }
@@ -472,7 +474,7 @@
   <div class="page-wrapper" id="pageWrapper">
     <div class="left-side">
       <div class="title-wrapper">
-        <div id="kinami-lockup-mount"></div>
+        <div id="kinami-lockup-mount" role="heading" aria-level="1" aria-label="kinami"></div>
       </div>
     </div>
 
