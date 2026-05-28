@@ -76,12 +76,8 @@
       transform: translate(-50%, -50%) scale(0.7);
     }
 
-    h1 {
-      font-size: clamp(48px, 8vw, 96px);
-      font-weight: 300;
-      letter-spacing: 0.05em;
-      color: rgba(220, 180, 100, 0.5);
-      text-align: center;
+    .kinami-lockup-word {
+      font-size: clamp(48px, 8vw, 96px) !important;
     }
 
     .bottom-info {
@@ -476,7 +472,7 @@
   <div class="page-wrapper" id="pageWrapper">
     <div class="left-side">
       <div class="title-wrapper">
-        <h1>kinami</h1>
+        <div id="kinami-lockup-mount"></div>
       </div>
     </div>
 
@@ -690,6 +686,36 @@
     <div class="scroll-hint-chevron"></div>
     <div class="scroll-hint-text">scroll</div>
   </div>
+
+  <script type="module">
+    import { createLockup } from './lib/logo/lockup.js';
+
+    const mount = document.getElementById('kinami-lockup-mount');
+
+    function buildLockup() {
+      // Read the responsive font-size from CSS so the mark stays proportional
+      const probe = document.createElement('span');
+      probe.className = 'kinami-lockup-word';
+      probe.style.visibility = 'hidden';
+      probe.style.position = 'absolute';
+      probe.textContent = 'kinami';
+      document.body.appendChild(probe);
+      const fontSize = parseFloat(getComputedStyle(probe).fontSize);
+      probe.remove();
+
+      mount.innerHTML = '';
+      mount.appendChild(createLockup({ wordmarkFontSize: fontSize }));
+    }
+
+    document.fonts.ready.then(buildLockup);
+
+    // Re-render on viewport changes so the clamp() font-size shifts propagate
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(buildLockup, 150);
+    });
+  </script>
 
   <script>
     // Canvas noise functions
