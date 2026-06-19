@@ -29,9 +29,13 @@
     body {
       background: var(--void); color: var(--text);
       font-family: var(--serif);
-      height: 100svh; overflow-y: scroll;
-      scroll-snap-type: y mandatory;
+      height: 100svh; overflow: hidden;
     }
+    #pager { transition: transform 0.72s cubic-bezier(0.7,0,0.2,1); will-change: transform; }
+    .pager-dots { position:fixed; right:26px; top:50%; transform:translateY(-50%); z-index:40; display:flex; flex-direction:column; gap:14px; }
+    .pager-dots button { width:9px; height:9px; padding:0; border-radius:50%; border:1px solid var(--line-strong); background:transparent; cursor:pointer; transition:background .3s ease, border-color .3s ease; }
+    .pager-dots button[aria-current="true"] { background:var(--signal); border-color:var(--signal); }
+    @media (max-width:768px){ .pager-dots{ right:14px; } }
     body::before {
       content:""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
       background-image:
@@ -39,7 +43,7 @@
       opacity: 0.5;
     }
     .view {
-      position: relative; height: 100svh; scroll-snap-align: start;
+      position: relative; height: 100svh;
       display: flex; flex-direction: column; justify-content: center;
       padding: 0 8vw; overflow: hidden;
     }
@@ -63,7 +67,7 @@
     #hero h1 { font-family:var(--serif); font-weight:300; font-size:clamp(30px,4.4vw,60px); line-height:1.14; letter-spacing:0.01em; color:var(--text); }
     #hero h1 .accent { display:block; color:var(--signal); }
     @keyframes rise { from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none} }
-    .scroll-cue { position:absolute; bottom:24px; left:50%; transform:translateX(-50%); z-index:3;
+    .scroll-cue { position:absolute; bottom:24px; left:50%; transform:translateX(-50%); z-index:3; cursor:pointer;
       font-family:var(--mono); font-size:10px; letter-spacing:0.2em; color:var(--text-faint); animation:cue 2.4s ease-in-out infinite; }
     @keyframes cue { 0%,100%{opacity:.3} 50%{opacity:.8} }
     .panel { position:relative; z-index:3; max-width:640px; }
@@ -125,6 +129,7 @@
     @media (max-width:768px){ #beta .footer{ flex-direction:column; gap:12px; left:24px; right:24px; text-align:center; } }
     @media (prefers-reduced-motion: reduce) {
       #hero .line { animation:none; opacity:1; } .scroll-cue, .dot { animation:none; }
+      #pager { transition:none; }
     }
     @media (max-width: 768px) {
       .view { padding:0 24px; } #hero .topbar { left:24px; right:24px; } #hero .line { margin-bottom:16vh; margin-left:24px; margin-right:24px; }
@@ -132,7 +137,7 @@
   </style>
 </head>
 <body>
-  <main>
+  <main id="pager">
   <!-- View 1 — Hero -->
   <section id="hero" class="view">
     <video aria-hidden="true" autoplay muted playsinline preload="auto" poster="assets/hero-poster.jpg?v=snd">
@@ -195,6 +200,12 @@
   </section>
   </main>
 
+  <nav class="pager-dots" aria-label="Section navigation">
+    <button type="button" data-go="0" aria-current="true" aria-label="Hero"></button>
+    <button type="button" data-go="1" aria-current="false" aria-label="The threat"></button>
+    <button type="button" data-go="2" aria-current="false" aria-label="What it is and join the beta"></button>
+  </nav>
+
   <script>
     // Respect reduced-motion: don't autoplay the hero; rest on the poster / first frame.
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -219,9 +230,82 @@
         if (!vid.muted && vid.paused) { vid.play().catch(function () { vid.muted = true; }); }
         updateLabel();
       });
+      // Default to sound ON: browsers block audible autoplay, so unmute on the first user gesture.
+      function enableSound(e) {
+        if (e && e.target && e.target.closest && e.target.closest('#soundToggle')) return; // let the toggle handle its own clicks
+        if (!vid.muted) return;
+        vid.muted = false;
+        if (vid.paused) vid.play().catch(function () { vid.muted = true; });
+        updateLabel();
+      }
+      ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (ev) {
+        window.addEventListener(ev, enableSound, { once: true, capture: true, passive: true });
+      });
       updateLabel();
     }());
   </script>
   <script src="assets/threat-map.js"></script>
+  <script>
+    // Full-page swipe nav: one view per gesture, no partial scroll positions.
+    (function () {
+      const pager = document.getElementById('pager');
+      const views = [].slice.call(pager.querySelectorAll('.view'));
+      const dots = [].slice.call(document.querySelectorAll('.pager-dots button'));
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let idx = 0, lock = false;
+      function step() { return views[0].getBoundingClientRect().height; }
+      function render() {
+        pager.style.transform = 'translateY(' + (-idx * step()) + 'px)';
+        dots.forEach(function (d, i) { d.setAttribute('aria-current', i === idx ? 'true' : 'false'); });
+      }
+      function go(n) {
+        n = Math.max(0, Math.min(views.length - 1, n));
+        if (n === idx) return;
+        idx = n; render();
+        if (!reduce) { lock = true; setTimeout(function () { lock = false; }, 760); }
+      }
+      // Walk up from the event target: can a scrollable child (e.g. the threat box) still scroll in this direction?
+      function canNativeScroll(el, dir) {
+        while (el && el !== pager && el !== document.body) {
+          if (el.scrollHeight - el.clientHeight > 4) {
+            const oy = getComputedStyle(el).overflowY;
+            if (oy === 'auto' || oy === 'scroll') {
+              const max = el.scrollHeight - el.clientHeight;
+              if (dir > 0 && el.scrollTop < max - 1) return true;
+              if (dir < 0 && el.scrollTop > 1) return true;
+            }
+          }
+          el = el.parentElement;
+        }
+        return false;
+      }
+      window.addEventListener('wheel', function (e) {
+        const dir = e.deltaY > 0 ? 1 : -1;
+        if (canNativeScroll(e.target, dir)) return;   // let the explainer box scroll to its end first
+        e.preventDefault();
+        if (lock || Math.abs(e.deltaY) < 6) return;
+        go(idx + dir);
+      }, { passive: false });
+      let ty = null;
+      window.addEventListener('touchstart', function (e) { ty = e.touches[0].clientY; }, { passive: true });
+      window.addEventListener('touchend', function (e) {
+        if (ty === null) return;
+        const dy = ty - e.changedTouches[0].clientY, dir = dy > 0 ? 1 : -1;
+        if (Math.abs(dy) > 50 && !lock && !canNativeScroll(e.target, dir)) go(idx + dir);
+        ty = null;
+      }, { passive: true });
+      window.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(idx + 1); }
+        else if (e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); go(idx - 1); }
+        else if (e.key === 'Home') { go(0); }
+        else if (e.key === 'End') { go(views.length - 1); }
+      });
+      dots.forEach(function (d) { d.addEventListener('click', function () { go(parseInt(d.getAttribute('data-go'), 10)); }); });
+      const cue = document.querySelector('.scroll-cue');
+      if (cue) cue.addEventListener('click', function () { go(idx + 1); });
+      window.addEventListener('resize', render);
+      render();
+    }());
+  </script>
 </body>
 </html>
