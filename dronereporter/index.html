@@ -69,6 +69,17 @@
     .panel .eyebrow::before { content:""; display:inline-block; width:24px; height:1px; background:var(--line-strong); margin-right:12px; vertical-align:middle; }
     .panel h2 { font-family:var(--serif); font-weight:400; font-size:clamp(30px,4.6vw,52px); line-height:1.15; color:var(--text); margin-bottom:26px; }
     .panel p { font-family:var(--serif); font-size:clamp(17px,2vw,20px); line-height:1.6; color:var(--text-dim); margin-bottom:14px; max-width:48ch; }
+    .cta { display:inline-block; margin-top:8px; font-family:var(--mono); font-size:12px;
+      text-transform:uppercase; letter-spacing:0.12em; text-decoration:none; color:var(--signal);
+      padding:14px 26px; border:1px solid var(--signal); background:transparent;
+      transition:background 0.3s ease, color 0.3s ease; }
+    .cta:hover { background:var(--signal); color:var(--void); }
+    .cta[aria-disabled="true"] { color:var(--text-faint); border-color:var(--line-strong); pointer-events:none; }
+    #beta .footer { position:absolute; bottom:24px; left:8vw; right:8vw; z-index:3;
+      display:flex; justify-content:space-between; align-items:center;
+      font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-faint); }
+    #beta .footer a { color:var(--text-dim); text-decoration:none; margin-right:16px; }
+    @media (max-width:768px){ #beta .footer{ flex-direction:column; gap:12px; left:24px; right:24px; text-align:center; } }
     @media (prefers-reduced-motion: reduce) {
       #hero .line { animation:none; opacity:1; } .scroll-cue, .dot { animation:none; }
     }
@@ -106,8 +117,22 @@
     </div>
   </section>
 
-  <!-- View 3 — Live in beta (Task A4) -->
-  <section id="beta" class="view"></section>
+  <!-- View 3 — Live in beta -->
+  <section id="beta" class="view">
+    <div class="panel">
+      <div class="eyebrow">Live in beta</div>
+      <h2>The network is live. Add your eyes to it.</h2>
+      <p>Drone Reporter is in beta on iPhone. Join through TestFlight and start reporting today.</p>
+      <span class="cta" role="link" aria-disabled="true">Beta opening soon</span>
+    </div>
+    <div class="footer">
+      <div>
+        <a href="/dronereporter/privacy/">Privacy</a>
+        <a href="/dronereporter/terms/">Terms</a>
+      </div>
+      <div>Play your part in our defence.</div>
+    </div>
+  </section>
 
   <script>
     // Respect reduced-motion: don't autoplay the hero; rest on the poster / first frame.
