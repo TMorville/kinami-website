@@ -1,0 +1,385 @@
+{
+  "updated": "2026-06-19",
+  "stats": [
+    {
+      "value": "20,000+",
+      "label": "passengers disrupted, Copenhagen & Oslo, Sept 2025",
+      "source": "https://www.euronews.com/my-europe/2025/11/20/fact-checking-europes-drone-problem-why-are-airports-shuttering-over-drone-sightings"
+    },
+    {
+      "value": "~23",
+      "label": "Russian drones entered Polish airspace, 9-10 Sept 2025",
+      "source": "https://en.wikipedia.org/wiki/2025_Russian_drone_incursion_into_Poland"
+    },
+    {
+      "value": "Article 4",
+      "label": "invoked by Poland & Estonia after Sept 2025 incursions",
+      "source": "https://www.euronews.com/2025/09/19/russian-fighter-jets-violated-estonias-airspace-authorities-say"
+    },
+    {
+      "value": "Eastern Sentry",
+      "label": "NATO mission launched 12 Sept 2025 to defend the eastern flank",
+      "source": "https://www.cnn.com/2025/09/12/world/nato-operation-eastern-sentry-russia-poland-latam-intl"
+    },
+    {
+      "value": "EUR 6bn",
+      "label": "EU drone-alliance funding pledged amid the 2025 wave",
+      "source": "https://www.aljazeera.com/amp/news/2025/10/16/eu-discusses-drone-wall-to-protect-airspace-from-russian-violations"
+    },
+    {
+      "value": "10+",
+      "label": "European countries hit by drone incidents, Sept-Dec 2025",
+      "source": "https://en.wikipedia.org/wiki/2025_European_drone_sightings"
+    }
+  ],
+  "incidents": [
+    {
+      "id": "norway-platforms-2022-09",
+      "label": "Norwegian offshore oil & gas platforms",
+      "country": "Norway",
+      "site": "North Sea / Norwegian Sea installations",
+      "lat": 58.84,
+      "lng": 1.89,
+      "date": "2022-09-26",
+      "category": "infrastructure",
+      "description": "Unidentified drones were observed at more than 10 Norwegian offshore oil and gas facilities, including within the 500 m safety zone of installations such as Gina Krog and near Equinor's Johan Sverdrup field.",
+      "source": "https://oilprice.com/Latest-Energy-News/World-News/Norway-Investigates-Mysterious-Drone-Sightings-Near-Offshore-Oil-Gas-Fields.html"
+    },
+    {
+      "id": "gatwick-2018-12",
+      "label": "London Gatwick Airport",
+      "country": "United Kingdom",
+      "site": "Gatwick",
+      "lat": 51.1537,
+      "lng": -0.1821,
+      "date": "2018-12-19",
+      "category": "airport-closure",
+      "description": "Repeated drone sightings near the runway shut Gatwick for roughly 36 hours, cancelling around 1,000 flights and affecting some 140,000 passengers in the largest pre-2025 European airport drone disruption.",
+      "source": "https://en.wikipedia.org/wiki/Gatwick_Airport_drone_incident"
+    },
+    {
+      "id": "frankfurt-2023",
+      "label": "Frankfurt Airport",
+      "country": "Germany",
+      "site": "Frankfurt am Main",
+      "lat": 50.0379,
+      "lng": 8.5622,
+      "date": "2023-01-01",
+      "category": "airport-closure",
+      "description": "Drone incursions halted all traffic at Frankfurt, one of Europe's busiest airports, on two days in 2023, part of 26 dates between 2017 and 2023 on which drones affected operations there.",
+      "source": "https://www.flightglobal.com/safety/drone-incursions-stopped-frankfurt-airport-traffic-twice-in-2023/157920.article"
+    },
+    {
+      "id": "poland-incursion-2025-09",
+      "label": "Poland airspace incursion",
+      "country": "Poland",
+      "site": "Eastern / central Poland",
+      "lat": 52.2297,
+      "lng": 21.0122,
+      "date": "2025-09-10",
+      "category": "military-site",
+      "description": "About 23 Russian drones crossed from Belarus into Polish airspace overnight on 9-10 September; Polish F-16s and Dutch F-35s downed several, Poland invoked NATO Article 4 and the incursion triggered Operation Eastern Sentry.",
+      "source": "https://en.wikipedia.org/wiki/2025_Russian_drone_incursion_into_Poland"
+    },
+    {
+      "id": "romania-incursion-2025-09",
+      "label": "Romania airspace incursion",
+      "country": "Romania",
+      "site": "Northern Dobruja",
+      "lat": 44.36,
+      "lng": 28.49,
+      "date": "2025-09-13",
+      "category": "military-site",
+      "description": "A Russian Geran drone penetrated Romanian airspace on 13 September and was tracked for nearly an hour by two Romanian F-16s, making Romania the second NATO state to have its airspace breached during the wave.",
+      "source": "https://euro-sd.com/2025/09/major-news/46711/russian-drone-over-romania/"
+    },
+    {
+      "id": "estonia-incursion-2025-09",
+      "label": "Estonia airspace violation",
+      "country": "Estonia",
+      "site": "Vaindloo island",
+      "lat": 59.81,
+      "lng": 26.36,
+      "date": "2025-09-19",
+      "category": "military-site",
+      "description": "Three Russian MiG-31 jets entered Estonian airspace near Vaindloo for about twelve minutes without flight plans or transponders; Italian F-35s on Baltic Air Policing intercepted them and Estonia invoked NATO Article 4.",
+      "source": "https://www.euronews.com/2025/09/19/russian-fighter-jets-violated-estonias-airspace-authorities-say"
+    },
+    {
+      "id": "lithuania-drone-2025-09",
+      "label": "Lithuania drone crossings",
+      "country": "Lithuania",
+      "site": "Belarus border region",
+      "lat": 54.6872,
+      "lng": 25.2797,
+      "date": "2025-09-09",
+      "category": "military-site",
+      "description": "Lithuania registered two Gerbera drones crossing from Belarus during the same wave, one of which was found to carry an explosive warhead.",
+      "source": "https://www.aerotime.aero/articles/estonia-condemns-brazen-russian-airspace-violation-by-three-mig-31-jets"
+    },
+    {
+      "id": "latvia-drone-2025-09",
+      "label": "Latvia drone wreckage",
+      "country": "Latvia",
+      "site": "Baltic coast",
+      "lat": 56.95,
+      "lng": 24.11,
+      "date": "2025-09-18",
+      "category": "military-site",
+      "description": "Remains of a drone similar to those used in the Polish and Lithuanian incursions were recovered on Latvia's Baltic coast in mid-September 2025.",
+      "source": "https://www.aerotime.aero/articles/estonia-condemns-brazen-russian-airspace-violation-by-three-mig-31-jets"
+    },
+    {
+      "id": "billund-2025-09",
+      "label": "Billund Airport",
+      "country": "Denmark",
+      "site": "Billund",
+      "lat": 55.7403,
+      "lng": 9.1518,
+      "date": "2025-09-21",
+      "category": "airport-closure",
+      "description": "Denmark's second-busiest airport and the gateway to Legoland was shut for several hours after air traffic controllers reported multiple unidentified drones, days before the larger Copenhagen incident.",
+      "source": "https://markets.financialcontent.com/bpas/article/abnewswire-2026-1-29-airports-that-have-been-affected-by-drones"
+    },
+    {
+      "id": "copenhagen-2025-09",
+      "label": "Copenhagen Airport",
+      "country": "Denmark",
+      "site": "Kastrup",
+      "lat": 55.618,
+      "lng": 12.656,
+      "date": "2025-09-22",
+      "category": "airport-closure",
+      "description": "Two to three large drones flown by a 'capable operator' closed Copenhagen Airport for nearly four hours, cancelling more than 100 flights; PM Mette Frederiksen called it the most serious attack on Danish critical infrastructure to date.",
+      "source": "https://www.cnn.com/2025/09/22/europe/copenhagen-oslo-airport-closed-drones-int-latam"
+    },
+    {
+      "id": "oslo-2025-09",
+      "label": "Oslo Gardermoen Airport",
+      "country": "Norway",
+      "site": "Gardermoen",
+      "lat": 60.1939,
+      "lng": 11.1004,
+      "date": "2025-09-22",
+      "category": "airport-closure",
+      "description": "Oslo's main airport closed for about three hours the same night as Copenhagen after two separate drone sightings; combined the two closures disrupted more than 20,000 passengers.",
+      "source": "https://www.cnn.com/2025/09/22/europe/copenhagen-oslo-airport-closed-drones-int-latam"
+    },
+    {
+      "id": "aalborg-2025-09",
+      "label": "Aalborg Airport",
+      "country": "Denmark",
+      "site": "Aalborg (civil-military)",
+      "lat": 57.0928,
+      "lng": 9.8492,
+      "date": "2025-09-24",
+      "category": "airport-closure",
+      "description": "The combined civil-military airport at Aalborg closed twice within roughly 24 hours after repeated drone sightings, part of a coordinated night of activity over several Danish airports.",
+      "source": "https://www.cnn.com/2025/09/24/europe/denmark-aalborg-airport-closed-drones-latam-intl"
+    },
+    {
+      "id": "esbjerg-sonderborg-2025-09",
+      "label": "Esbjerg & Sonderborg Airports",
+      "country": "Denmark",
+      "site": "Esbjerg",
+      "lat": 55.5256,
+      "lng": 8.5534,
+      "date": "2025-09-24",
+      "category": "sighting",
+      "description": "Police reported drone activity near Esbjerg and Sonderborg airports on the same night as the wider Danish wave, which officials characterised as a hybrid operation meant to sow fear.",
+      "source": "https://www.npr.org/2025/09/25/nx-s1-5553244/denmark-drones-airports"
+    },
+    {
+      "id": "skrydstrup-2025-09",
+      "label": "Skrydstrup Air Base",
+      "country": "Denmark",
+      "site": "Vojens (F-16/F-35 base)",
+      "lat": 55.221,
+      "lng": 9.267,
+      "date": "2025-09-24",
+      "category": "military-site",
+      "description": "Drone activity was reported over Skrydstrup, Denmark's main fighter base hosting F-16s and incoming F-35s, during the late-September wave of incursions over Danish military and civil sites.",
+      "source": "https://en.wikipedia.org/wiki/2025_European_drone_sightings"
+    },
+    {
+      "id": "karup-2025-09",
+      "label": "Karup Air Base",
+      "country": "Denmark",
+      "site": "Karup (largest military base)",
+      "lat": 56.2971,
+      "lng": 9.1243,
+      "date": "2025-09-26",
+      "category": "military-site",
+      "description": "Civil airspace at Karup, Denmark's largest military base and home to its helicopter wing, was briefly closed after a drone sighting that lasted several hours.",
+      "source": "https://en.wikipedia.org/wiki/2025_European_drone_sightings"
+    },
+    {
+      "id": "schleswig-holstein-2025-09",
+      "label": "Kiel naval & infrastructure sites",
+      "country": "Germany",
+      "site": "Kiel, Schleswig-Holstein",
+      "lat": 54.3233,
+      "lng": 10.1228,
+      "date": "2025-09-25",
+      "category": "infrastructure",
+      "description": "Drone formations overflew the ThyssenKrupp Marine Systems naval shipyard, Kiel University Hospital, a power plant and the state parliament; authorities opened an espionage and sabotage investigation.",
+      "source": "https://newsukraine.rbc.ua/news/spy-drones-over-german-military-bases-on-1754705354.html"
+    },
+    {
+      "id": "orland-2025-09",
+      "label": "Orland Main Air Station",
+      "country": "Norway",
+      "site": "Orland (F-35 NATO base)",
+      "lat": 63.6989,
+      "lng": 9.604,
+      "date": "2025-09-27",
+      "category": "military-site",
+      "description": "Multiple drones were reported within a roughly 2.5-hour window over Orland, Norway's NATO-critical F-35 main air station, during the late-September Nordic wave.",
+      "source": "https://www.newsinenglish.no/2025/09/29/norwegian-airspace-violated-again/"
+    },
+    {
+      "id": "munich-2025-10",
+      "label": "Munich Airport",
+      "country": "Germany",
+      "site": "Franz Josef Strauss",
+      "lat": 48.3538,
+      "lng": 11.7861,
+      "date": "2025-10-02",
+      "category": "airport-closure",
+      "description": "Munich Airport closed twice in under 24 hours after drone sightings; the first night grounded 17 flights affecting about 3,000 passengers and the second affected roughly 6,500 passengers.",
+      "source": "https://www.cnn.com/2025/10/02/europe/munich-airport-closed-drone-sighting-intl-hnk"
+    },
+    {
+      "id": "elsenborn-2025-10",
+      "label": "Elsenborn military camp",
+      "country": "Belgium",
+      "site": "Elsenborn",
+      "lat": 50.4419,
+      "lng": 6.2247,
+      "date": "2025-10-02",
+      "category": "military-site",
+      "description": "Belgian defence officials reported about 15 drones over the Elsenborn military training area that then flew across the border toward Duren in Germany.",
+      "source": "https://www.cnn.com/2025/10/02/europe/munich-airport-closed-drone-sighting-intl-hnk"
+    },
+    {
+      "id": "berlin-2025-10",
+      "label": "Berlin Brandenburg Airport",
+      "country": "Germany",
+      "site": "BER",
+      "lat": 52.3667,
+      "lng": 13.5033,
+      "date": "2025-10-31",
+      "category": "airport-closure",
+      "description": "Berlin Brandenburg Airport suspended operations for almost two hours after unidentified drones were detected in nearby airspace.",
+      "source": "https://en.wikipedia.org/wiki/2025_European_drone_sightings"
+    },
+    {
+      "id": "brussels-2025-11",
+      "label": "Brussels Airport",
+      "country": "Belgium",
+      "site": "Zaventem",
+      "lat": 50.9014,
+      "lng": 4.4844,
+      "date": "2025-11-04",
+      "category": "airport-closure",
+      "description": "Belgium's busiest hub closed twice on 4 November after drone sightings, cancelling 54 flights and stranding hundreds of passengers overnight, with further disruption over following days.",
+      "source": "https://www.euronews.com/2025/11/05/latest-drone-sightings-force-flight-cancellations-at-belgiums-main-airport"
+    },
+    {
+      "id": "kleine-brogel-2025-11",
+      "label": "Kleine Brogel Air Base",
+      "country": "Belgium",
+      "site": "Kleine Brogel (US nuclear weapons site)",
+      "lat": 51.1683,
+      "lng": 5.47,
+      "date": "2025-11-02",
+      "category": "military-site",
+      "description": "Unidentified drones were repeatedly observed over the Kleine Brogel air base, which stores US nuclear weapons, prompting Belgium to request UK anti-drone support.",
+      "source": "https://www.cbsnews.com/news/drones-europe-nato-airports-russia-hybrid-warfare-belgium-uk-anti-drone-troops/"
+    },
+    {
+      "id": "liege-2025-11",
+      "label": "Liege Airport",
+      "country": "Belgium",
+      "site": "Liege (cargo hub)",
+      "lat": 50.6374,
+      "lng": 5.4432,
+      "date": "2025-11-07",
+      "category": "airport-closure",
+      "description": "One of Europe's largest cargo airports halted flights several times for roughly 30 minutes each as drones were detected nearby in early November.",
+      "source": "https://www.aljazeera.com/news/2025/11/7/belgiums-liege-airport-temporarily-halts-flights-after-new-drone-sighting"
+    },
+    {
+      "id": "gothenburg-2025-11",
+      "label": "Gothenburg-Landvetter Airport",
+      "country": "Sweden",
+      "site": "Landvetter",
+      "lat": 57.6685,
+      "lng": 12.2978,
+      "date": "2025-11-06",
+      "category": "airport-closure",
+      "description": "Drone sightings at Gothenburg-Landvetter, Sweden's second-busiest airport, forced inbound flights to be redirected, including to Copenhagen.",
+      "source": "https://en.wikipedia.org/wiki/2025_European_drone_sightings"
+    },
+    {
+      "id": "doel-2025-11",
+      "label": "Doel Nuclear Power Station",
+      "country": "Belgium",
+      "site": "Doel",
+      "lat": 51.3253,
+      "lng": 4.2589,
+      "date": "2025-11-09",
+      "category": "infrastructure",
+      "description": "Three drones were reported above the Doel nuclear power station during Belgium's November wave of unexplained drone overflights.",
+      "source": "https://en.wikipedia.org/wiki/2025_European_drone_sightings"
+    },
+    {
+      "id": "volkel-2025-11",
+      "label": "Volkel Air Base",
+      "country": "Netherlands",
+      "site": "Volkel (nuclear weapons storage)",
+      "lat": 51.6572,
+      "lng": 5.6908,
+      "date": "2025-11-22",
+      "category": "military-site",
+      "description": "Dutch forces opened fire at drones over Volkel air base, a nuclear-weapons storage site, but recovered no wreckage.",
+      "source": "https://en.wikipedia.org/wiki/2025_European_drone_sightings"
+    },
+    {
+      "id": "dublin-2025-12",
+      "label": "Dublin Airport area",
+      "country": "Ireland",
+      "site": "North of Dublin",
+      "lat": 53.4264,
+      "lng": -6.2499,
+      "date": "2025-12-01",
+      "category": "sighting",
+      "description": "Several unidentified drones were spotted north of Dublin and over the Irish Sea as Ukrainian President Zelensky's flight approached, prompting a security response.",
+      "source": "https://en.wikipedia.org/wiki/2025_European_drone_sightings"
+    },
+    {
+      "id": "ile-longue-2025-12",
+      "label": "Ile Longue naval base",
+      "country": "France",
+      "site": "Brest (nuclear submarine base)",
+      "lat": 48.3064,
+      "lng": -4.5067,
+      "date": "2025-12-04",
+      "category": "military-site",
+      "description": "Five unidentified drones were spotted over Ile Longue, the operational base for France's nuclear ballistic-missile submarines; soldiers used a jammer but downed none.",
+      "source": "https://en.wikipedia.org/wiki/2025_European_drone_sightings"
+    },
+    {
+      "id": "immelmann-2025-12",
+      "label": "Immelmann Air Base",
+      "country": "Germany",
+      "site": "Holzdorf, Lower Saxony region",
+      "lat": 51.7678,
+      "lng": 13.1672,
+      "date": "2025-12-11",
+      "category": "military-site",
+      "description": "Internal military documents recorded about 23 unidentified drones circling the Bundeswehr's Immelmann air base for several hours while forces could only observe, unable to shoot them down.",
+      "source": "https://newsukraine.rbc.ua/news/dozens-of-unidentified-drones-hover-over-1769954779.html"
+    }
+  ]
+}
