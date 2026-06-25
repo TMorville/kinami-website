@@ -6,7 +6,7 @@
   <title>Drone Reporter — Kinami</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&family=Anton&display=swap" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="/assets/logo/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/logo/apple-touch-icon.png">
   <meta property="og:title" content="Drone Reporter — Kinami">
@@ -48,6 +48,13 @@
       padding: 0 8vw; overflow: hidden;
     }
     .mono { font-family: var(--mono); font-weight: 300; text-transform: uppercase; letter-spacing: 0.12em; }
+    /* Wordmark logo — tilted Anton, the locked brand mark (text-only). */
+    .wordmark { font-family:'Anton', sans-serif; font-weight:400; text-transform:uppercase;
+      letter-spacing:0; line-height:0.84; font-size:21px; display:inline-block;
+      transform:skewX(-8deg); transform-origin:left bottom; color:var(--text); }
+    /* REPORTER set to 0.656em so its full width matches DRONE — the locked lockup
+       (same width, naturally smaller; no letter-spacing). */
+    .wordmark .wm-accent { color:var(--signal); font-size:0.656em; }
     .dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--signal); margin-right:8px; vertical-align:middle; animation:pulse 2.4s ease-in-out infinite; }
     @keyframes pulse { 0%,100%{opacity:.35} 50%{opacity:1} }
     #hero { padding: 0; }
@@ -145,7 +152,7 @@
     </video>
     <div class="scrim"></div>
     <div class="topbar">
-      <span>Drone Reporter</span>
+      <span class="wordmark">Drone<br><span class="wm-accent">Reporter</span></span>
       <button id="soundToggle" class="sound-toggle" aria-pressed="false">♪ Sound off</button>
     </div>
     <div class="line">
