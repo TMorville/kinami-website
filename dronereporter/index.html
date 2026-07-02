@@ -114,6 +114,9 @@
       transition:background 0.3s ease, color 0.3s ease; }
     .cta:hover { background:var(--signal); color:var(--void); }
     .cta[aria-disabled="true"] { color:var(--text-faint); border-color:var(--line-strong); pointer-events:none; }
+    .cta-fill { background:var(--signal); color:var(--void); border-color:var(--signal); }
+    .cta-fill:hover { background:transparent; color:var(--signal); }
+    #hero .cta { margin-top:32px; font-size:13px; padding:16px 32px; }
     /* View 3 — two columns: What it is / Live in beta */
     #beta .cols { display:flex; align-items:flex-start; gap:6vw; width:100%; }
     #beta .col { flex:1 1 0; min-width:0; max-width:560px; }
@@ -150,6 +153,7 @@
     </div>
     <div class="line">
       <h1>Hybrid warfare is a reality in Europe.<span class="accent">Play your part in our defence.</span></h1>
+      <a class="cta cta-fill" href="https://testflight.apple.com/join/N7uHVQMd" target="_blank" rel="noopener">Sign up for beta</a>
     </div>
     <div class="scroll-cue" aria-hidden="true">Scroll ↓</div>
   </section>
