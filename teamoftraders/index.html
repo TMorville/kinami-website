@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>team of traders — kinami</title>
+  <meta name="description" content="Three months inside a team of AI trading agents — every plan, every trade, every win and loss.">
+  <link rel="icon" type="image/x-icon" href="/assets/logo/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/logo/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void: #0c0a04;
+      --amber: 220, 180, 100;
+      --ember: 240, 200, 130;
+      --surface-glass: rgba(12, 10, 4, 0.75);
+      --border-whisper: rgba(220, 180, 100, 0.06);
+      --border-subtle: rgba(220, 180, 100, 0.1);
+      --serif: 'Cormorant Infant', serif;
+      --mono: 'DM Mono', monospace;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--void); color: rgba(var(--amber), 0.82); font-family: var(--serif); }
+    .label { font-family: var(--mono); font-size: 10px; font-weight: 300; letter-spacing: 1px; text-transform: uppercase; color: rgba(var(--amber), 0.55); }
+    a { color: rgba(var(--amber), 0.82); text-decoration-color: rgba(var(--amber), 0.2); }
+    a:hover { text-decoration-color: rgba(var(--amber), 0.5); }
+
+    header { position: fixed; top: 0; left: 0; right: 0; z-index: 30; display: flex; justify-content: space-between; align-items: baseline; padding: 20px 24px; }
+    header .wordmark { font-family: var(--serif); font-weight: 300; font-size: 20px; letter-spacing: 0.05em; color: rgba(var(--amber), 0.5); text-decoration: none; }
+
+    #hero { min-height: 100vh; display: grid; place-content: center; text-align: center; gap: 16px; padding: 24px; }
+    #hero h1 { font-weight: 300; font-size: clamp(40px, 7vw, 84px); letter-spacing: 0.05em; color: rgba(var(--amber), 0.88); }
+    #hero p { font-size: 18px; line-height: 1.6; max-width: 560px; color: rgba(var(--amber), 0.72); }
+    #status { margin-top: 24px; }
+
+    #narrative { position: relative; }
+    #stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+    #strata-canvas, #equity-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    #cards { position: absolute; inset: 0; pointer-events: none; }
+    .card { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(520px, 84vw); padding: 32px; background: var(--surface-glass); backdrop-filter: blur(6px); border: 1px solid var(--border-whisper); opacity: 0; }
+    .card .agent-tag { margin-bottom: 12px; display: block; }
+    .card blockquote { font-size: 17px; line-height: 1.6; font-style: italic; color: rgba(var(--amber), 0.88); }
+    .card .card-title { font-size: 26px; font-weight: 400; margin-bottom: 8px; color: rgba(var(--amber), 0.92); }
+    #scroll-spacer { height: 1px; } /* set by scroll.js */
+
+    #explorer { position: relative; min-height: 100vh; padding: 80px 24px 120px; }
+    #explorer-wrap { position: relative; max-width: 1100px; margin: 0 auto; }
+    #explorer-canvas, #explorer-equity { position: absolute; top: 0; left: 0; }
+    #filters { display: flex; gap: 8px; flex-wrap: wrap; max-width: 1100px; margin: 0 auto 24px; }
+    .pill { font-family: var(--mono); font-size: 10px; font-weight: 300; letter-spacing: 0.5px; text-transform: uppercase; padding: 6px 12px; border-radius: 12px; border: 1px solid var(--border-subtle); background: rgba(var(--amber), 0.04); color: rgba(var(--amber), 0.72); cursor: pointer; }
+    .pill[aria-pressed="true"] { background: rgba(var(--amber), 0.14); color: rgba(var(--amber), 0.92); }
+    #week-rail { position: absolute; right: -8px; top: 0; display: flex; flex-direction: column; gap: 6px; }
+    #week-rail button { font-family: var(--mono); font-size: 10px; letter-spacing: 0.5px; background: none; border: none; color: rgba(var(--amber), 0.4); cursor: pointer; padding: 2px 6px; text-align: right; }
+    #week-rail button:hover, #week-rail button[aria-pressed="true"] { color: rgba(var(--amber), 0.92); }
+    #tooltip { position: fixed; z-index: 40; pointer-events: none; padding: 8px 12px; background: var(--surface-glass); backdrop-filter: blur(6px); border: 1px solid var(--border-subtle); font-family: var(--mono); font-size: 11px; letter-spacing: 0.5px; color: rgba(var(--amber), 0.88); display: none; }
+    .panel { position: fixed; top: 0; right: 0; bottom: 0; width: min(480px, 100vw); z-index: 50; background: var(--surface-glass); backdrop-filter: blur(8px); border-left: 1px solid var(--border-whisper); padding: 60px 32px 40px; overflow-y: auto; transform: translateX(100%); transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    .panel.open { transform: translateX(0); }
+    .panel .close { position: absolute; top: 24px; right: 24px; width: 20px; height: 20px; background: none; border: none; color: rgba(var(--amber), 0.55); font-size: 16px; cursor: pointer; }
+    .panel h2 { font-weight: 400; font-size: 36px; color: rgba(var(--amber), 0.92); margin-bottom: 24px; }
+    .panel .section { margin-bottom: 40px; }
+    .panel .section .label { display: block; margin-bottom: 8px; }
+    .panel blockquote { font-size: 16px; line-height: 1.6; font-style: italic; color: rgba(var(--amber), 0.82); }
+    .panel table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; letter-spacing: 0.5px; }
+    .panel td, .panel th { text-align: left; padding: 6px 8px 6px 0; border-bottom: 1px solid var(--border-whisper); color: rgba(var(--amber), 0.72); font-weight: 300; }
+    #crosshair-readout { position: absolute; left: 0; top: -28px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.5px; color: rgba(var(--amber), 0.72); }
+
+    .skip { position: absolute; left: -9999px; }
+    .skip:focus { position: fixed; left: 16px; top: 16px; z-index: 60; background: var(--surface-glass); padding: 8px 12px; }
+    noscript .card { position: static; opacity: 1; transform: none; margin: 24px auto; }
+    @media (max-width: 768px) {
+      .panel { width: 100vw; }
+      #week-rail { position: static; flex-direction: row; flex-wrap: wrap; margin-bottom: 16px; }
+      #week-rail button { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#explorer">skip to explorer</a>
+  <header>
+    <a class="wordmark" href="/">kinami</a>
+    <span class="label">team of traders</span>
+  </header>
+
+  <section id="hero">
+    <span class="label">a live paper-trading experiment · apr–jul 2026</span>
+    <h1>team of traders</h1>
+    <p>A team of AI agents — analyst, strategist, trader, manager — ran two paper portfolios
+       for three months. Every plan it wrote, every trade it made, every win and every loss,
+       exactly as it happened. Scroll to watch it think.</p>
+    <span id="status" class="label">loading the ledger…</span>
+  </section>
+
+  <section id="narrative" aria-label="The story, week by week">
+    <div id="stage">
+      <canvas id="strata-canvas"></canvas>
+      <svg id="equity-svg" aria-hidden="true"></svg>
+      <div id="cards"></div>
+    </div>
+    <div id="scroll-spacer"></div>
+  </section>
+
+  <section id="explorer" aria-label="Explore every trade">
+    <div id="filters"></div>
+    <div id="explorer-wrap">
+      <div id="crosshair-readout"></div>
+      <canvas id="explorer-canvas"></canvas>
+      <svg id="explorer-equity" aria-hidden="true"></svg>
+      <div id="week-rail" role="tablist" aria-label="Weekly strategies"></div>
+    </div>
+  </section>
+
+  <div id="tooltip" role="status"></div>
+  <aside id="trade-panel" class="panel" aria-label="Trade detail"></aside>
+  <aside id="strategy-panel" class="panel" aria-label="Weekly strategy"></aside>
+
+  <noscript>
+    <div class="card"><span class="label">this piece needs javascript — the short version</span>
+      <blockquote>Two AI-run paper books, Apr–Jul 2026. EU: €10,000 start, first-week fat-finger
+      (ENR filled at 10× expected — "EMERGENCY POSITION REDUCTION"), ended around €8,800.
+      US: $10,000 start, disciplined exits like +23.8% on CRDO in 5 days, ended around $11,700 —
+      ahead of a near-flat QQQ. Every trade carried the team's written reasoning.</blockquote>
+    </div>
+  </noscript>
+
+  <script type="module" src="/lib/teamoftraders/main.js"></script>
+</body>
+</html>
