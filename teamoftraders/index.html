@@ -70,6 +70,12 @@
     .panel table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; letter-spacing: 0.5px; }
     .panel td, .panel th { text-align: left; padding: 6px 8px 6px 0; border-bottom: 1px solid var(--border-whisper); color: rgba(var(--amber), 0.72); font-weight: 300; }
 
+    body.static #narrative { margin-top: 72px; }
+    body.static #stage { position: relative; height: 55vh; }
+    body.static #scroll-hint, body.static #filters, body.static #week-rail, body.static #crosshair-readout { display: none; }
+    body.static #cards { position: static; pointer-events: auto; padding: 24px 16px 60px; will-change: auto; }
+    body.static .card { position: static; transform: none; opacity: 1; margin: 20px auto; width: min(520px, 92vw); }
+
     .skip { position: absolute; left: -9999px; }
     .skip:focus { position: fixed; left: 16px; top: 16px; z-index: 60; background: var(--surface-glass); padding: 8px 12px; }
     noscript .card { position: static; opacity: 1; transform: none; margin: 24px auto; }
@@ -98,7 +104,7 @@
 
   <section id="narrative" aria-label="The timeline — every plan, trade, and outcome">
     <div id="stage">
-      <canvas id="strata-canvas"></canvas>
+      <canvas id="strata-canvas">The timeline visualization requires canvas support — the story below carries the same content.</canvas>
       <svg id="equity-svg" aria-hidden="true"></svg>
       <div id="stage-scroller" aria-label="Timeline — scroll right through the weeks" role="region" tabindex="0">
         <div id="stage-spacer"></div>
