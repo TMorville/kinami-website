@@ -42,11 +42,15 @@
     #stage-scroller { position: absolute; inset: 0; overflow-x: auto; overflow-y: hidden; z-index: 5; scrollbar-width: thin; scrollbar-color: rgba(220, 180, 100, 0.25) transparent; }
     #stage-spacer { height: 1px; }
     #cards { z-index: 10; }
-    .card { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(520px, 84vw); padding: 32px; background: var(--surface-glass); backdrop-filter: blur(6px); border: 1px solid var(--border-whisper); opacity: 0; }
+    #cards { will-change: transform; }
+    .card { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(380px, 60vw); padding: 24px 28px; background: var(--surface-glass); backdrop-filter: blur(6px); border: 1px solid var(--border-whisper); opacity: 0; transition: opacity 0.6s ease; }
+    .card.lit { opacity: 1; }
     .card .agent-tag { margin-bottom: 12px; display: block; }
-    .card blockquote { font-size: 17px; line-height: 1.6; font-style: italic; color: rgba(var(--amber), 0.88); }
-    .card .card-title { font-size: 26px; font-weight: 400; margin-bottom: 8px; color: rgba(var(--amber), 0.92); }
-    #scroll-spacer { height: 1px; } /* set by scroll.js */
+    .card blockquote { font-size: 15px; line-height: 1.55; font-style: italic; color: rgba(var(--amber), 0.88); margin-top: 6px; }
+    .card .card-title { font-size: 22px; font-weight: 400; margin-bottom: 4px; color: rgba(var(--amber), 0.92); }
+    #scroll-hint { position: absolute; right: 24px; bottom: 18px; z-index: 12; opacity: 1; transition: opacity 0.6s ease; pointer-events: none; }
+    #scroll-hint.hidden { opacity: 0; }
+    #scroll-spacer { height: 1px; }
 
     #explorer { position: relative; min-height: 100vh; padding: 80px 24px 120px; }
     #explorer-wrap { position: relative; max-width: 1100px; margin: 0 auto; }
@@ -103,6 +107,7 @@
         <div id="stage-spacer"></div>
       </div>
       <div id="cards"></div>
+      <div id="scroll-hint" class="label">scroll →</div>
     </div>
     <div id="scroll-spacer"></div>
   </section>
