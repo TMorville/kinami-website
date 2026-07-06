@@ -52,15 +52,13 @@
     #scroll-hint.hidden { opacity: 0; }
     #scroll-spacer { height: 1px; }
 
-    #explorer { position: relative; min-height: 100vh; padding: 80px 24px 120px; }
-    #explorer-wrap { position: relative; max-width: 1100px; margin: 0 auto; }
-    #explorer-canvas, #explorer-equity { position: absolute; top: 0; left: 0; }
-    #filters { display: flex; gap: 8px; flex-wrap: wrap; max-width: 1100px; margin: 0 auto 24px; }
+    #filters { position: absolute; top: 60px; left: 24px; z-index: 12; display: flex; gap: 8px; flex-wrap: wrap; max-width: 60vw; }
     .pill { font-family: var(--mono); font-size: 10px; font-weight: 300; letter-spacing: 0.5px; text-transform: uppercase; padding: 6px 12px; border-radius: 12px; border: 1px solid var(--border-subtle); background: rgba(var(--amber), 0.04); color: rgba(var(--amber), 0.72); cursor: pointer; }
     .pill[aria-pressed="true"] { background: rgba(var(--amber), 0.14); color: rgba(var(--amber), 0.92); }
-    #week-rail { position: absolute; right: -8px; top: 0; display: flex; flex-direction: column; gap: 6px; }
-    #week-rail button { font-family: var(--mono); font-size: 10px; letter-spacing: 0.5px; background: none; border: none; color: rgba(var(--amber), 0.4); cursor: pointer; padding: 2px 6px; text-align: right; }
+    #week-rail { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 2px; z-index: 12; }
+    #week-rail button { font-family: var(--mono); font-size: 10px; letter-spacing: 0.5px; background: none; border: none; color: rgba(var(--amber), 0.4); cursor: pointer; padding: 2px 8px; }
     #week-rail button:hover, #week-rail button[aria-pressed="true"] { color: rgba(var(--amber), 0.92); }
+    #crosshair-readout { position: absolute; top: 60px; right: 24px; z-index: 12; text-align: right; }
     #tooltip { position: fixed; z-index: 40; pointer-events: none; padding: 8px 12px; background: var(--surface-glass); backdrop-filter: blur(6px); border: 1px solid var(--border-subtle); font-family: var(--mono); font-size: 11px; letter-spacing: 0.5px; color: rgba(var(--amber), 0.88); display: none; }
     .panel { position: fixed; top: 0; right: 0; bottom: 0; width: min(480px, 100vw); z-index: 50; background: var(--surface-glass); backdrop-filter: blur(8px); border-left: 1px solid var(--border-whisper); padding: 60px 32px 40px; overflow-y: auto; transform: translateX(100%); transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
     .panel.open { transform: translateX(0); }
@@ -71,7 +69,6 @@
     .panel blockquote { font-size: 16px; line-height: 1.6; font-style: italic; color: rgba(var(--amber), 0.82); }
     .panel table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; letter-spacing: 0.5px; }
     .panel td, .panel th { text-align: left; padding: 6px 8px 6px 0; border-bottom: 1px solid var(--border-whisper); color: rgba(var(--amber), 0.72); font-weight: 300; }
-    #crosshair-readout { position: absolute; left: 0; top: -28px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.5px; color: rgba(var(--amber), 0.72); }
 
     .skip { position: absolute; left: -9999px; }
     .skip:focus { position: fixed; left: 16px; top: 16px; z-index: 60; background: var(--surface-glass); padding: 8px 12px; }
@@ -84,7 +81,7 @@
   </style>
 </head>
 <body>
-  <a class="skip" href="#explorer">skip to explorer</a>
+  <a class="skip" href="#stage-scroller">skip to the timeline</a>
   <header>
     <a class="wordmark" href="/">kinami</a>
     <span class="label">team of traders</span>
@@ -99,7 +96,7 @@
     <span id="status" class="label">loading the ledger…</span>
   </section>
 
-  <section id="narrative" aria-label="The story, week by week">
+  <section id="narrative" aria-label="The timeline — every plan, trade, and outcome">
     <div id="stage">
       <canvas id="strata-canvas"></canvas>
       <svg id="equity-svg" aria-hidden="true"></svg>
@@ -107,19 +104,12 @@
         <div id="stage-spacer"></div>
       </div>
       <div id="cards"></div>
+      <div id="filters"></div>
+      <div id="crosshair-readout" class="label"></div>
+      <div id="week-rail" role="tablist" aria-label="Weekly strategies"></div>
       <div id="scroll-hint" class="label">scroll →</div>
     </div>
     <div id="scroll-spacer"></div>
-  </section>
-
-  <section id="explorer" aria-label="Explore every trade">
-    <div id="filters"></div>
-    <div id="explorer-wrap">
-      <div id="crosshair-readout"></div>
-      <canvas id="explorer-canvas"></canvas>
-      <svg id="explorer-equity" aria-hidden="true"></svg>
-      <div id="week-rail" role="tablist" aria-label="Weekly strategies"></div>
-    </div>
   </section>
 
   <div id="tooltip" role="status"></div>
