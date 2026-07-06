@@ -54,6 +54,7 @@
 
     #filters { position: absolute; top: 60px; left: 24px; z-index: 12; display: flex; gap: 8px; flex-wrap: wrap; max-width: 60vw; }
     .pill { font-family: var(--mono); font-size: 10px; font-weight: 300; letter-spacing: 0.5px; text-transform: uppercase; padding: 6px 12px; border-radius: 12px; border: 1px solid var(--border-subtle); background: rgba(var(--amber), 0.04); color: rgba(var(--amber), 0.72); cursor: pointer; }
+    .pill:hover { background: rgba(var(--amber), 0.1); color: rgba(var(--amber), 0.88); }
     .pill[aria-pressed="true"] { background: rgba(var(--amber), 0.14); color: rgba(var(--amber), 0.92); }
     #week-rail { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 2px; z-index: 12; }
     #week-rail button { font-family: var(--mono); font-size: 10px; letter-spacing: 0.5px; background: none; border: none; color: rgba(var(--amber), 0.4); cursor: pointer; padding: 2px 8px; }
@@ -111,7 +112,7 @@
       <div id="filters"></div>
       <div id="crosshair-readout" class="label"></div>
       <div id="week-rail" role="tablist" aria-label="Weekly strategies"></div>
-      <div id="scroll-hint" class="label">scroll →</div>
+      <div id="scroll-hint" class="label">scroll → · click any trade to read the team's reasoning</div>
     </div>
     <div id="scroll-spacer"></div>
   </section>
