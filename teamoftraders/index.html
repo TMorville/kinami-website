@@ -61,8 +61,6 @@
     #week-rail button:hover, #week-rail button[aria-pressed="true"] { color: rgba(var(--amber), 0.92); }
     #week-rail button.passed { color: rgba(var(--amber), 0.62); }
     #week-rail button.current { color: rgba(var(--ember), 0.95); }
-    #legend { position: absolute; left: 24px; bottom: 18px; z-index: 12; pointer-events: none; }
-    body.static #legend { display: none; }
     #crosshair-readout { position: absolute; top: 60px; right: 24px; z-index: 12; text-align: right; }
     #tooltip { position: fixed; z-index: 40; pointer-events: none; padding: 8px 12px; background: var(--surface-glass); backdrop-filter: blur(6px); border: 1px solid var(--border-subtle); font-family: var(--mono); font-size: 11px; letter-spacing: 0.5px; color: rgba(var(--amber), 0.88); display: none; }
     .panel { position: fixed; top: 0; right: 0; bottom: 0; width: min(480px, 100vw); z-index: 50; background: var(--surface-glass); backdrop-filter: blur(8px); border-left: 1px solid var(--border-whisper); padding: 60px 32px 40px; overflow-y: auto; transform: translateX(100%); transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -116,7 +114,6 @@
       <div id="filters"></div>
       <div id="crosshair-readout" class="label"></div>
       <div id="week-rail" role="tablist" aria-label="Weekly strategies"></div>
-      <div id="legend" class="label">▯ buy · length = cost&ensp;&ensp;▮ sell · up = win · down = loss</div>
       <div id="scroll-hint" class="label">scroll → · click any trade to read the team's reasoning</div>
     </div>
     <div id="scroll-spacer"></div>
