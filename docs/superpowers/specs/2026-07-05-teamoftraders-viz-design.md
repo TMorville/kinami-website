@@ -246,3 +246,14 @@ The **plan → execution → outcome** spine. Makes reasoning first-class, not d
 ## 13. Relationship to the deferred "teamoftraders" open-sourcing (Project A)
 
 This viz is Project B. Project A (clean-room extraction of the trading repo → public `teamoftraders`) is a separate spec. The **shared seam is the sanitized export** (§3): designing it OSS-safe here means the data-publication boundary is already solved when Project A begins.
+
+---
+
+## Amendment A1 — 2026-07-06: horizontal timeline layout
+
+User feedback on the first rendered build rejected the vertical two-column sediment layout. §4–§6 geometry is superseded:
+
+- **Time flows left→right.** Two stacked lanes: EU (top), US (bottom), shared x axis of trading days; ISO-week stripes as vertical whisper dividers with labels.
+- **Trades sit ON the equity curve**: each lane draws its equity line (ember, solid) vs benchmark (amber, dashed); trades are glowing markers at their date positioned on the path (small deterministic jitter): size = notional, ring = sell, bright ember = win, dim amber = loss, mid = open.
+- **Pre-record window** (trading began 2026-04-08; daily snapshots begin 2026-05-08): the path starts at a synthetic anchor (date of first trade, starting capital — the book verifiably started at exactly €/$10,000) drawn as a *dotted faint* segment to the first real snapshot; markers in that window interpolate along it. The explorer crosshair labels this window "no daily record".
+- Everything else stands: narrative scrollytelling (reveal now sweeps left→right), explorer interactions, weekly-strategy layer, design tokens, static fallbacks, the showcase.json contract (unchanged — this is presentation-only).
