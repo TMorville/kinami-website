@@ -187,6 +187,22 @@
       <li>Any optional text you provide (description, drone type, behaviour)</li>
     </ul>
 
+    <h3>Live tracking</h3>
+    <p>Live tracking is a separate mode that you start and stop yourself. While a session is open, the app sends a sample to our servers about once a second. Each sample holds:</p>
+    <ul>
+      <li><strong>Your position</strong>: latitude, longitude, altitude, and the accuracy of the GPS fix</li>
+      <li><strong>Where your phone is pointing</strong>: compass bearing, pitch, roll, and estimated field of view</li>
+      <li><strong>The time</strong> the sample was captured</li>
+    </ul>
+    <p>A session therefore records where you stood and where you looked, second by second, for as long as it runs. We record no video and no audio. The line of sight is what the app needs to triangulate a drone from two or more phones.</p>
+
+    <h3>Beta feedback</h3>
+    <p>The app has a feedback form. When you send feedback we receive the category you pick (bug, idea, or other) and the text you write. The app also attaches context that you do not type: app version, build number, operating system name and version, device model, device locale, and the name of the screen you were on when you opened the form.</p>
+    <p>A feedback record carries no link to your account. We store no user ID with it. That also means we cannot find your past submissions and delete them on request.</p>
+
+    <h3>Drone alerts</h3>
+    <p>Drone alerts stay off unless you turn them on. Turning them on registers this installation of the app with our servers. The record holds an identifier that the app generates on your device for this install, the platform (iOS or Android), and your position at the time. While alerts are on, the app refreshes that position each time you open it, so we can work out which devices are near a confirmed sighting. The identifier is used only by Drone Reporter. It is not an advertising identifier and it does not follow you into other apps.</p>
+
     <h3>Technical data</h3>
     <ul>
       <li><strong>Authentication tokens</strong> stored on your device to keep you signed in</li>
@@ -205,6 +221,8 @@
     <ul>
       <li><strong>Provide the service</strong>: Display drone observations on the map, manage your account, and let you review or delete your reports.</li>
       <li><strong>Improve the service</strong>: Aggregate, anonymised observation data may be used to identify drone activity patterns.</li>
+      <li><strong>Send drone alerts</strong>: If you turn alerts on, we use the last position your device reported to decide whether a confirmed sighting is near you.</li>
+      <li><strong>Fix problems</strong>: We read feedback and the context attached to it to reproduce bugs and decide what to build next.</li>
       <li><strong>Communicate with you</strong>: We may email you about important changes to your account or this policy. We do not send marketing emails.</li>
     </ul>
 
@@ -240,20 +258,25 @@
         </tr>
       </tbody>
     </table>
-    <p>We do not sell or share your personal data with advertisers, data brokers, or any other third parties.</p>
+    <h3>Who else sees your reports</h3>
+    <p>Your reports appear on the shared map inside the app. Other signed-in users see the location, the time and the direction you were facing. The map does not show your name, your email address or your photo.</p>
+    <p>Drone Reporter is built to make reports available to the public authorities responsible for the airspace. A separate console exists for that purpose. It can show an authority the location, the time, the photo and the estimated drone position of a report. No authority account is enabled today, so no report has reached an authority through it. We will update this policy before we enable the first account.</p>
+    <p>We do not sell your personal data. We do not share it with advertisers or data brokers.</p>
 
     <h2>4. Data Storage and Security</h2>
     <ul>
       <li>All backend data is stored on <strong>Google Cloud Platform in europe-west4 (Netherlands)</strong>.</li>
       <li>API communication uses <strong>HTTPS</strong> with TLS encryption.</li>
-      <li>Authentication tokens on your device are stored using the platform keychain (iOS Keychain).</li>
+      <li>Authentication tokens on your device are stored in the platform's own secure store: the <strong>iOS Keychain</strong> on iPhone, and <strong>encrypted shared preferences backed by the Android Keystore</strong> on Android.</li>
       <li>Photos are stored in a private Google Cloud Storage bucket accessible only to our backend service.</li>
     </ul>
 
     <h2>5. Data Retention</h2>
     <ul>
       <li><strong>Account data</strong> is retained as long as your account is active.</li>
-      <li><strong>Observations</strong> are retained until you delete them or delete your account.</li>
+      <li><strong>Observations</strong> are retained until you delete them or delete your account. After account deletion, what remains is an anonymous record of the time and place of the sighting, with the link to you destroyed.</li>
+      <li><strong>Tracking samples</strong> have no fixed retention period. Deleting old samples is a manual operation that an administrator runs. It is not on a schedule, so we do not state a retention period for them. Deleting your account deletes your tracking sessions and every sample in them.</li>
+      <li><strong>Feedback submissions</strong> are kept with the text and the context you sent. They carry no link to your account, so deleting your account does not remove them and we cannot tell which ones are yours.</li>
       <li><strong>Server logs</strong> (IP addresses, request metadata) are retained for up to 30 days.</li>
     </ul>
 
@@ -262,10 +285,11 @@
     <ul>
       <li><strong>View</strong> your observations in the "My Observations" screen.</li>
       <li><strong>Delete</strong> individual observations by swiping to delete.</li>
-      <li><strong>Delete your account</strong> and all associated data by contacting us at <a href="mailto:privacy@kinami.dk">privacy@kinami.dk</a>.</li>
+      <li><strong>Delete your account</strong> in the app, under Settings, then Account, then Delete account. You can also email us at <a href="mailto:tomo@kinami.io">tomo@kinami.io</a>, or follow the steps on our <a href="/dronereporter/delete-account/">account deletion page</a>.</li>
       <li><strong>Request a copy</strong> of your data by contacting us at the same address.</li>
     </ul>
-    <p>If you are in the EU/EEA, you have additional rights under the GDPR, including the right to access, rectify, port, and restrict processing of your data. To exercise these rights, contact us at <a href="mailto:privacy@kinami.dk">privacy@kinami.dk</a>.</p>
+    <p>Deleting your account deletes the account record, your email address and name, the sign-in identifier that links your Apple or Google account to Drone Reporter, your registered devices, your tracking sessions and their samples, and the photos you uploaded. Every report you submitted is withdrawn from the shared map, from the agency view and from alerts. Each one stays only as an anonymous record of the time and place of the sighting. This cannot be undone.</p>
+    <p>If you are in the EU/EEA, you have additional rights under the GDPR, including the right to access, rectify, port, and restrict processing of your data. To exercise these rights, contact us at <a href="mailto:tomo@kinami.io">tomo@kinami.io</a>.</p>
 
     <h2>7. Children's Privacy</h2>
     <p>The App is not directed at children under 13. We do not knowingly collect data from children. If you believe a child has provided us with personal data, contact us and we will delete it.</p>
@@ -275,10 +299,10 @@
 
     <h2>9. Contact</h2>
     <p>For privacy questions or requests:</p>
-    <p><strong>Kinami</strong><br>Email: <a href="mailto:privacy@kinami.dk">privacy@kinami.dk</a></p>
+    <p><strong>Kinami</strong><br>Email: <a href="mailto:tomo@kinami.io">tomo@kinami.io</a></p>
 
     <div class="footer">
-      <p>Last updated: February 17, 2026</p>
+      <p>Last updated: August 19, 2026</p>
     </div>
   </div>
 </body>
