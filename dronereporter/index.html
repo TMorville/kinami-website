@@ -122,6 +122,27 @@
     .cta-fill { background:var(--signal); color:var(--void); border-color:var(--signal); }
     .cta-fill:hover { background:transparent; color:var(--signal); }
     #hero .cta { margin-top:32px; font-size:13px; padding:16px 32px; }
+    /* Store badges — Apple/Play glyph + two-line label, in the site's own amber system
+       rather than the official black artwork, which cannot sit on this palette. */
+    .store-badges { display:flex; flex-wrap:wrap; gap:12px; margin-top:12px; }
+    .store-badge { display:inline-flex; align-items:center; gap:12px; text-decoration:none;
+      padding:10px 20px 10px 18px; border:1px solid var(--signal); color:var(--signal);
+      background:transparent; transition:background 0.3s ease, color 0.3s ease; }
+    .store-badge svg { width:20px; height:20px; flex:none; fill:currentColor; }
+    .store-badge .sb-text { display:flex; flex-direction:column; line-height:1.1; text-align:left; }
+    .store-badge .sb-top { font-family:var(--mono); font-weight:300; font-size:9px;
+      text-transform:uppercase; letter-spacing:0.14em; opacity:0.75; }
+    .store-badge .sb-name { font-family:var(--mono); font-size:14px; letter-spacing:0.03em; margin-top:3px; }
+    .store-badge:hover, .store-badge:focus-visible { background:var(--signal); color:var(--void); }
+    .store-badge.is-fill { background:var(--signal); color:var(--void); border-color:var(--signal); }
+    .store-badge.is-fill:hover, .store-badge.is-fill:focus-visible { background:transparent; color:var(--signal); }
+    .store-badge.is-soon { border-color:var(--line-strong); color:var(--text-faint);
+      cursor:default; pointer-events:none; }
+    #hero .store-badges { margin-top:32px; }
+    #hero .store-badge { padding:13px 26px 13px 22px; }
+    #hero .store-badge svg { width:22px; height:22px; }
+    #hero .store-badge .sb-name { font-size:15px; }
+    @media (max-width:768px){ .store-badges { gap:10px; } }
     /* View 3 — two columns: What it is / Live in beta */
     #beta .cols { display:flex; align-items:flex-start; gap:6vw; width:100%; }
     #beta .col { flex:1 1 0; min-width:0; max-width:560px; }
@@ -158,7 +179,16 @@
     </div>
     <div class="line">
       <h1>Hybrid warfare is a reality in Europe.<span class="accent">Play your part in our defence.</span></h1>
-      <a class="cta cta-fill" href="https://testflight.apple.com/join/N7uHVQMd" target="_blank" rel="noopener">Sign up for beta</a>
+      <div class="store-badges">
+        <a class="store-badge is-fill" href="https://testflight.apple.com/join/N7uHVQMd" target="_blank" rel="noopener" aria-label="Join the iPhone beta on TestFlight">
+          <svg viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+          <span class="sb-text"><span class="sb-top">Beta on</span><span class="sb-name">TestFlight</span></span>
+        </a>
+        <span class="store-badge is-soon" aria-label="Android beta coming soon on Google Play">
+          <svg viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>
+          <span class="sb-text"><span class="sb-top">Coming soon</span><span class="sb-name">Google Play</span></span>
+        </span>
+      </div>
     </div>
     <div class="scroll-cue" aria-hidden="true">Scroll ↓</div>
   </section>
@@ -181,8 +211,17 @@
       <div class="col panel">
         <div class="eyebrow">Civilians</div>
         <h2>What can you do?</h2>
-        <p>Download Drone Reporter and report any drone you see. Two taps and it's on the map. The more people looking up, the harder Europe is to catch off guard. The app is in beta on TestFlight. Android is coming soon.</p>
-        <a class="cta" href="https://testflight.apple.com/join/N7uHVQMd" target="_blank" rel="noopener">Sign up for beta</a>
+        <p>Download Drone Reporter and report any drone you see. Two taps and it's on the map. The more people looking up, the harder Europe is to catch off guard. The app is in beta on TestFlight. Android follows on Google Play.</p>
+        <div class="store-badges">
+          <a class="store-badge" href="https://testflight.apple.com/join/N7uHVQMd" target="_blank" rel="noopener" aria-label="Join the iPhone beta on TestFlight">
+            <svg viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+            <span class="sb-text"><span class="sb-top">Beta on</span><span class="sb-name">TestFlight</span></span>
+          </a>
+          <span class="store-badge is-soon" aria-label="Android beta coming soon on Google Play">
+            <svg viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>
+            <span class="sb-text"><span class="sb-top">Coming soon</span><span class="sb-name">Google Play</span></span>
+          </span>
+        </div>
       </div>
       <div class="col panel">
         <div class="eyebrow">Agencies</div>
