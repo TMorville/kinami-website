@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delete Your Account | Drone Reporter | Kinami</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0c0a04;
+      font-family: 'Cormorant Infant', serif;
+      color: rgba(220, 180, 100, 0.82);
+      min-height: 100vh;
+      padding: 60px 24px;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .back-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(220, 180, 100, 0.55);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      display: inline-block;
+      margin-bottom: 48px;
+    }
+
+    .back-link:hover {
+      color: rgba(220, 180, 100, 0.88);
+    }
+
+    h1 {
+      font-size: 36px;
+      font-weight: 400;
+      color: rgba(220, 180, 100, 0.92);
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(220, 180, 100, 0.55);
+      margin-bottom: 48px;
+    }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 400;
+      color: rgba(220, 180, 100, 0.88);
+      margin-top: 40px;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      font-size: 18px;
+      font-weight: 400;
+      color: rgba(220, 180, 100, 0.82);
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: rgba(220, 180, 100, 0.82);
+      margin-bottom: 12px;
+    }
+
+    strong {
+      font-weight: 400;
+      color: rgba(220, 180, 100, 0.92);
+    }
+
+    ul, ol {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 12px;
+    }
+
+    ul li, ol li {
+      font-size: 16px;
+      line-height: 1.6;
+      color: rgba(220, 180, 100, 0.82);
+      padding-left: 16px;
+      position: relative;
+      margin-bottom: 4px;
+    }
+
+    ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 11px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(220, 180, 100, 0.35);
+    }
+
+    ol {
+      counter-reset: step;
+    }
+
+    ol li {
+      padding-left: 24px;
+      counter-increment: step;
+    }
+
+    ol li::before {
+      content: counter(step) '.';
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: rgba(220, 180, 100, 0.55);
+      line-height: 2.4;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+
+    th {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(220, 180, 100, 0.55);
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(220, 180, 100, 0.1);
+    }
+
+    td {
+      font-size: 14px;
+      color: rgba(220, 180, 100, 0.72);
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(220, 180, 100, 0.06);
+      vertical-align: top;
+    }
+
+    a {
+      color: rgba(220, 180, 100, 0.82);
+      text-decoration: underline;
+      text-decoration-color: rgba(220, 180, 100, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    a:hover {
+      color: rgba(220, 180, 100, 0.92);
+      text-decoration-color: rgba(220, 180, 100, 0.5);
+    }
+
+    .footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(220, 180, 100, 0.06);
+    }
+
+    .footer p {
+      font-size: 14px;
+      color: rgba(220, 180, 100, 0.55);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="https://kinami.io/" class="back-link">&larr; kinami.io</a>
+
+    <h1>Delete Your Account</h1>
+    <div class="subtitle">Drone Reporter &middot; io.kinami.dronetracker</div>
+
+    <p>This page explains how to delete your <strong>Drone Reporter</strong> account and the data attached to it. Drone Reporter is published by Kinami. The Android package name is <strong>io.kinami.dronetracker</strong>.</p>
+    <p>You can delete your account inside the app, or request deletion by email without installing the app.</p>
+
+    <h2>1. Delete Your Account In The App</h2>
+    <ol>
+      <li>Open Drone Reporter and sign in.</li>
+      <li>Open <strong>Settings</strong> from the home screen.</li>
+      <li>Scroll to the <strong>Account</strong> section.</li>
+      <li>Tap <strong>Delete account</strong>.</li>
+      <li>Confirm twice. The app asks you to confirm, then asks a second time before it proceeds.</li>
+    </ol>
+    <p>The deletion runs immediately. The app signs you out and returns to the login screen when it finishes.</p>
+
+    <h2>2. Request Deletion Without The App</h2>
+    <p>You do not need the app installed. Send an email to <a href="mailto:tomo@kinami.io?subject=Delete%20my%20Drone%20Reporter%20account">tomo@kinami.io</a> with the subject line:</p>
+    <p><strong>Delete my Drone Reporter account</strong></p>
+    <p>Send it from the email address attached to your account, so that we can match the request to the account.</p>
+
+    <h3>What we ask you for</h3>
+    <ul>
+      <li>The email address on the account, if it differs from the address you are writing from.</li>
+      <li>Which sign-in provider you used, Apple or Google.</li>
+      <li>If you signed in with Apple and chose Hide My Email, the private relay address Apple issued for Drone Reporter.</li>
+    </ul>
+    <p>We never ask for a password. Drone Reporter has no password of its own, because sign-in runs through Apple or Google.</p>
+    <p>If we cannot match the request to an account from the address you write from, we reply and ask you to confirm from the account email address. We do this to stop one person deleting another person's account.</p>
+
+    <h2>3. What Gets Deleted</h2>
+    <ul>
+      <li><strong>Your account.</strong> The account record is deleted from our database.</li>
+      <li><strong>Your email address and name.</strong> These come from Apple Sign-In or Google Sign-In. They are deleted with the account record, not anonymised.</li>
+      <li><strong>The sign-in identifier</strong> that links your Apple or Google account to Drone Reporter.</li>
+      <li><strong>The photos you uploaded.</strong> Each photo attached to your observations is deleted from storage.</li>
+      <li><strong>Your observations, as sightings on the shared map.</strong> Every observation you submitted is withdrawn from the shared map, from the agency view, and from alerts. The app removes its local copy on the next sync.</li>
+      <li><strong>Your live tracking sessions.</strong> Every tracking session you ran is deleted, along with every position and pointing sample in it.</li>
+      <li><strong>Your registered devices.</strong> If you turned drone alerts on, the per-install identifier and the position held for alert targeting are deleted.</li>
+    </ul>
+    <p>This cannot be undone. We cannot restore an account after deletion.</p>
+
+    <h2>4. What We Retain</h2>
+    <p>We keep an anonymous record of each observation you submitted. The record holds the time and place of the sighting. Every link to you is destroyed: the account is gone, the user reference on the record is cleared, and the photo is deleted. The record is no longer shown on the shared map, in the agency view, or in alerts.</p>
+    <p>Retention, as set out in our <a href="../privacy/">Privacy Policy</a>:</p>
+    <ul>
+      <li><strong>Account data</strong> is retained only while your account is active.</li>
+      <li><strong>Observations</strong> are retained until you delete them or delete your account. After account deletion, what remains is an anonymous record of the time and place of the sighting, with the link to you destroyed. It is no longer shown anywhere in the app.</li>
+      <li><strong>Server logs</strong> (IP addresses, request metadata) are retained for up to 30 days.</li>
+    </ul>
+    <p>We may also retain records that we are required to keep by law. We do not sell or share your personal data with advertisers or data brokers.</p>
+
+    <h2>5. How Long It Takes</h2>
+    <p>Deletion from inside the app takes effect immediately.</p>
+    <p>An email request is completed within <strong>30 days</strong> of us receiving it. This matches the one month response window under the GDPR. We reply by email to confirm when the deletion is done.</p>
+
+    <h2>6. Contact</h2>
+    <p><strong>Kinami</strong><br>Email: <a href="mailto:tomo@kinami.io">tomo@kinami.io</a></p>
+    <p>Read the full <a href="../privacy/">Privacy Policy</a> or the <a href="../terms/">Terms of Service</a>.</p>
+
+    <div class="footer">
+      <p>Last updated: August 19, 2026</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found | Drone Reporter</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="/assets/logo/favicon.ico">
+  <meta name="theme-color" content="#0A0907">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --void:#0A0907; --text:#EDE7DA; --text-dim:#9A9180;
+      --line:rgba(220,180,100,0.10); --line-strong:rgba(220,180,100,0.24);
+      --signal:#E8A33D;
+      --serif:'Cormorant Infant', serif; --mono:'DM Mono', monospace;
+    }
+    body {
+      background: var(--void); color: var(--text);
+      font-family: var(--serif);
+      min-height: 100svh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 8vw;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 80px);
+      opacity: 0.5;
+    }
+    .mono {
+      font-family: var(--mono); font-weight: 300;
+      text-transform: uppercase; letter-spacing: 0.14em;
+    }
+    .topbar {
+      position: fixed; top: 26px; left: 8vw; right: 8vw; z-index: 3;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 11px; color: var(--text-dim);
+    }
+    .topbar .code { color: var(--signal); }
+    main { position: relative; z-index: 2; max-width: 720px; }
+    h1 {
+      font-weight: 300; font-size: clamp(30px, 4.4vw, 56px);
+      line-height: 1.14; letter-spacing: 0.01em; margin-bottom: 20px;
+    }
+    p {
+      font-size: clamp(16px, 1.5vw, 19px); line-height: 1.6;
+      color: rgba(237,231,218,0.62); max-width: 46ch;
+    }
+    nav {
+      margin-top: 44px; padding-top: 22px;
+      border-top: 1px solid var(--line-strong);
+      display: flex; flex-wrap: wrap; gap: 28px;
+    }
+    nav a {
+      font-size: 11px; color: var(--text-dim);
+      text-decoration: none; transition: color 0.2s ease;
+    }
+    nav a:hover, nav a:focus-visible { color: var(--signal); outline: none; }
+    @media (max-width: 768px) {
+      body { padding: 0 7vw; }
+      .topbar { left: 7vw; right: 7vw; font-size: 10px; }
+      nav { gap: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar mono">
+    <span>Drone Reporter</span>
+    <span class="code">Error 404</span>
+  </div>
+
+  <main>
+    <h1>This page does not exist.</h1>
+    <p>The address may be mistyped, or the page may have moved. The links below still work.</p>
+    <nav class="mono">
+      <a href="/" data-root>Home</a>
+      <a href="/privacy/" data-root>Privacy</a>
+      <a href="/terms/" data-root>Terms</a>
+      <a href="/delete-account/" data-root>Delete account</a>
+    </nav>
+  </main>
+
+  <script>
+    // The same subtree is served both at the root of dronereporter.io and under
+    // /dronereporter/ on kinami.io. A 404 can be served at any depth, so relative
+    // links are unreliable here. Prefix the root-absolute links when needed.
+    (function () {
+      var prefix = location.pathname.indexOf('/dronereporter/') === 0 ? '/dronereporter' : '';
+      if (!prefix) return;
+      document.querySelectorAll('a[data-root]').forEach(function (a) {
+        a.setAttribute('href', prefix + a.getAttribute('href'));
+      });
+    })();
+  </script>
+</body>
+</html>

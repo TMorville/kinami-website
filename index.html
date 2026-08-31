@@ -627,7 +627,7 @@
   </div>
 
   <div class="bottom-info">
-    <a class="info-cell" href="/dronereporter/" style="text-decoration:none; color:inherit; display:block;">
+    <a class="info-cell" href="https://dronereporter.io/" style="text-decoration:none; color:inherit; display:block;">
       <div class="info-label">Project 001</div>
       <div class="info-title">Drone Reporter</div>
       <div class="info-desc">Crowdsourced airspace observation</div>
@@ -856,7 +856,7 @@
     const initialPath = location.pathname.replace(/^\/|\/$/g, '');
     // Legacy deep-link: Drone Reporter now lives at its own page, not an inline panel.
     if (initialHash === 'dronereporter' || initialPath === 'dronereporter') {
-      location.replace('/dronereporter/');
+      location.replace('https://dronereporter.io/');
     }
     const deepLinkPanel = hashPanelMap[initialHash] || hashPanelMap[initialPath];
     if (deepLinkPanel) {
