@@ -99,6 +99,10 @@
     #threat .threat-stat-label { display:block; font-family:var(--mono); font-weight:300; font-size:10px; line-height:1.5; letter-spacing:0.06em; color:var(--text-dim); margin-top:4px; }
     #threat .threat-stat:hover .threat-stat-value { color:var(--signal); }
     #threat .threat-footline { font-family:var(--mono); font-weight:300; font-size:11px; letter-spacing:0.06em; color:var(--text-faint); margin:0; }
+    /* Fade the cut edge so a clipped panel reads as scrollable. Class set from threat-map.js,
+       because the panel only overflows at some viewport heights and CSS cannot test for that. */
+    #threat .threat-box.is-clipped { -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
+      mask-image:linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%); }
     .threat-tooltip {
       position:fixed; z-index:50; pointer-events:none; max-width:300px;
       font-family:var(--mono); font-size:11px; line-height:1.45; color:var(--text);
@@ -165,7 +169,7 @@
     <div class="threat-box">
       <div class="eyebrow">The threat</div>
       <h2>The sky over Europe is contested.</h2>
-      <p>Since 2022, unidentified drones have closed airports, shadowed warships, and circled nuclear sites across Europe. The wave broke in autumn 2025, heaviest where the war in Ukraine spills over: the Nordics, the Baltics, Poland.</p>
+      <p>Since 2022, unidentified drones have shut airports and circled nuclear sites across Europe. The 2025 wave has not receded: in 2026 NATO jets downed four drones over Alliance soil.</p>
       <div class="threat-stats" id="threat-stats"></div>
       <p class="threat-footline" id="threat-footline"></p>
     </div>

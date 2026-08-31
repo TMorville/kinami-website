@@ -115,6 +115,8 @@
   }
 
   function resize() {
+    const box = document.querySelector('.threat-box');
+    if (box) box.classList.toggle('is-clipped', box.scrollHeight > box.clientHeight + 1);
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     cssW = rect.width;
@@ -271,7 +273,7 @@
 
     Promise.all([
       fetch('assets/europe.min.geojson').then((r) => r.json()),
-      fetch('assets/threat-data.json').then((r) => r.json()),
+      fetch('assets/threat-data.json?v=' + Date.now()).then((r) => r.json()),
     ])
       .then(function (res) {
         geojson = res[0];
