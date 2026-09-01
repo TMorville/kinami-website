@@ -99,6 +99,7 @@
     #threat .threat-stat-label { display:block; font-family:var(--mono); font-weight:300; font-size:10px; line-height:1.5; letter-spacing:0.06em; color:var(--text-dim); margin-top:4px; }
     #threat .threat-stat:hover .threat-stat-value { color:var(--signal); }
     #threat .threat-footline { font-family:var(--mono); font-weight:300; font-size:11px; letter-spacing:0.06em; color:var(--text-faint); margin:0; }
+    #threat .cta { margin-top:22px; }
     /* Fade the cut edge so a clipped panel reads as scrollable. Class set from threat-map.js,
        because the panel only overflows at some viewport heights and CSS cannot test for that. */
     #threat .threat-box.is-clipped { -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
@@ -202,6 +203,7 @@
       <p>Since 2022, unidentified drones have shut airports and circled nuclear sites across Europe. The 2025 wave has not receded: in 2026 NATO jets downed four drones over Alliance soil.</p>
       <div class="threat-stats" id="threat-stats"></div>
       <p class="threat-footline" id="threat-footline"></p>
+      <a class="cta" href="map/">Open the live map</a>
     </div>
   </section>
 
