@@ -142,6 +142,10 @@
     }
     .range-option input { position:absolute; opacity:0; width:1px; height:1px; margin:0; }
     .range-option:hover { color:var(--text); border-color:var(--line-strong); }
+    /* app.js disables the fieldset whenever there is no live snapshot to
+       reslice. pointer-events, not a hover override: an override specific
+       enough to beat :hover would also outrank the :checked fill below. */
+    .range-control:disabled .range-option { opacity:0.4; pointer-events:none; }
     .range-option:has(input:checked) { color:var(--void); background:var(--signal); border-color:var(--signal); }
     .range-option:has(input:focus-visible) { outline:1px solid var(--signal); outline-offset:3px; }
 

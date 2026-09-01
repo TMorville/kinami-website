@@ -127,6 +127,12 @@ function renderChrome(snapshot) {
     strip.hidden = true;
   }
 
+  // The range only reslices live reports. With no snapshot there is nothing to
+  // reslice, so the control is inoperable: leaving it live let a click fill a
+  // pill and move the legend to "over 24 h" while the heading still read
+  // "unavailable" and the map did not change.
+  el("range-control").disabled = !snapshot;
+
   const active = TIME_RANGES.find((r) => r.key === range);
   // "over All" reads wrong; the widest range names itself in time terms.
   const rangeText = active.key === "all" ? "all time" : active.label;
