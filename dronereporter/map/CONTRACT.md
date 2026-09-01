@@ -262,6 +262,17 @@ produces a wrong page rather than a rejected one.
   time at bake. `reports_24h`, `reports_7d` and `active_cells_7d` all count the
   same delayed, geofence-passing population the map shows, over windows ending
   at `cutoff_at`.
+- **Centroids are deterministic and byte-stable.** The grid is a fixed WGS84
+  0.01 degree by 0.01 degree grid anchored at (0, 0):
+  `cell_lon = floor(lon / 0.01)` and `cell_lat = floor(lat / 0.01)`. A feature's
+  geometry is that cell's centroid,
+  `[cell_lon * 0.01 + 0.005, cell_lat * 0.01 + 0.005]`, emitted with exactly
+  3 decimal places, and identical across snapshots for the same cell. The client
+  uses the coordinate pair itself as cell identity: it collapses hour buckets
+  into cells by the exact `${lon},${lat}` string. A bake that jitters a
+  centroid, or emits a different number of decimal places, splits one cell into
+  several. Counts scatter across the fragments, direction stops aggregating, and
+  nothing is rejected, because every fragment is individually valid.
 
 ## Transport
 
