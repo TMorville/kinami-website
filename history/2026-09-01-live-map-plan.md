@@ -10,6 +10,8 @@
 
 **Spec:** `history/2026-09-01-live-map-design.md` (read it first; tasks argue from it).
 
+**Reference sources** (the upstream React implementation being ported, saved read-only for this session): `/private/tmp/claude-501/-Users-tomo-kinami-website/27405f79-aefd-42be-8226-a08c9145934d/scratchpad/publicmap-94/src/` (map/style.ts, map/markIcons.ts, index.css and the UI components) and `.../scratchpad/publicmap/src/` (the #113-hardened contract/parse.ts, data/fetchSnapshot.ts, data/useSnapshot.ts). Task 5's port reads style.ts and markIcons.ts from there. If the scratchpad is gone, re-fetch: `gh api repos/TMorville/dronetracker/tarball/docs/publicmap-local-synthetic-phase` and `.../tarball/fix/publicmap-review-findings`.
+
 ## Global Constraints
 
 - No build step. Nothing under `dronereporter/` may require compilation.
@@ -132,6 +134,19 @@ test("geometry discriminators and coordinate ranges are enforced", () => {
   const short = feature();
   short.geometry = { type: "Point", coordinates: [12.5] };
   assert.throws(() => parseReports(reports([short])), MalformedPayloadError);
+  const nan = feature();
+  nan.geometry = { type: "Point", coordinates: [NaN, 55.6] };
+  assert.throws(() => parseReports(reports([nan])), MalformedPayloadError);
+});
+
+test("timestamps must be ISO 8601 with an explicit UTC or offset designator", () => {
+  // Date.parse accepts these, the contract does not.
+  assert.throws(() => parseManifest({ ...manifest(), generated_at: "Sep 1, 2026" }), MalformedPayloadError);
+  assert.throws(
+    () => parseManifest({ ...manifest(), generated_at: "2026-09-01T10:02:11" }),
+    MalformedPayloadError,
+  );
+  parseManifest({ ...manifest(), generated_at: "2026-09-01T10:02:11.500+02:00" });
 });
 
 test("direction: both fields or neither, finite, resultant bounded by count", () => {
@@ -222,10 +237,15 @@ function countNum(obj, key) {
  * comparison is false, so a malformed timestamp would silently disable the
  * too-old gate. Reject it here instead.
  */
+const ISO_UTC = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/;
+
 function isoDate(obj, key) {
   const value = str(obj, key);
-  if (!Number.isFinite(Date.parse(value))) {
-    throw new MalformedPayloadError(`"${key}" is not a parseable timestamp: "${value}"`);
+  // Shape first: Date.parse accepts non-ISO forms and offset-less local
+  // times, which would make the same artifact mean different instants in
+  // different browsers. Then parseability, which the cliff and ramp need.
+  if (!ISO_UTC.test(value) || !Number.isFinite(Date.parse(value))) {
+    throw new MalformedPayloadError(`"${key}" is not an ISO 8601 UTC timestamp: "${value}"`);
   }
   return value;
 }
@@ -332,8 +352,10 @@ function parseFeature(raw, index) {
   if (
     !Array.isArray(coords) ||
     coords.length !== 2 ||
-    typeof coords[0] !== "number" ||
-    typeof coords[1] !== "number" ||
+    // Number.isFinite, not typeof: NaN is a number and every NaN comparison
+    // below is false, so [NaN, 55] would pass a typeof-and-bounds check.
+    !Number.isFinite(coords[0]) ||
+    !Number.isFinite(coords[1]) ||
     Math.abs(coords[0]) > 180 ||
     Math.abs(coords[1]) > 90
   ) {
@@ -390,7 +412,7 @@ git commit -m "map: add strict snapshot contract parser"
 
 **Interfaces:**
 - Consumes: parsed `Reports` from Task 1 (shape only, no import needed).
-- Produces: `TIME_RANGES`, `DEFAULT_RANGE` ("7d"), `timeWindowOf(range, generatedAtIso, features)` → `{startMs, endMs}`, `featuresInWindow(features, window, markerMs = null)`, `collapseCells(reports)` → `Cell[]` (`{lon, lat, count, newestHour, dirX, dirY, dirCount}`), `directionOf(cell)` → `{mark: "none"|"halo"} | {mark: "wedge", bearing, halfAngle}`, `ageHours(hourIso, refIso)`, `rampStops(window, markerMs = null)` → `{fullHours, baseHours}`, `cellsToGeoJSON(cells, window, markerMs = null)` (features with `properties: {age_h, count, mark, bearing, half_angle}`), constants `C_WEDGE`, `MIN_HALF_ANGLE_DEG` (8), `MAX_HALF_ANGLE_DEG` (44), `MIN_DIRECTIONAL_REPORTS` (2), `RADIUS_MIN_PX` (4), `RADIUS_MAX_PX` (14), `COUNT_AT_MIN_RADIUS` (1), `COUNT_AT_MAX_RADIUS` (50), `FULL_AMBER_FRACTION` (24/168).
+- Produces: `TIME_RANGES`, `DEFAULT_RANGE` ("all"), `timeWindowOf(range, generatedAtIso, features)` → `{startMs, endMs}`, `featuresInWindow(features, window, markerMs = null)`, `collapseCells(reports)` → `Cell[]` (`{lon, lat, count, newestHour, dirX, dirY, dirCount}`), `directionOf(cell)` → `{mark: "none"|"halo"} | {mark: "wedge", bearing, halfAngle}`, `ageHours(hourIso, refIso)`, `rampStops(window, markerMs = null)` → `{fullHours, baseHours}`, `cellsToGeoJSON(cells, window, markerMs = null)` (features with `properties: {age_h, count, mark, bearing, half_angle}`), constants `C_WEDGE`, `MIN_HALF_ANGLE_DEG` (8), `MAX_HALF_ANGLE_DEG` (44), `MIN_DIRECTIONAL_REPORTS` (2), `RADIUS_MIN_PX` (4), `RADIUS_MAX_PX` (14), `COUNT_AT_MIN_RADIUS` (1), `COUNT_AT_MAX_RADIUS` (50), `FULL_AMBER_FRACTION` (24/168).
 
 The `markerMs` parameters stay (default null) so replay can return without reshaping the modules; no replay driver ships in v1.
 
@@ -558,9 +580,14 @@ export function timeWindowOf(range, generatedAtIso, features) {
   const endMs = Date.parse(generatedAtIso);
   const hours = TIME_RANGES.find((r) => r.key === range)?.hours ?? null;
   if (hours !== null) return { startMs: endMs - hours * HOUR_MS, endMs };
-  const oldest =
-    features.length === 0 ? endMs : Math.min(...features.map((f) => Date.parse(f.properties.hour)));
-  return { startMs: Math.min(oldest, endMs), endMs };
+  // A loop, not Math.min(...spread): spreading every feature as a function
+  // argument overflows the engine's argument limit on large snapshots.
+  let oldest = endMs;
+  for (const f of features) {
+    const t = Date.parse(f.properties.hour);
+    if (t < oldest) oldest = t;
+  }
+  return { startMs: oldest, endMs };
 }
 
 /** Features outside the window are excluded, not dimmed. */
@@ -972,7 +999,7 @@ test("store: a snapshot past the cliff refuses to render, even on the stale path
   assert.deepEqual(states.at(-1), { status: "unavailable", reason: "too-old" });
 });
 
-test("store: never-loaded failures re-enter the retry ladder from any trigger", async (t) => {
+test("store: visibility re-arms the retry ladder even after it exhausted", async (t) => {
   let calls = 0;
   const { store, states } = harness({
     fetcher: async () => {
@@ -983,14 +1010,36 @@ test("store: never-loaded failures re-enter the retry ladder from any trigger", 
   });
   t.after(() => store.destroy());
   store.start();
-  await flush();
+  // Let the initial attempt plus all three ladder retries burn out.
+  await new Promise((resolve) => setTimeout(resolve, 60));
   assert.equal(states.at(-1).reason, "never-loaded");
+  assert.ok(calls >= 4, `ladder did not run (calls ${calls})`);
   const before = calls;
-  // A visibility-triggered failure must schedule its own retry.
+  await new Promise((resolve) => setTimeout(resolve, 20));
+  assert.equal(calls, before, "ladder kept firing past exhaustion");
+  // A returning visitor gets the fast path back: onVisible loads AND its
+  // failure schedules a fresh ladder retry.
   store.onVisible();
+  await new Promise((resolve) => setTimeout(resolve, 20));
+  assert.ok(calls >= before + 2, `retry ladder dead after visibility failure (calls ${calls})`);
+});
+
+test("store: start is idempotent and dead after destroy", async () => {
+  let calls = 0;
+  const { store } = harness({
+    fetcher: async () => {
+      calls += 1;
+      return goodSnapshot();
+    },
+  });
+  store.start();
+  store.start();
   await flush();
-  await new Promise((resolve) => setTimeout(resolve, 15));
-  assert.ok(calls > before + 1, `retry ladder dead after visibility failure (calls ${calls})`);
+  assert.equal(calls, 1, "second start stacked another initial load");
+  store.destroy();
+  store.start();
+  await flush();
+  assert.equal(calls, 1, "start after destroy loaded again");
 });
 
 test("store: the expiry timer stamps too-old with no fetch settling", async (t) => {
@@ -1005,7 +1054,8 @@ test("store: the expiry timer stamps too-old with no fetch settling", async (t) 
   await flush();
   assert.equal(states.at(-1).status, "ok");
   setNow(new Date(Date.parse(GEN) + 100).toISOString());
-  await new Promise((resolve) => setTimeout(resolve, 30));
+  // The timer carries a +50 ms boundary pad; wait past it.
+  await new Promise((resolve) => setTimeout(resolve, 120));
   assert.deepEqual(states.at(-1), { status: "unavailable", reason: "too-old" });
 });
 
@@ -1190,14 +1240,19 @@ export function createSnapshotStore({
     if (state.status !== "ok" && state.status !== "stale") return;
     const expiresInMs =
       Date.parse(state.snapshot.manifest.generated_at) + allowanceMs(state.snapshot) - now();
+    // +50 ms pad: the timer must observe a time PAST the boundary, or the
+    // strict > in isTooOld leaves the callback a no-op with nothing re-armed.
     expiryTimer = setTimeout(() => {
       expiryTimer = null;
       // Re-verify against whatever state is current: a callback queued for a
       // previous snapshot must not stamp too-old over data that is not.
-      if ((state.status === "ok" || state.status === "stale") && isTooOld(state.snapshot)) {
+      if (state.status !== "ok" && state.status !== "stale") return;
+      if (isTooOld(state.snapshot)) {
         setState({ status: "unavailable", reason: "too-old" });
+      } else {
+        scheduleExpiry(); // still fresh (clock moved); re-arm
       }
-    }, Math.max(0, expiresInMs));
+    }, Math.max(0, expiresInMs) + 50);
   }
 
   function setState(next) {
@@ -1264,7 +1319,12 @@ export function createSnapshotStore({
     }
   }
 
+  let started = false;
   function start() {
+    // Idempotent, and dead after destroy: a second call must not stack a
+    // second poll interval.
+    if (started || destroyed) return;
+    started = true;
     void load("initial");
     pollTimer = setInterval(() => void load("poll"), refetchMs);
   }
@@ -1274,6 +1334,10 @@ export function createSnapshotStore({
     if ((state.status === "ok" || state.status === "stale") && isTooOld(state.snapshot)) {
       setState({ status: "unavailable", reason: "too-old" });
     }
+    // A returning visitor re-arms the quick retry ladder: after the ladder
+    // exhausted (failures past its length), only the 5-minute poll would
+    // retry, and someone who just switched back deserves the fast path.
+    if (lastGood === null) failures = 0;
     void load("visibility");
   }
 
@@ -1485,9 +1549,13 @@ test("a narrow wedge covers fewer pixels than a wide one", () => {
   assert.ok(inked(wedgeIcon(8)) < inked(wedgeIcon(44)));
 });
 
-test("mark layer filters out 'none' and never culls overlapping icons", () => {
+test("mark layer filters out 'none' and clusters, never culls overlapping icons", () => {
   const layer = markLayer(palette, { fullHours: 24, baseHours: 168 });
-  assert.deepEqual(layer.filter, ["!=", ["get", "mark"], "none"]);
+  assert.deepEqual(layer.filter, [
+    "all",
+    ["!", ["has", "point_count"]],
+    ["!=", ["get", "mark"], "none"],
+  ]);
   assert.equal(layer.layout["icon-allow-overlap"], true);
   assert.equal(layer.layout["icon-ignore-placement"], true);
   assert.equal(layer.layout["icon-rotation-alignment"], "map");
@@ -1647,6 +1715,15 @@ test("a restyle that wiped sources gets CURRENT data back, not empty seeds", () 
   assert.equal(map.sources.get(CELL_SOURCE_ID).data.features.length, 5);
   assert.equal(map.sources.get(INCIDENT_SOURCE_ID).data.features.length, 4);
   assert.equal(map.layers.length, 5);
+});
+
+test("a rejecting setData is caught, never an unhandled rejection", async () => {
+  const map = fakeMap();
+  syncMap(map, rs(geo(1), geo(1)));
+  map.sources.get(CELL_SOURCE_ID).setData = () => Promise.reject(new Error("boom"));
+  assert.doesNotThrow(() => syncMap(map, rs(geo(2), geo(2))));
+  // node:test fails the run on an unhandled rejection; give it a tick.
+  await new Promise((resolve) => setTimeout(resolve, 0));
 });
 
 test("repeat syncs update data and paint without duplicating layers", () => {
@@ -2024,7 +2101,10 @@ Structure (full file; inline CSS follows the product page's token block and the 
 <body>
   <header class="top">
     <a class="back" href="../">Drone Reporter</a>
-    <h1 class="page-label">Drone activity map</h1>
+    <div class="head-text">
+      <h1 class="page-label">Drone activity map</h1>
+      <p class="tagline">Documented incidents across Europe, and live reports from the volunteer network.</p>
+    </div>
   </header>
   <main class="layout">
     <section class="map-stage">
@@ -2139,8 +2219,24 @@ function recompute() {
     const visible = featuresInWindow(features, window);
     renderState.cells = cellsToGeoJSON(collapseCells({ ...snapshot.reports, features: visible }), window);
   }
-  if (map && mapReady) syncMap(map, renderState);
+  safeSync();
   renderChrome(snapshot);
+}
+
+/**
+ * All syncs route through here. During a setStyle transition, addSource and
+ * addLayer against the half-replaced style throw; mapReady is dropped around
+ * the transition and, as a second line of defense, a mid-transition failure
+ * is swallowed because the styledata that ends the transition re-syncs the
+ * same idempotent state.
+ */
+function safeSync() {
+  if (!map || !mapReady) return;
+  try {
+    syncMap(map, renderState);
+  } catch (error) {
+    console.warn("Map sync deferred to the next styledata.", error);
+  }
 }
 
 // ---- chrome ---------------------------------------------------------------
@@ -2249,10 +2345,20 @@ function mapRuntimeUnavailable() {
 }
 
 // ---- map bring-up -----------------------------------------------------------
+/** MapLibre 6 needs WebGL2; probing is deterministic where the constructor's
+    failure path is not (some context failures surface async). */
+function webgl2Available() {
+  try {
+    return document.createElement("canvas").getContext("webgl2") !== null;
+  } catch {
+    return false;
+  }
+}
+
 function startMap() {
   const maplibregl = globalThis.maplibregl;
   const container = el("map");
-  if (!maplibregl) return mapRuntimeUnavailable();
+  if (!maplibregl || !webgl2Available()) return mapRuntimeUnavailable();
   try {
     map = new maplibregl.Map({
       container,
@@ -2272,7 +2378,7 @@ function startMap() {
   // when the basemap request fails, the exact case the fallback serves.
   map.on("styledata", () => {
     mapReady = true;
-    syncMap(map, renderState);
+    safeSync();
   });
 
   // Spec: basemap failure is not data failure. Only a failure of the style
@@ -2283,6 +2389,8 @@ function startMap() {
     if (usedFallback || url !== BASEMAP_STYLE_URL) return;
     usedFallback = true;
     console.warn("Basemap unavailable, falling back to a bare background.", event.error);
+    // Drop readiness for the transition; the fallback's styledata restores it.
+    mapReady = false;
     map.setStyle(fallbackStyle(renderState.palette));
   });
 
@@ -2322,7 +2430,7 @@ fetch("../assets/threat-data.json")
     incidents = parseIncidents(raw).incidents;
     renderState.incidents = incidentsToGeoJSON(incidents);
     el("curated-since").textContent = `since ${oldestYear(incidents)}`;
-    if (map && mapReady) syncMap(map, renderState);
+    safeSync();
     if (!el("map-fallback").hidden) renderIncidentList();
   })
   .catch((error) => console.warn("Curated incidents failed to load.", error));
@@ -2369,7 +2477,7 @@ git commit -m "map: add activity map page, app wiring, vendored MapLibre"
 Write the contract the parser enforces, structured as: entry point (`https://data.dronereporter.io/manifest.json`), the three artifacts with field tables and one example each (copy the JSON examples from dronetracker `history/plans/2026-08-06-public-map-design.md` §4.1 to §4.3, updated to `schema_version` "1.1.0" and one feature carrying `dir_x`/`dir_y`), the full rejection list from Task 1 (verbatim from the test names), the direction semantics (unit-vector sums over ALL reports in the bucket; omit both fields when the bucket holds one report or when any counted report lacks a heading; resultant bound count × 1.01), the freshness field (`max_age_minutes`, optional additive: the producer's promise driving the client's too-old cliff, clamped by the client to 60 to 10080 minutes, default 1440 when absent; the bake publishes 2880 while its cadence is daily), producer invariants the client does not check (hour ≤ cutoff_at; stats windows against cutoff_at), and the transport requirements (CORS `*` on all three artifacts and error responses; `Cache-Control` max-age=300 manifest / immutable 1 year snapshots; the Cloudflare Cache Rule note). End with a "Consumers and producers" line: this page is the consumer; the bake job in TMorville/dronetracker is the producer.
 
 - [ ] **Step 1: Write the file as specified**
-- [ ] **Step 2: Proofread against contract.js: every rejection in code appears in the doc and vice versa**
+- [ ] **Step 2: Proofread against contract.js AND snapshot.js: every rejection in code appears in the doc and vice versa. The cross-artifact snapshot_id rejection and the all-or-nothing fetch rule live in snapshot.js, not contract.js; do not lose them.**
 - [ ] **Step 3: Commit**
 
 ```bash
@@ -2410,4 +2518,6 @@ git commit -m "dronereporter: link the threat view to the activity map"
 - [ ] **Step 3: /ux skill pass** over the screenshots plus accessibility tree; act on findings.
 - [ ] **Step 4: Relative-path audit** — `grep -n 'href="/\|src="/' dronereporter/map/index.html` returns nothing (no root-absolute paths); canonical/og URLs are the only absolute ones and point at `https://dronereporter.io/map/`.
 - [ ] **Step 5: kinami.io root check** — the page must also work served at `/dronereporter/map/` (Vite dev already serves it at that path, which is the kinami.io shape; this is why every path is relative).
-- [ ] **Step 6: Commit any fixes, then hand to /ship-pr** for the PR. After Tobias merges: verify the deployed page by content (served `<title>` contains "Activity Map") with a negative control (`curl -s https://dronereporter.io/map/definitely-not-a-page/ | grep -c "Activity Map"` must be 0 given 404.html exists), then close dronetracker #94, #96, #113 via `gh pr close -R TMorville/dronetracker <n> --comment "..."` pointing at the kinami-website home, and notify the bake-job session that CONTRACT.md is live.
+- [ ] **Step 6: Commit any fixes, then hand to /ship-pr** for the PR.
+
+Review trail: Codex pass over this plan 2026-09-01 (10 min, gpt-5.6-sol). Fixed: Task 5 test/implementation filter contradiction (blocker); retry-ladder exhaustion semantics (onVisible re-arms while never loaded, plus exhaustion test); setStyle readiness window (safeSync + mapReady dropped around setStyle); deterministic WebGL2 probe before construction; NaN coordinates; ISO-shape timestamp validation; expiry-timer boundary (+50 ms pad and re-arm); Math.min spread over unbounded features; start() idempotence and death after destroy; rejecting-setData test; DEFAULT_RANGE interface text; header tagline; spec title mismatch; CONTRACT.md audit widened to snapshot.js; reference-source paths added to the header. Not adopted: a real-browser automated MapLibre integration test (Task 11's Playwright pass covers it manually for v1); strict calendar round-trip validation (ISO shape + parseability is the contract's load-bearing part); app.js never calling destroy (the page is document-lifetime; destroy exists for tests and future embedding, now guarded against reuse). After Tobias merges: verify the deployed page by content (served `<title>` contains "Activity Map") with a negative control (`curl -s https://dronereporter.io/map/definitely-not-a-page/ | grep -c "Activity Map"` must be 0 given 404.html exists), then close dronetracker #94, #96, #113 via `gh pr close -R TMorville/dronetracker <n> --comment "..."` pointing at the kinami-website home, and notify the bake-job session that CONTRACT.md is live.

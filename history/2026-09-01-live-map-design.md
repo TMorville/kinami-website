@@ -229,7 +229,7 @@ Aside/panel: stats strip, legend, store badges (the same badges the product
 page uses; no QR code, no /go/ios), disclosure line. Footer back-link to
 `../` and `https://kinami.io/`. Meta: canonical
 `https://dronereporter.io/map/`, og/twitter absolute, page `<title>`
-"Live Map – Drone Reporter" pattern consistent with sibling pages.
+"Activity Map – Drone Reporter", consistent with sibling pages.
 Assumed audience (unvalidated, no audience card exists): desktop-first,
 English, Europe-framed journalists and officials during an incident news
 cycle.
