@@ -15,7 +15,9 @@ Each page is its own `index.html`; there is no single "main page".
 
 - `index.html` — the Kinami landing page
 - `teamoftraders/` — Team of Traders showcase. **Not on `main`.** It lives only on
-  `feature/teamoftraders-showcase` ([PR #9](https://github.com/TMorville/kinami-website/pull/9)), along with `lib/teamoftraders/` and `docs/`.
+  the `feature/teamoftraders-showcase` branch, along with `lib/teamoftraders/` and
+  `docs/`. Its PR ([#9](https://github.com/TMorville/kinami-website/pull/9)) was
+  closed 2026-09-01 without merging; the branch is still there.
 - `dronereporter/` — product page + `privacy/`, `terms/`, `deck/`
 - `dronetracker/` — legacy paths, now three redirect stubs pointing at
   `https://dronereporter.io/`. No content of its own.
@@ -33,7 +35,7 @@ before relying on a build.
 
 - `lib/logo/` — the animated logo/lockup (strange-attractor mark, `mark-animator.js`,
   render + export helpers, `preview.html`, smoke tests)
-- `lib/teamoftraders/` — the showcase's modules. Only on the PR #9 branch, not `main`.
+- `lib/teamoftraders/` — the showcase's modules. Only on the showcase branch, not `main`.
 - `assets/` — logo and Team of Traders assets
 - `pages/` — **output only**: `renders/` (mp4) and `screenshots/` (png). Not source.
 
@@ -69,6 +71,16 @@ Consequences for the `dronereporter/` subtree:
   above `dronereporter/`. The icons and `og.png` are copied into
   `dronereporter/assets/logo/`; the originals in `/assets/logo/` stay because the
   kinami.io root page uses them. Change one, copy to the other.
+- **`dronereporter/deck/assets/` is a THIRD copy, and it drifts.** The gated deck is
+  its own document root, so it cannot reference `../assets/` and keeps duplicates of
+  `threat-data.json`, `threat-map.js`, `europe.min.geojson`, `hero.mp4` and
+  `hero-poster.jpg`. Nothing keeps them in sync and no test catches divergence. On
+  2026-09-01 the site copy of `threat-data.json` was found two months behind the deck
+  copy one directory over (29 incidents vs 36), and it also lacked the cache-buster
+  the deck copy had gained *because* the map was serving stale data on reload — so the
+  public site had the older data and the bug that makes old data stick. **After
+  editing either copy, `cmp` the pair and copy across.** Verify the served file, not
+  the repo file.
 - Absolute URLs are correct in exactly two places: crawler metadata
   (`og:*`, `twitter:*`, `canonical`) points at `https://dronereporter.io/`, and
   the "kinami.io" back-links point at `https://kinami.io/` because they are now
