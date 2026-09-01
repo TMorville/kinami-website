@@ -150,7 +150,7 @@
     .range-option:has(input:focus-visible) { outline:1px solid var(--signal); outline-offset:3px; }
 
     /* Legend */
-    .legend-marks { list-style:none; margin-bottom:22px; }
+    .legend-marks { list-style:none; margin-bottom:9px; }
     .legend-marks li {
       display:flex; align-items:baseline; gap:10px; padding:7px 0;
       font-family:var(--serif); font-size:14px; line-height:1.5; color:var(--text-dim);
@@ -163,9 +163,21 @@
     .swatch-dot { background:radial-gradient(circle, var(--map-amber) 0 5px, transparent 5px); }
     .swatch-wedge { background:rgba(232,163,61,0.4); clip-path:polygon(50% 4%, 90% 88%, 10% 88%); }
     .swatch-halo { background:radial-gradient(circle, var(--map-amber) 0 3px, rgba(232,163,61,0.16) 3px 9px, transparent 9px); }
+    .swatch-cluster {
+      display:inline-flex; align-items:center; justify-content:center;
+      border-radius:50%; background:var(--map-amber); color:var(--void);
+      font-family:var(--mono); font-weight:400; font-size:9px; line-height:1;
+    }
     .swatch-ring {
       display:inline-block; width:11px; height:11px; border:1px solid rgba(232,163,61,0.85);
       border-radius:50%; margin-right:8px; vertical-align:baseline;
+    }
+    /* The marks only exist past MARK_MIN_ZOOM, so the legend says when to
+       expect them rather than letting a visitor hunt for a mark that the
+       current zoom will never draw. */
+    .legend-hint {
+      font-family:var(--mono); font-weight:300; font-size:10px; line-height:1.6;
+      letter-spacing:0.05em; color:var(--text-dim); margin-bottom:22px;
     }
     .legend-scale { margin-bottom:16px; }
     .legend-scale-head, .legend-scale-ends { display:flex; justify-content:space-between; gap:12px; }
@@ -177,11 +189,13 @@
       height:6px; border:1px solid var(--whisper);
       background:linear-gradient(90deg, var(--map-amber), var(--map-amber-dim));
     }
+    /* The scale ends and the note carry the honesty caveats, so they read at
+       --text-dim. --text-faint is for decoration the page can afford to lose. */
     .legend-scale-ends {
       font-family:var(--mono); font-weight:300; font-size:9px;
-      text-transform:uppercase; letter-spacing:0.08em; color:var(--text-faint); margin-top:6px;
+      text-transform:uppercase; letter-spacing:0.08em; color:var(--text-dim); margin-top:6px;
     }
-    .legend-note { font-family:var(--serif); font-size:13px; line-height:1.55; color:var(--text-faint); }
+    .legend-note { font-family:var(--serif); font-size:13px; line-height:1.55; color:var(--text-dim); }
 
     /* Call to action, on a glass surface so it reads as the one action here. */
     .cta-group {
@@ -317,9 +331,11 @@
         </fieldset>
         <ul class="legend-marks">
           <li><span class="swatch swatch-dot"></span><b>Dot</b> A single report, which carries no direction.</li>
+          <li><span class="swatch swatch-cluster" aria-hidden="true">7</span><b>Cluster</b> Nearby cells grouped while zoomed out. The number counts reports.</li>
           <li><span class="swatch swatch-wedge"></span><b>Wedge</b> Reports in this cell agree on a direction.</li>
           <li><span class="swatch swatch-halo"></span><b>Halo</b> Reports disagree, so no direction is shown.</li>
         </ul>
+        <p class="legend-hint">Direction marks appear when zoomed in.</p>
         <div class="legend-scale">
           <div class="legend-scale-head"><span>Recency</span><span id="legend-range">over 7 d</span></div>
           <div class="legend-ramp" aria-hidden="true"></div>
