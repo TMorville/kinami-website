@@ -2,7 +2,9 @@
 
 The live Kinami site: `TMorville/kinami-website`, served as **static HTML from the
 repo root** (no build step in the deploy path, no `dist/` committed, no CI
-workflow). Vite is a local convenience only — `npm run dev` on port 5199.
+workflow). Vite is a local convenience only, and `npm run dev` serves on Vite's
+default port (no port is configured). **`npm run build` currently fails**, and
+nothing in the deploy path calls it. See "Vite config is stale" below.
 
 One repo, two deploy targets. See "Deployment" below before touching
 `dronereporter/`.
@@ -12,19 +14,26 @@ One repo, two deploy targets. See "Deployment" below before touching
 Each page is its own `index.html`; there is no single "main page".
 
 - `index.html` — the Kinami landing page
-- `teamoftraders/` — Team of Traders showcase (the current active work)
+- `teamoftraders/` — Team of Traders showcase. **Not on `main`.** It lives only on
+  `feature/teamoftraders-showcase` ([PR #9](https://github.com/TMorville/kinami-website/pull/9)), along with `lib/teamoftraders/` and `docs/`.
 - `dronereporter/` — product page + `privacy/`, `terms/`, `deck/`
-- `dronetracker/` — product page + `privacy/`, `terms/`
+- `dronetracker/` — legacy paths, now three redirect stubs pointing at
+  `https://dronereporter.io/`. No content of its own.
 
-`vite.config.js` only registers `index.html` and `teamoftraders/index.html` as
-rollup inputs. The other pages are static-served and never enter a bundle — if you
-add a page that needs bundling, add it to the config too.
+### Vite config is stale
+
+`vite.config.js` lists 47 rollup inputs. 46 of them are `pages/*.html` exploration
+files that were deleted, so `npm run build` fails on the first missing entry. It
+does not register `teamoftraders/index.html` either. This breaks nothing today,
+because every host serves static HTML from the repo and no build runs in the
+deploy path, but do not trust the config as a description of the site. Fix it
+before relying on a build.
 
 ## Shared code
 
 - `lib/logo/` — the animated logo/lockup (strange-attractor mark, `mark-animator.js`,
   render + export helpers, `preview.html`, smoke tests)
-- `lib/teamoftraders/` — the showcase's render/interaction/narrative modules
+- `lib/teamoftraders/` — the showcase's modules. Only on the PR #9 branch, not `main`.
 - `assets/` — logo and Team of Traders assets
 - `pages/` — **output only**: `renders/` (mp4) and `screenshots/` (png). Not source.
 
