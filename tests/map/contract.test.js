@@ -70,9 +70,15 @@ test("counts must be non-negative integers", () => {
   assert.throws(() => parseReports(reports([feature({ count: 2.5 })])), MalformedPayloadError);
 });
 
-test("min_delay_minutes must be a finite number", () => {
+test("min_delay_minutes must be a non-negative integer", () => {
   assert.throws(() => parseManifest({ ...manifest(), min_delay_minutes: "60" }), MalformedPayloadError);
   assert.throws(() => parseManifest({ ...manifest(), min_delay_minutes: Infinity }), MalformedPayloadError);
+  // A negative delay would read as data published before it was collected.
+  assert.throws(() => parseManifest({ ...manifest(), min_delay_minutes: -90 }), MalformedPayloadError);
+  // formatDelay only phrases whole minutes and whole hours.
+  assert.throws(() => parseManifest({ ...manifest(), min_delay_minutes: 60.5 }), MalformedPayloadError);
+  // Zero is a legitimate promise: no publication delay at all.
+  assert.equal(parseManifest({ ...manifest(), min_delay_minutes: 0 }).min_delay_minutes, 0);
 });
 
 test("max_age_minutes is optional, validated when present, clamped to 1 h to 7 d", () => {

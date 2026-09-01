@@ -36,7 +36,7 @@ Three JSON documents make up one snapshot. All three carry the same
 | `snapshot_id` | string | yes | Identity of this publish. The other two files must repeat it. |
 | `generated_at` | ISO 8601 UTC | yes | When the bake ran. Drives the freshness cliff and the "updated X ago" line. |
 | `cutoff_at` | ISO 8601 UTC | yes | Eligibility boundary. No report after this instant appears in the snapshot. |
-| `min_delay_minutes` | number | yes | Finite. The publication delay the producer applies, in minutes. |
+| `min_delay_minutes` | integer | yes | Non-negative whole minutes. The publication delay the producer applies. |
 | `reports_url` | string | yes | URL of `reports.json`, absolute or relative to the manifest. |
 | `stats_url` | string | yes | URL of `stats.json`, absolute or relative to the manifest. |
 | `max_age_minutes` | number | no | The producer's freshness promise. See "Freshness" below. |
@@ -163,8 +163,10 @@ Payload shape:
 
 Numbers:
 
-- `min_delay_minutes` that is not a finite number. The string `"60"` is
-  rejected, and so is `Infinity`.
+- `min_delay_minutes` that is not a non-negative integer. The string `"60"`,
+  `Infinity`, `-90` and `60.5` are all rejected. A negative delay would claim
+  the data was published before it was collected, and a fraction has no
+  phrasing in the disclosure line. `0` is accepted: it promises no delay.
 - `max_age_minutes` present and not a finite number.
 - Any count that is not a non-negative integer: `total_reports`, `reports_24h`,
   `reports_7d`, `active_cells_7d` and a feature's `count`. `4.5` and `-1` are

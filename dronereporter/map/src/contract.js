@@ -38,7 +38,10 @@ function num(obj, key) {
   return value;
 }
 
-/** A count is a number of reports: a non-negative integer, never a fraction. */
+/**
+ * A whole, non-negative quantity, never a fraction: a number of reports, or a
+ * number of minutes.
+ */
 function countNum(obj, key) {
   const value = num(obj, key);
   if (!Number.isInteger(value) || value < 0) {
@@ -100,7 +103,10 @@ export function parseManifest(raw) {
     snapshot_id: str(obj, "snapshot_id"),
     generated_at: isoDate(obj, "generated_at"),
     cutoff_at: isoDate(obj, "cutoff_at"),
-    min_delay_minutes: num(obj, "min_delay_minutes"),
+    // A delay is whole minutes and cannot run backwards. A negative value
+    // would claim the data was published before it was collected, and a
+    // fraction has no phrasing in formatDelay.
+    min_delay_minutes: countNum(obj, "min_delay_minutes"),
     reports_url: str(obj, "reports_url"),
     stats_url: str(obj, "stats_url"),
   };
