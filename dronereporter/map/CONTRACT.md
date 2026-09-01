@@ -25,8 +25,9 @@ without stats.
 
 ## Artifacts
 
-Three JSON documents make up one snapshot. All three carry the same
-`schema_version`, `snapshot_id`, `generated_at` and `cutoff_at`.
+Three JSON documents make up one snapshot. `schema_version`, `snapshot_id`,
+`generated_at` and `cutoff_at` must agree across the three files (producer
+invariant; the client enforces `snapshot_id` agreement only).
 
 ### manifest.json
 
@@ -68,8 +69,8 @@ are no report ids, no per-report records, and no reporter-linked fields.
 | `type` | string | yes | Exactly `"FeatureCollection"`. |
 | `schema_version` | string | yes | Same rules as the manifest. |
 | `snapshot_id` | string | yes | Must equal the manifest's. |
-| `generated_at` | ISO 8601 UTC | yes | Same instant as the manifest's. |
-| `cutoff_at` | ISO 8601 UTC | yes | Same instant as the manifest's. |
+| `generated_at` | ISO 8601 UTC | yes | Must agree across the three files (producer invariant; the client enforces `snapshot_id` agreement only). |
+| `cutoff_at` | ISO 8601 UTC | yes | Must agree across the three files (producer invariant; the client enforces `snapshot_id` agreement only). |
 | `features` | array | yes | May be empty. |
 
 Each feature:
@@ -112,8 +113,8 @@ Each feature:
 | --- | --- | --- | --- |
 | `schema_version` | string | yes | Same rules as the manifest. |
 | `snapshot_id` | string | yes | Must equal the manifest's. |
-| `generated_at` | ISO 8601 UTC | yes | Same instant as the manifest's. |
-| `cutoff_at` | ISO 8601 UTC | yes | Same instant as the manifest's. |
+| `generated_at` | ISO 8601 UTC | yes | Must agree across the three files (producer invariant; the client enforces `snapshot_id` agreement only). |
+| `cutoff_at` | ISO 8601 UTC | yes | Must agree across the three files (producer invariant; the client enforces `snapshot_id` agreement only). |
 | `total_reports` | integer | yes | Non-negative. Reports, not cells. |
 | `reports_24h` | integer | yes | Non-negative. Reports in the 24 hours before `cutoff_at`. |
 | `reports_7d` | integer | yes | Non-negative. Reports in the 7 days before `cutoff_at`. |
@@ -257,6 +258,11 @@ leaves room for one missed run before the page goes dark.
 The client trusts these. They are the producer's responsibility, and a violation
 produces a wrong page rather than a rejected one.
 
+- `schema_version`, `generated_at` and `cutoff_at` agree across the three
+  artifacts. The client cross-checks only `snapshot_id`. It validates each
+  document's own version and timestamps for shape, and never compares one
+  document's values against another's, so a snapshot whose three files carry
+  three different `generated_at` instants is rendered, not rejected.
 - A feature's `hour` is at or before `cutoff_at`. The client validates that
   `hour` is a well-formed UTC timestamp, and nothing about its relation to the
   snapshot's cutoff.
