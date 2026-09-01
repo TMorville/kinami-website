@@ -37,6 +37,9 @@ const renderState = {
 
 let map = null;
 let mapReady = false;
+// Sticky: once the map runtime is gone the fallback panel owns the stage, and
+// no later snapshot state may put the live notice back on top of it.
+let runtimeUnavailable = false;
 let range = DEFAULT_RANGE;
 let snapshotState = { status: "loading" };
 let incidents = [];
@@ -84,7 +87,11 @@ const NOTICE = {
 
 function renderChrome(snapshot) {
   const notice = el("live-notice");
-  if (snapshotState.status === "ok") {
+  if (runtimeUnavailable) {
+    // There is no map under it to report on, and it would float over the
+    // fallback list.
+    notice.hidden = true;
+  } else if (snapshotState.status === "ok") {
     notice.hidden = true;
   } else if (snapshotState.status === "stale") {
     notice.hidden = false;
@@ -119,12 +126,23 @@ function renderChrome(snapshot) {
       cell.append(v, l);
       strip.append(cell);
     }
-    el("disclosure").textContent =
+  } else {
+    strip.hidden = true;
+  }
+
+  // The disclosure describes the live layer that is on screen. With no
+  // snapshot there is no delay to promise and nothing the promise covers, so
+  // the line goes away rather than asserting a figure from the markup.
+  const disclosure = el("disclosure");
+  if (snapshot) {
+    disclosure.hidden = false;
+    disclosure.textContent =
       `Unverified crowd reports · positions approximate to ~1 km · delayed at least ${formatDelay(
         snapshot.manifest.min_delay_minutes,
       )}.`;
   } else {
-    strip.hidden = true;
+    disclosure.hidden = true;
+    disclosure.textContent = "";
   }
 
   // The range only reslices live reports. With no snapshot there is nothing to
@@ -161,24 +179,46 @@ function buildRangeControl() {
   }
 }
 
-// ---- curated fallback list (map runtime unavailable) ------------------------
+// ---- curated incident list ---------------------------------------------------
+/**
+ * Two lists carry the same rows: the one in the aside, always present under a
+ * collapsed disclosure, and the one in the fallback panel that replaces the
+ * map when the runtime is gone. The aside copy is the reason the record is
+ * reachable at all without WebGL, a pointer, or sighted map reading.
+ */
+function incidentLists() {
+  return document.querySelectorAll(".incident-list");
+}
+
 function renderIncidentList() {
-  const list = el("incident-list");
-  list.innerHTML = "";
   const sorted = [...incidents].sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
-  for (const incident of sorted) {
+  for (const list of incidentLists()) {
+    list.innerHTML = "";
+    for (const incident of sorted) {
+      const item = document.createElement("li");
+      item.innerHTML = popupHtml({
+        label: incident.label,
+        date: incident.date,
+        description: incident.description,
+        source: incident.source,
+      });
+      list.append(item);
+    }
+  }
+}
+
+/** An empty list under an "All documented incidents" summary reads as "none". */
+function renderIncidentListFailure() {
+  for (const list of incidentLists()) {
+    list.innerHTML = "";
     const item = document.createElement("li");
-    item.innerHTML = popupHtml({
-      label: incident.label,
-      date: incident.date,
-      description: incident.description,
-      source: incident.source,
-    });
+    item.textContent = "The documented incidents could not be loaded.";
     list.append(item);
   }
 }
 
 function mapRuntimeUnavailable() {
+  runtimeUnavailable = true;
   el("map").hidden = true;
   el("live-notice").hidden = true;
   el("map-fallback").hidden = false;
@@ -272,9 +312,12 @@ fetch("../assets/threat-data.json")
     renderState.incidents = incidentsToGeoJSON(incidents);
     el("curated-since").textContent = `since ${oldestYear(incidents)}`;
     safeSync();
-    if (!el("map-fallback").hidden) renderIncidentList();
+    renderIncidentList();
   })
-  .catch((error) => console.warn("Curated incidents failed to load.", error));
+  .catch((error) => {
+    console.warn("Curated incidents failed to load.", error);
+    renderIncidentListFailure();
+  });
 
 const store = createSnapshotStore({
   manifestUrl: MANIFEST_URL,

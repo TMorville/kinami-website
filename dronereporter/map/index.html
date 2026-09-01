@@ -94,7 +94,13 @@
       position:absolute; z-index:6; inset:0; overflow-y:auto;
       background:var(--void); padding:28px 26px;
     }
-    .map-fallback .notice {
+    /* With scripts off the map cannot draw, so the stage says so instead of
+       sitting as an empty black rectangle. */
+    .map-stage noscript {
+      position:absolute; z-index:7; inset:0; display:block;
+      background:var(--void); padding:28px 26px;
+    }
+    .map-fallback .notice, .map-stage noscript p {
       font-family:var(--mono); font-weight:300; font-size:11px; letter-spacing:0.06em;
       line-height:1.6; color:var(--text-dim); max-width:60ch;
       border-bottom:1px solid var(--line); padding-bottom:16px;
@@ -220,9 +226,24 @@
       cursor:default; pointer-events:none; }
     @media (max-width:768px){ .store-badges { gap:10px; } }
 
-    /* Disclosure and footer */
+    /* The incidents in text: always in the aside, so the record is readable
+       without WebGL, without a mouse, and to a screen reader. */
+    .incident-details { margin-top:18px; border-top:1px solid var(--line); padding-top:14px; }
+    .incident-details summary {
+      cursor:pointer; font-family:var(--mono); font-weight:300; font-size:10px;
+      text-transform:uppercase; letter-spacing:0.1em; color:var(--text-dim);
+      transition:color 0.3s ease;
+    }
+    .incident-details summary:hover, .incident-details summary:focus-visible { color:var(--signal); }
+    /* The UA ring is browser blue, the one colour this page does not own. */
+    .incident-details summary:focus-visible { outline:1px solid var(--signal); outline-offset:3px; }
+    .incident-details .incident-list { margin-top:4px; }
+
+    /* Disclosure and footer. The disclosure describes the live layer, so it
+       lives in the live group and app.js hides it whenever no snapshot is on
+       screen: a delay promise with nothing to promise about is a false claim. */
     .disclosure {
-      border-top:1px solid var(--line); padding-top:16px; margin-bottom:18px;
+      border-top:1px solid var(--line); margin-top:16px; padding-top:14px;
       font-family:var(--mono); font-weight:300; font-size:10px; line-height:1.7;
       letter-spacing:0.05em; color:var(--text-faint);
     }
@@ -314,11 +335,17 @@
   </header>
   <main class="layout">
     <section class="map-stage">
-      <div id="map" aria-label="Map of documented drone incidents and live crowd reports across Europe"></div>
+      <div id="map" role="region" aria-label="Map of documented drone incidents and live crowd reports across Europe"></div>
       <p id="live-notice" class="live-notice" role="status" hidden></p>
+      <noscript>
+        <p>The map needs JavaScript to draw. With JavaScript on, the Documented incidents panel lists every incident as text under "All documented incidents".</p>
+        <!-- Without scripts nothing fills that list, so the empty control goes
+             rather than opening onto nothing. -->
+        <style>.incident-details { display:none; }</style>
+      </noscript>
       <div id="map-fallback" class="map-fallback" hidden>
         <p class="notice">The interactive map could not start in this browser. The documented incidents are listed below.</p>
-        <ol id="incident-list" class="incident-list"></ol>
+        <ol id="fallback-incident-list" class="incident-list"></ol>
       </div>
     </section>
     <aside class="side">
@@ -342,10 +369,15 @@
           <div class="legend-scale-ends"><span>newest</span><span>oldest in range</span></div>
         </div>
         <p class="legend-note">The dot grows with the number of reports, not with certainty. It shows where reports came from, never where a drone was.</p>
+        <p class="disclosure" id="disclosure" hidden></p>
       </section>
       <section class="group" id="curated-group" aria-labelledby="curated-title">
         <h2 class="group-title" id="curated-title">Documented incidents</h2>
         <p class="group-sub"><span class="swatch swatch-ring"></span>Curated record <span id="curated-since">since 2018</span>. Not filtered by the time range. Tap a ring for the story and source.</p>
+        <details class="incident-details">
+          <summary>All documented incidents</summary>
+          <ol id="incident-list" class="incident-list"></ol>
+        </details>
       </section>
       <section class="group cta-group">
         <h2 class="group-title">Seen a drone? Report it</h2>
@@ -361,7 +393,6 @@
           </span>
         </div>
       </section>
-      <p class="disclosure" id="disclosure">Unverified crowd reports · positions approximate to ~1 km · delayed at least 1 hour.</p>
       <footer class="foot">
         <a href="../">Drone Reporter</a>
         <a href="../privacy/">Privacy</a>
