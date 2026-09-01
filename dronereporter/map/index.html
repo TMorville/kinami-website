@@ -77,8 +77,14 @@
     }
 
     /* ---- Map overlays ---------------------------------------------------- */
+    /* The right inset clears MapLibre's zoom control, which sits at top:10px
+       right:10px and is 31 px wide; the notice would otherwise cover it at the
+       stacked width, where it has no max-width to hold it back. pointer-events
+       is off because the notice only reports state: it must never swallow a
+       click on the control or a drag of the map beneath it. */
     .live-notice {
-      position:absolute; z-index:5; left:16px; top:16px; right:16px; max-width:420px;
+      position:absolute; z-index:5; left:16px; top:16px; right:62px; max-width:420px;
+      pointer-events:none;
       background:var(--glass); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
       border:1px solid var(--line-strong); padding:10px 13px;
       font-family:var(--mono); font-weight:300; font-size:11px; line-height:1.55;
@@ -113,6 +119,11 @@
       display:grid; grid-template-columns:1fr 1fr; gap:1px;
       background:var(--line); border:1px solid var(--line); margin-bottom:18px;
     }
+    /* An author display declaration outranks the UA [hidden] rule, so the grid
+       above would keep an empty strip on screen whenever app.js sets
+       strip.hidden. Every other element app.js toggles takes its display from
+       the UA sheet and needs no such rule. */
+    .stats-strip[hidden] { display:none; }
     .stat { background:var(--void); padding:12px 13px 13px; }
     .stat-value { display:block; font-family:var(--serif); font-weight:400; font-size:22px; line-height:1.1; color:var(--text); }
     .stat-label {
