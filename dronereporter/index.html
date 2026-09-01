@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Drone Reporter | Kinami</title>
+  <title>Drone Reporter</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="assets/logo/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/logo/apple-touch-icon.png">
   <link rel="canonical" href="https://dronereporter.io/">
-  <meta property="og:title" content="Drone Reporter | Kinami">
+  <meta property="og:title" content="Drone Reporter">
   <meta property="og:description" content="Hybrid warfare is a reality in Europe. Play your part in our defence.">
   <meta property="og:image" content="https://dronereporter.io/assets/logo/og.png">
   <meta property="og:url" content="https://dronereporter.io/">
@@ -99,6 +99,10 @@
     #threat .threat-stat-label { display:block; font-family:var(--mono); font-weight:300; font-size:10px; line-height:1.5; letter-spacing:0.06em; color:var(--text-dim); margin-top:4px; }
     #threat .threat-stat:hover .threat-stat-value { color:var(--signal); }
     #threat .threat-footline { font-family:var(--mono); font-weight:300; font-size:11px; letter-spacing:0.06em; color:var(--text-faint); margin:0; }
+    /* Fade the cut edge so a clipped panel reads as scrollable. Class set from threat-map.js,
+       because the panel only overflows at some viewport heights and CSS cannot test for that. */
+    #threat .threat-box.is-clipped { -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
+      mask-image:linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%); }
     .threat-tooltip {
       position:fixed; z-index:50; pointer-events:none; max-width:300px;
       font-family:var(--mono); font-size:11px; line-height:1.45; color:var(--text);
@@ -118,6 +122,27 @@
     .cta-fill { background:var(--signal); color:var(--void); border-color:var(--signal); }
     .cta-fill:hover { background:transparent; color:var(--signal); }
     #hero .cta { margin-top:32px; font-size:13px; padding:16px 32px; }
+    /* Store badges — Apple/Play glyph + two-line label, in the site's own amber system
+       rather than the official black artwork, which cannot sit on this palette. */
+    .store-badges { display:flex; flex-wrap:wrap; gap:12px; margin-top:12px; }
+    .store-badge { display:inline-flex; align-items:center; gap:12px; text-decoration:none;
+      padding:10px 20px 10px 18px; border:1px solid var(--signal); color:var(--signal);
+      background:transparent; transition:background 0.3s ease, color 0.3s ease; }
+    .store-badge svg { width:20px; height:20px; flex:none; fill:currentColor; }
+    .store-badge .sb-text { display:flex; flex-direction:column; line-height:1.1; text-align:left; }
+    .store-badge .sb-top { font-family:var(--mono); font-weight:300; font-size:9px;
+      text-transform:uppercase; letter-spacing:0.14em; opacity:0.75; }
+    .store-badge .sb-name { font-family:var(--mono); font-size:14px; letter-spacing:0.03em; margin-top:3px; }
+    .store-badge:hover, .store-badge:focus-visible { background:var(--signal); color:var(--void); }
+    .store-badge.is-fill { background:var(--signal); color:var(--void); border-color:var(--signal); }
+    .store-badge.is-fill:hover, .store-badge.is-fill:focus-visible { background:transparent; color:var(--signal); }
+    .store-badge.is-soon { border-color:var(--line-strong); color:var(--text-faint);
+      cursor:default; pointer-events:none; }
+    #hero .store-badges { margin-top:32px; }
+    #hero .store-badge { padding:13px 26px 13px 22px; }
+    #hero .store-badge svg { width:22px; height:22px; }
+    #hero .store-badge .sb-name { font-size:15px; }
+    @media (max-width:768px){ .store-badges { gap:10px; } }
     /* View 3 — two columns: What it is / Live in beta */
     #beta .cols { display:flex; align-items:flex-start; gap:6vw; width:100%; }
     #beta .col { flex:1 1 0; min-width:0; max-width:560px; }
@@ -154,7 +179,16 @@
     </div>
     <div class="line">
       <h1>Hybrid warfare is a reality in Europe.<span class="accent">Play your part in our defence.</span></h1>
-      <a class="cta cta-fill" href="https://testflight.apple.com/join/N7uHVQMd" target="_blank" rel="noopener">Sign up for beta</a>
+      <div class="store-badges">
+        <a class="store-badge is-fill" href="https://testflight.apple.com/join/N7uHVQMd" target="_blank" rel="noopener" aria-label="Join the iPhone beta on TestFlight">
+          <svg viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+          <span class="sb-text"><span class="sb-top">Beta on</span><span class="sb-name">TestFlight</span></span>
+        </a>
+        <span class="store-badge is-soon" aria-label="Android beta coming soon on Google Play">
+          <svg viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>
+          <span class="sb-text"><span class="sb-top">Coming soon</span><span class="sb-name">Google Play</span></span>
+        </span>
+      </div>
     </div>
     <div class="scroll-cue" aria-hidden="true">Scroll ↓</div>
   </section>
@@ -165,7 +199,7 @@
     <div class="threat-box">
       <div class="eyebrow">The threat</div>
       <h2>The sky over Europe is contested.</h2>
-      <p>Since 2022, unidentified drones have closed airports, shadowed warships, and circled nuclear sites across Europe. The wave broke in autumn 2025, heaviest where the war in Ukraine spills over: the Nordics, the Baltics, Poland.</p>
+      <p>Since 2022, unidentified drones have shut airports and circled nuclear sites across Europe. The 2025 wave has not receded: in 2026 NATO jets downed four drones over Alliance soil.</p>
       <div class="threat-stats" id="threat-stats"></div>
       <p class="threat-footline" id="threat-footline"></p>
     </div>
@@ -177,8 +211,17 @@
       <div class="col panel">
         <div class="eyebrow">Civilians</div>
         <h2>What can you do?</h2>
-        <p>Download Drone Reporter and report any drone you see. Two taps and it's on the map. The more people looking up, the harder Europe is to catch off guard. The app is in beta on TestFlight. Android is coming soon.</p>
-        <a class="cta" href="https://testflight.apple.com/join/N7uHVQMd" target="_blank" rel="noopener">Sign up for beta</a>
+        <p>Download Drone Reporter and report any drone you see. Two taps and it's on the map. The more people looking up, the harder Europe is to catch off guard. The app is in beta on TestFlight. Android follows on Google Play.</p>
+        <div class="store-badges">
+          <a class="store-badge" href="https://testflight.apple.com/join/N7uHVQMd" target="_blank" rel="noopener" aria-label="Join the iPhone beta on TestFlight">
+            <svg viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+            <span class="sb-text"><span class="sb-top">Beta on</span><span class="sb-name">TestFlight</span></span>
+          </a>
+          <span class="store-badge is-soon" aria-label="Android beta coming soon on Google Play">
+            <svg viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>
+            <span class="sb-text"><span class="sb-top">Coming soon</span><span class="sb-name">Google Play</span></span>
+          </span>
+        </div>
       </div>
       <div class="col panel">
         <div class="eyebrow">Agencies</div>

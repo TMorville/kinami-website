@@ -115,6 +115,8 @@
   }
 
   function resize() {
+    const box = document.querySelector('.threat-box');
+    if (box) box.classList.toggle('is-clipped', box.scrollHeight > box.clientHeight + 1);
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     cssW = rect.width;

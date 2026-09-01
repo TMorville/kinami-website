@@ -1,40 +1,28 @@
 {
-  "updated": "2026-06-23",
+  "updated": "2026-08-31",
   "stats": [
     {
-      "value": "108",
-      "label": "drone incidents at German airports in early 2026, over double the year before",
-      "source": "https://www.newsworm.de/news/drone-incidents-at-german-airports-more-than-double-in-2026"
+      "value": "800 g",
+      "label": "of explosive on a drone at Leipzig/Halle, Aug 2026",
+      "source": "https://en.wikipedia.org/wiki/2026_Leipzig_Airport_drone_incidents"
     },
     {
-      "value": "2",
-      "label": "times NATO fighters downed drones over Alliance soil in 2026 (Estonia, Latvia)",
-      "source": "https://www.defensenews.com/global/europe/2026/05/19/nato-jet-shoots-down-ukrainian-drone-over-estonia-in-escalation-of-airspace-violations/"
+      "value": "144",
+      "label": "drone sightings over European sites since Aug 2024",
+      "source": "https://www.stripes.com/theaters/europe/2026-07-02/russian-drones-nuclear-bases-nato-22148620.html"
     },
     {
-      "value": "10+",
-      "label": "European countries hit by drone incidents since Sept 2025",
-      "source": "https://en.wikipedia.org/wiki/2025_European_drone_sightings"
+      "value": "4",
+      "label": "NATO shootdowns over Alliance soil in 2026",
+      "source": "https://www.grosswald.org/russian-drone-and-missile-incursions-nato-territory/"
     },
     {
       "value": "20,000+",
-      "label": "passengers disrupted at Copenhagen and Oslo, Sept 2025",
+      "label": "passengers disrupted, Copenhagen & Oslo, Sept 2025",
       "source": "https://www.euronews.com/my-europe/2025/11/20/fact-checking-europes-drone-problem-why-are-airports-shuttering-over-drone-sightings"
     }
   ],
   "incidents": [
-    {
-      "id": "norway-platforms-2022-09",
-      "label": "Norwegian offshore oil & gas platforms",
-      "country": "Norway",
-      "site": "North Sea / Norwegian Sea installations",
-      "lat": 58.84,
-      "lng": 1.89,
-      "date": "2022-09-26",
-      "category": "infrastructure",
-      "description": "Unidentified drones were observed at more than 10 Norwegian offshore oil and gas facilities, including within the 500 m safety zone of installations such as Gina Krog and near Equinor's Johan Sverdrup field.",
-      "source": "https://oilprice.com/Latest-Energy-News/World-News/Norway-Investigates-Mysterious-Drone-Sightings-Near-Offshore-Oil-Gas-Fields.html"
-    },
     {
       "id": "gatwick-2018-12",
       "label": "London Gatwick Airport",
@@ -48,6 +36,18 @@
       "source": "https://en.wikipedia.org/wiki/Gatwick_Airport_drone_incident"
     },
     {
+      "id": "norway-platforms-2022-09",
+      "label": "Norwegian offshore oil & gas platforms",
+      "country": "Norway",
+      "site": "North Sea / Norwegian Sea installations",
+      "lat": 58.84,
+      "lng": 1.89,
+      "date": "2022-09-26",
+      "category": "infrastructure",
+      "description": "Unidentified drones were observed at more than 10 Norwegian offshore oil and gas facilities, including within the 500 m safety zone of installations such as Gina Krog and near Equinor's Johan Sverdrup field.",
+      "source": "https://oilprice.com/Latest-Energy-News/World-News/Norway-Investigates-Mysterious-Drone-Sightings-Near-Offshore-Oil-Gas-Fields.html"
+    },
+    {
       "id": "frankfurt-2023",
       "label": "Frankfurt Airport",
       "country": "Germany",
@@ -58,6 +58,18 @@
       "category": "airport-closure",
       "description": "Drone incursions halted all traffic at Frankfurt, one of Europe's busiest airports, on two days in 2023, part of 26 dates between 2017 and 2023 on which drones affected operations there.",
       "source": "https://www.flightglobal.com/safety/drone-incursions-stopped-frankfurt-airport-traffic-twice-in-2023/157920.article"
+    },
+    {
+      "id": "lithuania-drone-2025-09",
+      "label": "Lithuania drone crossings",
+      "country": "Lithuania",
+      "site": "Belarus border region",
+      "lat": 54.6872,
+      "lng": 25.2797,
+      "date": "2025-09-09",
+      "category": "military-site",
+      "description": "Lithuania registered two Gerbera drones crossing from Belarus during the same wave, one of which was found to carry an explosive warhead.",
+      "source": "https://www.aerotime.aero/articles/estonia-condemns-brazen-russian-airspace-violation-by-three-mig-31-jets"
     },
     {
       "id": "poland-incursion-2025-09",
@@ -84,30 +96,6 @@
       "source": "https://euro-sd.com/2025/09/major-news/46711/russian-drone-over-romania/"
     },
     {
-      "id": "estonia-incursion-2025-09",
-      "label": "Estonia airspace violation",
-      "country": "Estonia",
-      "site": "Vaindloo island",
-      "lat": 59.81,
-      "lng": 26.36,
-      "date": "2025-09-19",
-      "category": "military-site",
-      "description": "Three Russian MiG-31 jets entered Estonian airspace near Vaindloo for about twelve minutes without flight plans or transponders; Italian F-35s on Baltic Air Policing intercepted them and Estonia invoked NATO Article 4.",
-      "source": "https://www.euronews.com/2025/09/19/russian-fighter-jets-violated-estonias-airspace-authorities-say"
-    },
-    {
-      "id": "lithuania-drone-2025-09",
-      "label": "Lithuania drone crossings",
-      "country": "Lithuania",
-      "site": "Belarus border region",
-      "lat": 54.6872,
-      "lng": 25.2797,
-      "date": "2025-09-09",
-      "category": "military-site",
-      "description": "Lithuania registered two Gerbera drones crossing from Belarus during the same wave, one of which was found to carry an explosive warhead.",
-      "source": "https://www.aerotime.aero/articles/estonia-condemns-brazen-russian-airspace-violation-by-three-mig-31-jets"
-    },
-    {
       "id": "latvia-drone-2025-09",
       "label": "Latvia drone wreckage",
       "country": "Latvia",
@@ -118,6 +106,18 @@
       "category": "military-site",
       "description": "Remains of a drone similar to those used in the Polish and Lithuanian incursions were recovered on Latvia's Baltic coast in mid-September 2025.",
       "source": "https://www.aerotime.aero/articles/estonia-condemns-brazen-russian-airspace-violation-by-three-mig-31-jets"
+    },
+    {
+      "id": "estonia-incursion-2025-09",
+      "label": "Estonia airspace violation",
+      "country": "Estonia",
+      "site": "Vaindloo island",
+      "lat": 59.81,
+      "lng": 26.36,
+      "date": "2025-09-19",
+      "category": "military-site",
+      "description": "Three Russian MiG-31 jets entered Estonian airspace near Vaindloo for about twelve minutes without flight plans or transponders; Italian F-35s on Baltic Air Policing intercepted them and Estonia invoked NATO Article 4.",
+      "source": "https://www.euronews.com/2025/09/19/russian-fighter-jets-violated-estonias-airspace-authorities-say"
     },
     {
       "id": "billund-2025-09",
@@ -192,18 +192,6 @@
       "source": "https://en.wikipedia.org/wiki/2025_European_drone_sightings"
     },
     {
-      "id": "karup-2025-09",
-      "label": "Karup Air Base",
-      "country": "Denmark",
-      "site": "Karup (largest military base)",
-      "lat": 56.2971,
-      "lng": 9.1243,
-      "date": "2025-09-26",
-      "category": "military-site",
-      "description": "Civil airspace at Karup, Denmark's largest military base and home to its helicopter wing, was briefly closed after a drone sighting that lasted several hours.",
-      "source": "https://en.wikipedia.org/wiki/2025_European_drone_sightings"
-    },
-    {
       "id": "schleswig-holstein-2025-09",
       "label": "Kiel naval & infrastructure sites",
       "country": "Germany",
@@ -214,6 +202,18 @@
       "category": "infrastructure",
       "description": "Drone formations overflew the ThyssenKrupp Marine Systems naval shipyard, Kiel University Hospital, a power plant and the state parliament; authorities opened an espionage and sabotage investigation.",
       "source": "https://newsukraine.rbc.ua/news/spy-drones-over-german-military-bases-on-1754705354.html"
+    },
+    {
+      "id": "karup-2025-09",
+      "label": "Karup Air Base",
+      "country": "Denmark",
+      "site": "Karup (largest military base)",
+      "lat": 56.2971,
+      "lng": 9.1243,
+      "date": "2025-09-26",
+      "category": "military-site",
+      "description": "Civil airspace at Karup, Denmark's largest military base and home to its helicopter wing, was briefly closed after a drone sighting that lasted several hours.",
+      "source": "https://en.wikipedia.org/wiki/2025_European_drone_sightings"
     },
     {
       "id": "orland-2025-09",
@@ -228,18 +228,6 @@
       "source": "https://www.newsinenglish.no/2025/09/29/norwegian-airspace-violated-again/"
     },
     {
-      "id": "munich-2025-10",
-      "label": "Munich Airport",
-      "country": "Germany",
-      "site": "Franz Josef Strauss",
-      "lat": 48.3538,
-      "lng": 11.7861,
-      "date": "2025-10-02",
-      "category": "airport-closure",
-      "description": "Munich Airport closed twice in under 24 hours after drone sightings; the first night grounded 17 flights affecting about 3,000 passengers and the second affected roughly 6,500 passengers.",
-      "source": "https://www.cnn.com/2025/10/02/europe/munich-airport-closed-drone-sighting-intl-hnk"
-    },
-    {
       "id": "elsenborn-2025-10",
       "label": "Elsenborn military camp",
       "country": "Belgium",
@@ -249,6 +237,18 @@
       "date": "2025-10-02",
       "category": "military-site",
       "description": "Belgian defence officials reported about 15 drones over the Elsenborn military training area that then flew across the border toward Duren in Germany.",
+      "source": "https://www.cnn.com/2025/10/02/europe/munich-airport-closed-drone-sighting-intl-hnk"
+    },
+    {
+      "id": "munich-2025-10",
+      "label": "Munich Airport",
+      "country": "Germany",
+      "site": "Franz Josef Strauss",
+      "lat": 48.3538,
+      "lng": 11.7861,
+      "date": "2025-10-02",
+      "category": "airport-closure",
+      "description": "Munich Airport closed twice in under 24 hours after drone sightings; the first night grounded 17 flights affecting about 3,000 passengers and the second affected roughly 6,500 passengers.",
       "source": "https://www.cnn.com/2025/10/02/europe/munich-airport-closed-drone-sighting-intl-hnk"
     },
     {
@@ -264,18 +264,6 @@
       "source": "https://en.wikipedia.org/wiki/2025_European_drone_sightings"
     },
     {
-      "id": "brussels-2025-11",
-      "label": "Brussels Airport",
-      "country": "Belgium",
-      "site": "Zaventem",
-      "lat": 50.9014,
-      "lng": 4.4844,
-      "date": "2025-11-04",
-      "category": "airport-closure",
-      "description": "Belgium's busiest hub closed twice on 4 November after drone sightings, cancelling 54 flights and stranding hundreds of passengers overnight, with further disruption over following days.",
-      "source": "https://www.euronews.com/2025/11/05/latest-drone-sightings-force-flight-cancellations-at-belgiums-main-airport"
-    },
-    {
       "id": "kleine-brogel-2025-11",
       "label": "Kleine Brogel Air Base",
       "country": "Belgium",
@@ -288,16 +276,16 @@
       "source": "https://www.cbsnews.com/news/drones-europe-nato-airports-russia-hybrid-warfare-belgium-uk-anti-drone-troops/"
     },
     {
-      "id": "liege-2025-11",
-      "label": "Liege Airport",
+      "id": "brussels-2025-11",
+      "label": "Brussels Airport",
       "country": "Belgium",
-      "site": "Liege (cargo hub)",
-      "lat": 50.6374,
-      "lng": 5.4432,
-      "date": "2025-11-07",
+      "site": "Zaventem",
+      "lat": 50.9014,
+      "lng": 4.4844,
+      "date": "2025-11-04",
       "category": "airport-closure",
-      "description": "One of Europe's largest cargo airports halted flights several times for roughly 30 minutes each as drones were detected nearby in early November.",
-      "source": "https://www.aljazeera.com/news/2025/11/7/belgiums-liege-airport-temporarily-halts-flights-after-new-drone-sighting"
+      "description": "Belgium's busiest hub closed twice on 4 November after drone sightings, cancelling 54 flights and stranding hundreds of passengers overnight, with further disruption over following days.",
+      "source": "https://www.euronews.com/2025/11/05/latest-drone-sightings-force-flight-cancellations-at-belgiums-main-airport"
     },
     {
       "id": "gothenburg-2025-11",
@@ -310,6 +298,18 @@
       "category": "airport-closure",
       "description": "Drone sightings at Gothenburg-Landvetter, Sweden's second-busiest airport, forced inbound flights to be redirected, including to Copenhagen.",
       "source": "https://en.wikipedia.org/wiki/2025_European_drone_sightings"
+    },
+    {
+      "id": "liege-2025-11",
+      "label": "Liege Airport",
+      "country": "Belgium",
+      "site": "Liege (cargo hub)",
+      "lat": 50.6374,
+      "lng": 5.4432,
+      "date": "2025-11-07",
+      "category": "airport-closure",
+      "description": "One of Europe's largest cargo airports halted flights several times for roughly 30 minutes each as drones were detected nearby in early November.",
+      "source": "https://www.aljazeera.com/news/2025/11/7/belgiums-liege-airport-temporarily-halts-flights-after-new-drone-sighting"
     },
     {
       "id": "doel-2025-11",
@@ -432,6 +432,18 @@
       "source": "https://www.defensenews.com/global/europe/2026/05/19/nato-jet-shoots-down-ukrainian-drone-over-estonia-in-escalation-of-airspace-violations/"
     },
     {
+      "id": "lithuania-vilnius-2026-05",
+      "label": "Vilnius Airport shutdown",
+      "country": "Lithuania",
+      "site": "Vilnius Airport and the Vilnius region",
+      "lat": 54.6341,
+      "lng": 25.2858,
+      "date": "2026-05-20",
+      "category": "airport-closure",
+      "description": "Lithuania closed the airspace over Vilnius airport and scrambled NATO Baltic Air Policing jets after a suspected drone crossed from Belarus. Residents were told to shelter, trains stopped, and the president and prime minister were moved to secure locations. The drone was never found.",
+      "source": "https://www.euronews.com/my-europe/2026/05/20/vilnius-airport-shuts-and-nato-jets-scrambled-after-drone-warning"
+    },
+    {
       "id": "munich-2026-05",
       "label": "Munich Airport (2026)",
       "country": "Germany",
@@ -454,6 +466,78 @@
       "category": "military-site",
       "description": "French Rafales on NATO Baltic Air Policing shot down a stray drone over Berzgale, the first NATO interception of a drone over Latvia.",
       "source": "https://www.aerotime.aero/articles/nato-fighters-shoot-down-drone-latvia"
+    },
+    {
+      "id": "germany-leipzig-2026-08",
+      "label": "Leipzig/Halle Airport",
+      "country": "Germany",
+      "site": "Leipzig/Halle Airport, NATO heavy-airlift hub",
+      "lat": 51.4239,
+      "lng": 12.2364,
+      "date": "2026-08-04",
+      "category": "airport-closure",
+      "description": "An FPV drone carrying 800 g of PETN struck the wing of an Antonov An-124 near its fuel tank and failed to detonate. A second drone hit a cargo jet on approach the next morning. The airport closed and the German federal prosecutor opened a case for attempted causing of an explosion.",
+      "source": "https://en.wikipedia.org/wiki/2026_Leipzig_Airport_drone_incidents"
+    },
+    {
+      "id": "bulgaria-kardam-2026-08",
+      "label": "Trans-Balkan pipeline, Kardam",
+      "country": "Bulgaria",
+      "site": "Kardam, near the Trans-Balkan gas compressor station",
+      "lat": 43.77,
+      "lng": 28.03,
+      "date": "2026-08-08",
+      "category": "infrastructure",
+      "description": "A drone crossed undetected from Romania and exploded about a kilometre from the Trans-Balkan pipeline compressor station. Neither country's air defences saw it. Bulgaria's defence ministry assessed it as a Maya decoy drone of a type Ukraine uses, with no sign the target was deliberate.",
+      "source": "https://www.euronews.com/my-europe/2026/08/09/ukraine-denies-targeting-bulgaria-as-drone-explodes-near-pipeline-kyiv-promises-inquiry"
+    },
+    {
+      "id": "germany-hannover-2026-08",
+      "label": "Hannover Airport",
+      "country": "Germany",
+      "site": "Hannover-Langenhagen Airport",
+      "lat": 52.4611,
+      "lng": 9.6851,
+      "date": "2026-08-11",
+      "category": "airport-closure",
+      "description": "Runways closed between 03:44 and 05:20 after airport staff and patrol officers sighted a drone at roughly 25 m several times. The airport's drone-detection system registered no signal at all. An internal police report said hybrid activity could not be ruled out.",
+      "source": "https://www.bloomberg.com/news/articles/2026-08-11/german-airport-shuts-for-nearly-two-hours-after-drone-sighting"
+    },
+    {
+      "id": "latvia-rugaji-2026-08",
+      "label": "NATO Eurofighter shootdown, Latvia",
+      "country": "Latvia",
+      "site": "Rugaji parish, Balvi region",
+      "lat": 56.99,
+      "lng": 27.13,
+      "date": "2026-08-14",
+      "category": "military-site",
+      "description": "An Italian Eurofighter on Baltic Air Policing shot down a drone over Rugaji. It was later identified as Ukrainian, pushed off course by Russian electronic warfare.",
+      "source": "https://www.grosswald.org/russian-drone-and-missile-incursions-nato-territory/"
+    },
+    {
+      "id": "romania-galati-2026-08",
+      "label": "NATO F-18 shootdown, Romania",
+      "country": "Romania",
+      "site": "About 24 km north of Galati",
+      "lat": 45.66,
+      "lng": 27.99,
+      "date": "2026-08-16",
+      "category": "military-site",
+      "description": "A Spanish F-18 flying Romanian air policing shot down a drone that entered from the Moldovan side. Clearance ran through NATO's Combined Air Operations Centre rather than the national capital.",
+      "source": "https://www.grosswald.org/russian-drone-and-missile-incursions-nato-territory/"
+    },
+    {
+      "id": "romania-neptun-deep-2026-08",
+      "label": "Neptun Deep gas field",
+      "country": "Romania",
+      "site": "Neptun Deep, Black Sea, about 80 nm east of Constanta",
+      "lat": 44.15,
+      "lng": 30.4,
+      "date": "2026-08-20",
+      "category": "infrastructure",
+      "description": "Romanian F-16s destroyed an explosive-laden sea drone with cannon fire at the Neptun Deep gas works, after NATO transferred engagement authority to Romanian forces.",
+      "source": "https://www.grosswald.org/russian-drone-and-missile-incursions-nato-territory/"
     }
   ]
 }
