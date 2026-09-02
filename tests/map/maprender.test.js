@@ -49,7 +49,6 @@ const geo = (n) => ({
 
 const rs = (cells, incidents) => ({
   palette: { amber: "#E8A33D", amberDim: "#4a3a22", background: "#0A0907" },
-  stops: { fullHours: 24, baseHours: 168 },
   cells,
   incidents,
 });
@@ -90,12 +89,15 @@ test("a rejecting setData is caught, never an unhandled rejection", async () => 
   await new Promise((resolve) => setTimeout(resolve, 0));
 });
 
-test("repeat syncs update data and paint without duplicating layers", () => {
+test("repeat syncs update data without duplicating layers, and paint rides addLayer", () => {
   const map = fakeMap();
   syncMap(map, rs(geo(1), geo(1)));
   syncMap(map, rs(geo(2), geo(1)));
   assert.equal(map.layers.length, 5);
   assert.equal(map.sources.get(CELL_SOURCE_ID).data.features.length, 2);
-  assert.ok(map.paint[`${CELL_LAYER_ID}/circle-color`]);
-  assert.ok(map.paint[`${MARK_LAYER_ID}/icon-color`]);
+  // Two-tone paint is static: it arrives with the layer, never via
+  // setPaintProperty, so a restyle re-adding the layers restores it too.
+  const dots = map.layers.find((l) => l.id === CELL_LAYER_ID);
+  assert.equal(dots.paint["circle-color"][0], "step");
+  assert.equal(Object.keys(map.paint).length, 0);
 });

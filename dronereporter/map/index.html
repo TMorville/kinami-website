@@ -30,14 +30,13 @@
       --serif:'Cormorant Infant', serif; --mono:'DM Mono', monospace;
       --map-amber:#E8A33D; --map-amber-dim:#4a3a22; --map-bg:#0A0907;
       /* Depth is transparency, never shadow. */
-      --glass:rgba(12,10,4,0.75);
+      --glass:rgba(12,10,4,0.78);
       --whisper:rgba(220,180,100,0.06);
       --tint:rgba(220,180,100,0.04);
     }
     body {
       background:var(--void); color:var(--text); font-family:var(--serif);
-      min-height:100svh; height:100svh; overflow:hidden;
-      display:flex; flex-direction:column;
+      height:100svh; overflow:hidden;
       -webkit-font-smoothing:antialiased;
     }
 
@@ -46,61 +45,20 @@
       overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0;
     }
 
-    /* ---- Header ---------------------------------------------------------- */
-    .top {
-      flex:none; display:flex; align-items:baseline; gap:28px; flex-wrap:wrap;
-      padding:16px 26px; border-bottom:1px solid var(--line);
-    }
-    .back {
-      font-family:var(--mono); font-weight:300; font-size:11px;
-      text-transform:uppercase; letter-spacing:0.14em; color:var(--signal);
-      text-decoration:none; border-bottom:1px solid rgba(220,180,100,0.2);
-      padding-bottom:2px; transition:border-color 0.3s ease;
-    }
-    .back:hover, .back:focus-visible { border-bottom-color:rgba(220,180,100,0.5); }
-    .head-text { display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; min-width:0; }
-    .page-label { font-family:var(--serif); font-weight:400; font-size:21px; letter-spacing:0.01em; color:var(--text); }
-    .tagline { font-family:var(--serif); font-size:15px; line-height:1.5; color:var(--text-dim); max-width:62ch; }
-
-    /* ---- Layout ---------------------------------------------------------- */
-    /* Desktop: the map takes the viewport, the aside is a fixed 360 px column
-       that scrolls on its own. Below 900 px the two stack. */
-    .layout {
-      flex:1; min-height:0; display:grid;
-      grid-template-columns:minmax(0,1fr) 360px;
-    }
-    .map-stage { position:relative; min-width:0; overflow:hidden; }
+    /* ---- Stage: the map IS the page ---------------------------------------- */
+    .stage { position:fixed; inset:0; }
     #map { position:absolute; inset:0; }
-    .side {
-      min-width:0; overflow-y:auto; overflow-x:hidden;
-      border-left:1px solid var(--line); padding:24px 22px 32px;
-    }
-
-    /* ---- Map overlays ---------------------------------------------------- */
-    /* The right inset clears MapLibre's zoom control, which sits at top:10px
-       right:10px and is 31 px wide; the notice would otherwise cover it at the
-       stacked width, where it has no max-width to hold it back. pointer-events
-       is off because the notice only reports state: it must never swallow a
-       click on the control or a drag of the map beneath it. */
-    .live-notice {
-      position:absolute; z-index:5; left:16px; top:16px; right:62px; max-width:420px;
-      pointer-events:none;
-      background:var(--glass); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-      border:1px solid var(--line-strong); padding:10px 13px;
-      font-family:var(--mono); font-weight:300; font-size:11px; line-height:1.55;
-      letter-spacing:0.03em; color:var(--text-dim);
-    }
     .map-fallback {
       position:absolute; z-index:6; inset:0; overflow-y:auto;
-      background:var(--void); padding:28px 26px;
+      background:var(--void); padding:28px 26px 120px;
     }
     /* With scripts off the map cannot draw, so the stage says so instead of
        sitting as an empty black rectangle. */
-    .map-stage noscript {
+    .stage noscript {
       position:absolute; z-index:7; inset:0; display:block;
       background:var(--void); padding:28px 26px;
     }
-    .map-fallback .notice, .map-stage noscript p {
+    .map-fallback .notice, .stage noscript p {
       font-family:var(--mono); font-weight:300; font-size:11px; letter-spacing:0.06em;
       line-height:1.6; color:var(--text-dim); max-width:60ch;
       border-bottom:1px solid var(--line); padding-bottom:16px;
@@ -108,127 +66,101 @@
     .incident-list { list-style:none; max-width:70ch; }
     .incident-list li { border-bottom:1px solid var(--whisper); padding:16px 0; }
 
-    /* ---- Aside groups ---------------------------------------------------- */
-    .group { margin-bottom:34px; }
-    .group-title {
-      font-family:var(--mono); font-weight:300; font-size:11px;
-      text-transform:uppercase; letter-spacing:0.12em; color:var(--text);
-      margin-bottom:14px; line-height:1.5;
-    }
-    #live-range-label, #curated-since { text-transform:none; color:var(--signal); }
-    .group-sub {
-      font-family:var(--serif); font-size:15px; line-height:1.55; color:var(--text-dim);
-    }
-
-    /* Stats: grid gap-as-border, the site's sedimentary cell pattern. */
-    .stats-strip {
-      display:grid; grid-template-columns:1fr 1fr; gap:1px;
-      background:var(--line); border:1px solid var(--line); margin-bottom:18px;
-    }
-    /* An author display declaration outranks the UA [hidden] rule, so the grid
-       above would keep an empty strip on screen whenever app.js sets
-       strip.hidden. Every other element app.js toggles takes its display from
-       the UA sheet and needs no such rule. */
-    .stats-strip[hidden] { display:none; }
-    .stat { background:var(--void); padding:12px 13px 13px; }
-    .stat-value { display:block; font-family:var(--serif); font-weight:400; font-size:22px; line-height:1.1; color:var(--text); }
-    .stat-label {
-      display:block; font-family:var(--mono); font-weight:300; font-size:9px;
-      text-transform:uppercase; letter-spacing:0.1em; color:var(--text-dim); margin-top:5px;
-    }
-
-    /* Range control: the site's pill pattern, on native radios. */
-    .range-control { border:0; display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
-    .range-option {
-      position:relative; display:inline-flex; align-items:center; cursor:pointer;
-      font-family:var(--mono); font-weight:300; font-size:10px;
-      text-transform:uppercase; letter-spacing:0.08em; color:var(--text-dim);
-      padding:6px 13px; border:1px solid var(--line); border-radius:12px;
-      background:var(--tint); transition:color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
-    }
-    .range-option input { position:absolute; opacity:0; width:1px; height:1px; margin:0; }
-    .range-option:hover { color:var(--text); border-color:var(--line-strong); }
-    /* app.js disables the fieldset whenever there is no live snapshot to
-       reslice. pointer-events, not a hover override: an override specific
-       enough to beat :hover would also outrank the :checked fill below. */
-    .range-control:disabled .range-option { opacity:0.4; pointer-events:none; }
-    .range-option:has(input:checked) { color:var(--void); background:var(--signal); border-color:var(--signal); }
-    .range-option:has(input:focus-visible) { outline:1px solid var(--signal); outline-offset:3px; }
-
-    /* Legend */
-    .legend-marks { list-style:none; margin-bottom:9px; }
-    .legend-marks li {
-      display:flex; align-items:baseline; gap:10px; padding:7px 0;
-      font-family:var(--serif); font-size:14px; line-height:1.5; color:var(--text-dim);
-    }
-    .legend-marks b {
-      flex:none; font-family:var(--mono); font-weight:300; font-size:10px;
-      text-transform:uppercase; letter-spacing:0.1em; color:var(--text);
-    }
-    .swatch { flex:none; width:18px; height:18px; align-self:center; }
-    .swatch-dot { background:radial-gradient(circle, var(--map-amber) 0 5px, transparent 5px); }
-    .swatch-wedge { background:rgba(232,163,61,0.4); clip-path:polygon(50% 4%, 90% 88%, 10% 88%); }
-    .swatch-halo { background:radial-gradient(circle, var(--map-amber) 0 3px, rgba(232,163,61,0.16) 3px 9px, transparent 9px); }
-    .swatch-cluster {
-      display:inline-flex; align-items:center; justify-content:center;
-      border-radius:50%; background:var(--map-amber); color:var(--void);
-      font-family:var(--mono); font-weight:400; font-size:9px; line-height:1;
-    }
-    .swatch-ring {
-      display:inline-block; width:11px; height:11px; border:1px solid rgba(232,163,61,0.85);
-      border-radius:50%; margin-right:8px; vertical-align:baseline;
-    }
-    /* The marks only exist past MARK_MIN_ZOOM, so the legend says when to
-       expect them rather than letting a visitor hunt for a mark that the
-       current zoom will never draw. */
-    .legend-hint {
-      font-family:var(--mono); font-weight:300; font-size:10px; line-height:1.6;
-      letter-spacing:0.05em; color:var(--text-dim); margin-bottom:22px;
-    }
-    .legend-scale { margin-bottom:16px; }
-    .legend-scale-head, .legend-scale-ends { display:flex; justify-content:space-between; gap:12px; }
-    .legend-scale-head {
-      font-family:var(--mono); font-weight:300; font-size:10px;
-      text-transform:uppercase; letter-spacing:0.1em; color:var(--text-dim); margin-bottom:7px;
-    }
-    .legend-ramp {
-      height:6px; border:1px solid var(--whisper);
-      background:linear-gradient(90deg, var(--map-amber), var(--map-amber-dim));
-    }
-    /* The scale ends and the note carry the honesty caveats, so they read at
-       --text-dim. --text-faint is for decoration the page can afford to lose. */
-    .legend-scale-ends {
-      font-family:var(--mono); font-weight:300; font-size:9px;
-      text-transform:uppercase; letter-spacing:0.08em; color:var(--text-dim); margin-top:6px;
-    }
-    .legend-note { font-family:var(--serif); font-size:13px; line-height:1.55; color:var(--text-dim); }
-
-    /* Call to action, on a glass surface so it reads as the one action here. */
-    .cta-group {
+    /* ---- Bottom bar --------------------------------------------------------- */
+    .bar {
+      position:absolute; z-index:10; left:0; right:0; bottom:0;
+      display:flex; align-items:center; gap:10px 22px; flex-wrap:wrap;
+      padding:10px 16px;
       background:var(--glass); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-      border:1px solid var(--line); padding:18px 18px 20px;
+      border-top:1px solid var(--line);
     }
+    .brand {
+      font-family:var(--mono); font-weight:300; font-size:11px;
+      text-transform:uppercase; letter-spacing:0.16em; color:var(--signal);
+      text-decoration:none; border-bottom:1px solid rgba(220,180,100,0.2);
+      padding-bottom:2px; transition:border-color 0.3s ease;
+    }
+    .brand:hover, .brand:focus-visible { border-bottom-color:rgba(220,180,100,0.5); }
+    .live-stats {
+      font-family:var(--mono); font-weight:300; font-size:10px;
+      letter-spacing:0.05em; color:var(--text-dim);
+    }
+    .bar-spacer { flex:1; }
 
-    /* Store badges — copied from ../index.html. */
-    .store-badges { display:flex; flex-wrap:wrap; gap:12px; margin-top:12px; }
-    .store-badge { display:inline-flex; align-items:center; gap:12px; text-decoration:none;
-      padding:10px 20px 10px 18px; border:1px solid var(--signal); color:var(--signal);
+    /* Store badges, compacted to bar scale from ../index.html's pattern. */
+    .store-badges { display:flex; flex-wrap:wrap; gap:8px; }
+    .store-badge { display:inline-flex; align-items:center; gap:9px; text-decoration:none;
+      padding:6px 13px 6px 11px; border:1px solid var(--signal); color:var(--signal);
       background:transparent; transition:background 0.3s ease, color 0.3s ease; }
-    .store-badge svg { width:20px; height:20px; flex:none; fill:currentColor; }
+    .store-badge svg { width:15px; height:15px; flex:none; fill:currentColor; }
     .store-badge .sb-text { display:flex; flex-direction:column; line-height:1.1; text-align:left; }
-    .store-badge .sb-top { font-family:var(--mono); font-weight:300; font-size:9px;
-      text-transform:uppercase; letter-spacing:0.14em; opacity:0.75; }
-    .store-badge .sb-name { font-family:var(--mono); font-size:14px; letter-spacing:0.03em; margin-top:3px; }
+    .store-badge .sb-top { font-family:var(--mono); font-weight:300; font-size:8px;
+      text-transform:uppercase; letter-spacing:0.12em; opacity:0.75; }
+    .store-badge .sb-name { font-family:var(--mono); font-size:11px; letter-spacing:0.03em; margin-top:2px; }
     .store-badge:hover, .store-badge:focus-visible { background:var(--signal); color:var(--void); }
     .store-badge.is-fill { background:var(--signal); color:var(--void); border-color:var(--signal); }
     .store-badge.is-fill:hover, .store-badge.is-fill:focus-visible { background:transparent; color:var(--signal); }
     .store-badge.is-soon { border-color:var(--line-strong); color:var(--text-faint);
       cursor:default; pointer-events:none; }
-    @media (max-width:768px){ .store-badges { gap:10px; } }
 
-    /* The incidents in text: always in the aside, so the record is readable
-       without WebGL, without a mouse, and to a screen reader. */
-    .incident-details { margin-top:18px; border-top:1px solid var(--line); padding-top:14px; }
+    .about-toggle {
+      cursor:pointer; background:var(--tint); color:var(--text-dim);
+      border:1px solid var(--line); border-radius:12px; padding:7px 15px;
+      font-family:var(--mono); font-weight:300; font-size:10px;
+      text-transform:uppercase; letter-spacing:0.1em;
+      transition:color 0.3s ease, border-color 0.3s ease;
+    }
+    .about-toggle:hover { color:var(--text); border-color:var(--line-strong); }
+    .about-toggle:focus-visible { outline:1px solid var(--signal); outline-offset:3px; }
+    .about-toggle[aria-expanded="true"] { color:var(--void); background:var(--signal); border-color:var(--signal); }
+
+    /* ---- Drawer: a bottom sheet over the bar -------------------------------- */
+    .drawer {
+      position:absolute; z-index:12; left:0; right:0; bottom:0;
+      max-height:min(72svh, 620px); overflow-y:auto;
+      background:var(--glass); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+      border-top:1px solid var(--line-strong);
+      padding:20px 20px 26px;
+    }
+    .drawer-inner { max-width:720px; margin:0 auto; }
+    .drawer-head { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:14px; }
+    .drawer-title {
+      font-family:var(--mono); font-weight:300; font-size:11px;
+      text-transform:uppercase; letter-spacing:0.12em; color:var(--text);
+    }
+    .drawer-close {
+      cursor:pointer; background:transparent; border:none; color:var(--text-dim);
+      font-family:var(--mono); font-weight:300; font-size:11px;
+      text-transform:uppercase; letter-spacing:0.1em; padding:4px 2px;
+      border-bottom:1px solid rgba(220,180,100,0.2);
+      transition:color 0.3s ease, border-color 0.3s ease;
+    }
+    .drawer-close:hover, .drawer-close:focus-visible { color:var(--signal); border-bottom-color:rgba(220,180,100,0.5); }
+    .drawer-close:focus-visible { outline:1px solid var(--signal); outline-offset:3px; }
+
+    .explain { list-style:none; }
+    .explain li {
+      display:flex; align-items:baseline; gap:11px; padding:8px 0;
+      font-family:var(--serif); font-size:15px; line-height:1.55; color:var(--text-dim);
+    }
+    .swatch { flex:none; width:18px; height:18px; align-self:center; }
+    .swatch-ring {
+      border:1px solid rgba(232,163,61,0.85); border-radius:50%;
+      width:12px; height:12px;
+    }
+    .swatch-recent { background:radial-gradient(circle, var(--map-amber) 0 6px, transparent 6px); }
+    .swatch-older { background:radial-gradient(circle, var(--map-amber-dim) 0 6px, transparent 6px); }
+    .swatch-wedge { background:rgba(232,163,61,0.4); clip-path:polygon(50% 4%, 90% 88%, 10% 88%); }
+    .explain-note {
+      font-family:var(--serif); font-size:14px; line-height:1.55; color:var(--text-dim);
+      border-top:1px solid var(--line); margin-top:12px; padding-top:12px;
+    }
+    .disclosure {
+      font-family:var(--mono); font-weight:300; font-size:10px; line-height:1.7;
+      letter-spacing:0.05em; color:var(--text-dim); margin-top:10px;
+    }
+
+    .incident-details { margin-top:16px; border-top:1px solid var(--line); padding-top:13px; }
     .incident-details summary {
       cursor:pointer; font-family:var(--mono); font-weight:300; font-size:10px;
       text-transform:uppercase; letter-spacing:0.1em; color:var(--text-dim);
@@ -238,16 +170,9 @@
     /* The UA ring is browser blue, the one colour this page does not own. */
     .incident-details summary:focus-visible { outline:1px solid var(--signal); outline-offset:3px; }
     .incident-details .incident-list { margin-top:4px; }
+    #curated-since { color:var(--signal); }
 
-    /* Disclosure and footer. The disclosure describes the live layer, so it
-       lives in the live group and app.js hides it whenever no snapshot is on
-       screen: a delay promise with nothing to promise about is a false claim. */
-    .disclosure {
-      border-top:1px solid var(--line); margin-top:16px; padding-top:14px;
-      font-family:var(--mono); font-weight:300; font-size:10px; line-height:1.7;
-      letter-spacing:0.05em; color:var(--text-faint);
-    }
-    .foot { display:flex; flex-wrap:wrap; gap:18px; }
+    .foot { display:flex; flex-wrap:wrap; gap:18px; border-top:1px solid var(--line); margin-top:18px; padding-top:14px; }
     .foot a {
       font-family:var(--mono); font-weight:300; font-size:10px;
       text-transform:uppercase; letter-spacing:0.1em; color:var(--text-dim);
@@ -265,6 +190,8 @@
     .maplibregl-ctrl-group button { background:transparent; }
     .maplibregl-ctrl-group button:hover { background:var(--tint); }
     .maplibregl-ctrl-group button .maplibregl-ctrl-icon { filter:invert(1) opacity(0.55); }
+    /* The bar owns the bottom edge, so MapLibre's attribution moves above it. */
+    .maplibregl-ctrl-bottom-right { bottom:52px; }
     .maplibregl-ctrl-attrib.maplibregl-compact {
       background:var(--glass); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
       border:1px solid var(--line); border-radius:0; box-shadow:none;
@@ -294,7 +221,7 @@
     .maplibregl-popup-anchor-left .maplibregl-popup-tip { border-right-color:var(--line-strong); }
     .maplibregl-popup-anchor-right .maplibregl-popup-tip { border-left-color:var(--line-strong); }
 
-    /* Popup and fallback-list body, both built by curated.js popupHtml. */
+    /* Popup and list body, both built by curated.js popupHtml. */
     .popup-date, .incident-list .popup-date {
       font-family:var(--mono); font-weight:300; font-size:10px;
       text-transform:uppercase; letter-spacing:0.12em; color:var(--signal); margin-bottom:6px;
@@ -313,92 +240,70 @@
     }
     .popup-source:hover, .popup-source:focus-visible { border-bottom-color:var(--signal); }
 
-    /* ---- Stacked ---------------------------------------------------------- */
-    @media (max-width:900px) {
-      body { height:auto; overflow:visible; overflow-x:clip; }
-      .top { padding:14px 18px; gap:14px; }
-      .head-text { gap:8px; }
-      .layout { grid-template-columns:minmax(0,1fr); }
-      .map-stage { height:62svh; }
-      .side { border-left:none; border-top:1px solid var(--line); overflow:visible; padding:22px 18px 34px; }
-      .live-notice { max-width:none; }
+    /* ---- Narrow ------------------------------------------------------------ */
+    @media (max-width:640px) {
+      .bar { gap:8px 14px; padding:9px 12px; }
+      .live-stats { flex-basis:100%; order:5; }
+      .maplibregl-ctrl-bottom-right { bottom:88px; }
     }
   </style>
 </head>
 <body>
-  <header class="top">
-    <a class="back" href="../">Drone Reporter</a>
-    <div class="head-text">
-      <h1 class="page-label">Drone activity map</h1>
-      <p class="tagline">Documented incidents across Europe, and live reports from the volunteer network.</p>
+  <main class="stage">
+    <div id="map" role="region" aria-label="Map of documented drone incidents and live crowd reports across Europe"></div>
+    <noscript>
+      <p>The map needs JavaScript to draw. Turn it on to see the documented incidents and live reports.</p>
+    </noscript>
+    <div id="map-fallback" class="map-fallback" hidden>
+      <p class="notice">The interactive map could not start in this browser. The documented incidents are listed below.</p>
+      <ol id="fallback-incident-list" class="incident-list"></ol>
     </div>
-  </header>
-  <main class="layout">
-    <section class="map-stage">
-      <div id="map" role="region" aria-label="Map of documented drone incidents and live crowd reports across Europe"></div>
-      <p id="live-notice" class="live-notice" role="status" hidden></p>
-      <noscript>
-        <p>The map needs JavaScript to draw. With JavaScript on, the Documented incidents panel lists every incident as text under "All documented incidents".</p>
-        <!-- Without scripts nothing fills that list, so the empty control goes
-             rather than opening onto nothing. -->
-        <style>.incident-details { display:none; }</style>
-      </noscript>
-      <div id="map-fallback" class="map-fallback" hidden>
-        <p class="notice">The interactive map could not start in this browser. The documented incidents are listed below.</p>
-        <ol id="fallback-incident-list" class="incident-list"></ol>
-      </div>
-    </section>
-    <aside class="side">
-      <section class="group" id="live-group" aria-labelledby="live-title">
-        <h2 class="group-title" id="live-title">Live crowd reports <span id="live-range-label"></span></h2>
-        <div id="stats-strip" class="stats-strip" hidden></div>
-        <fieldset class="range-control" id="range-control">
-          <legend class="visually-hidden">Time range for live reports</legend>
-          <!-- app.js fills: <label><input type="radio" name="range" value="24h">24 h</label> ... -->
-        </fieldset>
-        <ul class="legend-marks">
-          <li><span class="swatch swatch-dot"></span><b>Dot</b> A single report, which carries no direction.</li>
-          <li><span class="swatch swatch-cluster" aria-hidden="true">7</span><b>Cluster</b> Nearby cells grouped while zoomed out. The number counts reports.</li>
-          <li><span class="swatch swatch-wedge"></span><b>Wedge</b> Reports in this cell agree on a direction.</li>
-          <li><span class="swatch swatch-halo"></span><b>Halo</b> Reports disagree, so no direction is shown.</li>
-        </ul>
-        <p class="legend-hint">Direction marks appear when zoomed in.</p>
-        <div class="legend-scale">
-          <div class="legend-scale-head"><span>Recency</span><span id="legend-range">over 7 d</span></div>
-          <div class="legend-ramp" aria-hidden="true"></div>
-          <div class="legend-scale-ends"><span>newest</span><span>oldest in range</span></div>
+
+    <aside id="drawer" class="drawer" hidden aria-labelledby="drawer-title">
+      <div class="drawer-inner">
+        <div class="drawer-head">
+          <h2 class="drawer-title" id="drawer-title">About this map</h2>
+          <button type="button" class="drawer-close" id="drawer-close">Close</button>
         </div>
-        <p class="legend-note">The dot grows with the number of reports, not with certainty. It shows where reports came from, never where a drone was.</p>
+        <ul class="explain">
+          <!-- One text span per row: the li is a flex container, so a bare
+               inline element would become its own flex item and the row gap
+               would split the sentence. -->
+          <li><span class="swatch swatch-ring"></span><span>A ring is a documented incident, curated from public reporting <span id="curated-since">since 2018</span>. Tap one for the story and source.</span></li>
+          <li><span class="swatch swatch-recent"></span><span>A bright dot is a crowd report from the last 24 hours. Dots grow with the number of reports and group into larger circles when zoomed out.</span></li>
+          <li><span class="swatch swatch-older"></span><span>A dim dot is older than 24 hours.</span></li>
+          <li><span class="swatch swatch-wedge"></span><span>Zoomed in, a wedge shows the direction reports agree on; a faint halo means they disagree.</span></li>
+        </ul>
+        <p class="explain-note">A dot shows where reports came from, never where a drone was, and it grows with the number of reports, not with certainty. Drone Reporter is a volunteer network in beta, not an official or verified source.</p>
         <p class="disclosure" id="disclosure" hidden></p>
-      </section>
-      <section class="group" id="curated-group" aria-labelledby="curated-title">
-        <h2 class="group-title" id="curated-title">Documented incidents</h2>
-        <p class="group-sub"><span class="swatch swatch-ring"></span>Curated record <span id="curated-since">since 2018</span>. Not filtered by the time range. Tap a ring for the story and source.</p>
         <details class="incident-details">
           <summary>All documented incidents</summary>
           <ol id="incident-list" class="incident-list"></ol>
         </details>
-      </section>
-      <section class="group cta-group">
-        <h2 class="group-title">Seen a drone? Report it</h2>
-        <p class="group-sub">Drone Reporter is a volunteer network in beta. It is growing, and it is not an official or verified source.</p>
-        <div class="store-badges">
-          <a class="store-badge" href="https://testflight.apple.com/join/N7uHVQMd" target="_blank" rel="noopener" aria-label="Join the iPhone beta on TestFlight">
-            <svg viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
-            <span class="sb-text"><span class="sb-top">Beta on</span><span class="sb-name">TestFlight</span></span>
-          </a>
-          <span class="store-badge is-soon" aria-label="Android beta coming soon on Google Play">
-            <svg viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>
-            <span class="sb-text"><span class="sb-top">Coming soon</span><span class="sb-name">Google Play</span></span>
-          </span>
-        </div>
-      </section>
-      <footer class="foot">
-        <a href="../">Drone Reporter</a>
-        <a href="../privacy/">Privacy</a>
-        <a href="https://kinami.io/">kinami.io</a>
-      </footer>
+        <footer class="foot">
+          <a href="../">Drone Reporter</a>
+          <a href="../privacy/">Privacy</a>
+          <a href="https://kinami.io/">kinami.io</a>
+        </footer>
+      </div>
     </aside>
+
+    <footer class="bar">
+      <a class="brand" href="../">Drone Reporter</a>
+      <span class="live-stats" id="live-stats" hidden></span>
+      <span class="bar-spacer"></span>
+      <div class="store-badges">
+        <a class="store-badge is-fill" href="https://testflight.apple.com/join/N7uHVQMd" target="_blank" rel="noopener" aria-label="Join the iPhone beta on TestFlight">
+          <svg viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+          <span class="sb-text"><span class="sb-top">Beta on</span><span class="sb-name">TestFlight</span></span>
+        </a>
+        <span class="store-badge is-soon" aria-label="Android beta coming soon on Google Play">
+          <svg viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>
+          <span class="sb-text"><span class="sb-top">Coming soon</span><span class="sb-name">Google Play</span></span>
+        </span>
+      </div>
+      <button type="button" class="about-toggle" id="drawer-toggle" aria-expanded="false" aria-controls="drawer">About this map</button>
+    </footer>
   </main>
   <script type="module">
     /* MapLibre 6 publishes an ES module and no UMD bundle, so the global that

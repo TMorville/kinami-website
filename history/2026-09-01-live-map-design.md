@@ -270,7 +270,27 @@ its filename (e.g. `maplibre-gl-6.4.0.js`) with its license header retained.
 - Curated data stays in `assets/threat-data.json`; the map reads it
   relatively; the deck's copy remains a separate concern.
 
-## 11. Review trail
+## 11. Simplification (2026-09-02, user-directed, supersedes parts of §5-§7)
+
+Tobias reviewed the shipped page on the branch preview and directed a
+simplification. The map is now the whole page: no header, the map bleeds
+to every edge. A glass bottom bar carries the only chrome: a Drone
+Reporter back-link, a compact live-stats line (present only with a
+snapshot: counts plus "updated X ago"), the two store badges, and an
+"About this map" toggle. That toggle opens a bottom-sheet drawer holding
+the explainer (ring, bright dot, dim dot, wedge/halo), the honesty note,
+the derived disclosure line, the 43-incident list (the accessible path),
+and the footer links. Recency is TWO TONES, not a ramp: bright amber under
+24 h against generated_at, dim past it (`step` expression, RECENT_HOURS =
+24), applied to dots, clusters (via min_age_h) and marks alike. The
+time-range control, the window machinery, the recency scale, the legend
+groups, and every unavailable/loading notice are REMOVED: an empty live
+layer contributes nothing and says nothing; stats and disclosure simply
+absent until data exists. The state machine and its cliff are unchanged
+underneath; past the cliff the dots silently drop. Tests went 54 to 49
+with the deleted window features.
+
+## 12. Review trail
 
 Codex pass 2026-09-01 (10 min, gpt-5.6-sol). Accepted: CORS as a pinned
 deployment requirement; a map-runtime-unavailable state with a curated

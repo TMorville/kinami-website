@@ -319,50 +319,24 @@ export const CELL_SOURCE_OPTIONS = {
 };
 
 /**
- * The recency ramp, as a MapLibre expression over the precomputed `age_h`.
- *
- * The stops come in as an argument because the ramp is RESCALED TO THE ACTIVE
- * WINDOW, so this expression is rebuilt whenever the range or the replay marker
- * changes. Baking 24 h and 168 h in here is what made a 24 h window paint every
- * dot the same amber.
- *
- * Because of that, the drawn colour denotes no fixed age, and the active range
- * has to be named on screen. The legend carries it.
+ * Recency is two tones, not a ramp: bright amber under RECENT_HOURS, dim
+ * past it. A step reads at a glance and needs no on-screen scale; the
+ * continuous window-rescaled ramp it replaced needed a legend to be honest.
+ * Age is measured against the snapshot's own generated_at, so the boundary
+ * is a statement about the data, not the reader's clock.
  */
-export function recencyColour(palette, stops) {
-  // The two stops must stay strictly increasing: MapLibre rejects an
-  // interpolate whose inputs are equal, and a one-hour window makes them so.
-  const baseHours = Math.max(stops.baseHours, stops.fullHours + 1);
-  return [
-    "interpolate",
-    ["linear"],
-    ["get", "age_h"],
-    0,
-    palette.amber,
-    stops.fullHours,
-    palette.amber,
-    baseHours,
-    palette.amberDim,
-  ];
+export const RECENT_HOURS = 24;
+
+export function recencyColour(palette) {
+  return ["step", ["get", "age_h"], palette.amber, RECENT_HOURS, palette.amberDim];
 }
 
-/** The dots' ramp keyed on the cluster's freshest member. */
-export function clusterRecencyColour(palette, stops) {
-  const baseHours = Math.max(stops.baseHours, stops.fullHours + 1);
-  return [
-    "interpolate",
-    ["linear"],
-    ["get", "min_age_h"],
-    0,
-    palette.amber,
-    stops.fullHours,
-    palette.amber,
-    baseHours,
-    palette.amberDim,
-  ];
+/** The dots' two tones keyed on the cluster's freshest member. */
+export function clusterRecencyColour(palette) {
+  return ["step", ["get", "min_age_h"], palette.amber, RECENT_HOURS, palette.amberDim];
 }
 
-export function cellCirclePaint(palette, stops) {
+export function cellCirclePaint(palette) {
   return {
     "circle-radius": [
       "interpolate",
@@ -373,13 +347,13 @@ export function cellCirclePaint(palette, stops) {
       COUNT_AT_MAX_RADIUS,
       RADIUS_MAX_PX,
     ],
-    "circle-color": recencyColour(palette, stops),
+    "circle-color": recencyColour(palette),
     "circle-opacity": 0.85,
     "circle-blur": 0.2,
   };
 }
 
-export function clusterLayer(palette, stops) {
+export function clusterLayer(palette) {
   return {
     id: CLUSTER_LAYER_ID,
     type: "circle",
@@ -387,7 +361,7 @@ export function clusterLayer(palette, stops) {
     filter: ["has", "point_count"],
     paint: {
       "circle-radius": ["interpolate", ["linear"], ["get", "sum_count"], 2, 10, 50, 16, 500, 24],
-      "circle-color": clusterRecencyColour(palette, stops),
+      "circle-color": clusterRecencyColour(palette),
       "circle-opacity": 0.85,
       "circle-blur": 0.2,
     },
@@ -497,7 +471,7 @@ export function markIconSize() {
  * layers cull colliding labels by default, which would silently delete marks
  * from exactly the dense areas the map exists to show.
  */
-export function markLayer(palette, stops) {
+export function markLayer(palette) {
   return {
     id: MARK_LAYER_ID,
     type: "symbol",
@@ -519,8 +493,8 @@ export function markLayer(palette, stops) {
       "icon-ignore-placement": true,
     },
     paint: {
-      // Same ramp as the dots, which is the reason the icons are SDF.
-      "icon-color": recencyColour(palette, stops),
+      // Same two tones as the dots, which is the reason the icons are SDF.
+      "icon-color": recencyColour(palette),
       "icon-opacity": ["case", ["==", ["get", "mark"], "halo"], HALO_OPACITY, WEDGE_OPACITY],
     },
   };

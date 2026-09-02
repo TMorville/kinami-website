@@ -11,11 +11,9 @@ import {
   cellCirclePaint,
   clusterCountLayer,
   clusterLayer,
-  clusterRecencyColour,
   curatedRingLayer,
   markIcons,
   markLayer,
-  recencyColour,
 } from "./layers.js";
 
 function ensureSource(map, id, options, data) {
@@ -39,7 +37,7 @@ function ensureSource(map, id, options, data) {
  * Always pushing CURRENT data is what makes a restyle unable to lose it.
  */
 export function syncMap(map, renderState) {
-  const { palette, stops, cells, incidents } = renderState;
+  const { palette, cells, incidents } = renderState;
 
   // Hiding rather than filtering the style document: a future OpenFreeMap
   // revision renaming a layer must be a no-op here, not a throw.
@@ -59,23 +57,19 @@ export function syncMap(map, renderState) {
   // Rings, then clusters with their counts, then marks, then dots; marks
   // before dots so a dot draws over its own wedge apex.
   if (!map.getLayer(INCIDENT_LAYER_ID)) map.addLayer(curatedRingLayer(palette));
-  if (!map.getLayer(CLUSTER_LAYER_ID)) map.addLayer(clusterLayer(palette, stops));
+  if (!map.getLayer(CLUSTER_LAYER_ID)) map.addLayer(clusterLayer(palette));
   if (!map.getLayer(CLUSTER_COUNT_LAYER_ID)) map.addLayer(clusterCountLayer(palette));
-  if (!map.getLayer(MARK_LAYER_ID)) map.addLayer(markLayer(palette, stops));
+  if (!map.getLayer(MARK_LAYER_ID)) map.addLayer(markLayer(palette));
   if (!map.getLayer(CELL_LAYER_ID)) {
     map.addLayer({
       id: CELL_LAYER_ID,
       type: "circle",
       source: CELL_SOURCE_ID,
       filter: ["!", ["has", "point_count"]],
-      paint: cellCirclePaint(palette, stops),
+      paint: cellCirclePaint(palette),
     });
   }
-
-  // Paint refresh: the ramp is rescaled to the active window, so it changes
-  // without the layers changing.
-  const colour = recencyColour(palette, stops);
-  map.setPaintProperty(CELL_LAYER_ID, "circle-color", colour);
-  map.setPaintProperty(MARK_LAYER_ID, "icon-color", colour);
-  map.setPaintProperty(CLUSTER_LAYER_ID, "circle-color", clusterRecencyColour(palette, stops));
+  // Paint is static since the two-tone step (2026-09-02): the layers carry
+  // their colour at addLayer time, and a restyle re-adds them through the
+  // branch above. No per-sync paint refresh remains.
 }

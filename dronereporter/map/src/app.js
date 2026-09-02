@@ -1,14 +1,6 @@
 // dronereporter/map/src/app.js
 import { createSnapshotStore } from "./snapshot.js";
-import {
-  DEFAULT_RANGE,
-  TIME_RANGES,
-  cellsToGeoJSON,
-  collapseCells,
-  featuresInWindow,
-  rampStops,
-  timeWindowOf,
-} from "./cells.js";
+import { cellsToGeoJSON, collapseCells } from "./cells.js";
 import {
   BASEMAP_STYLE_URL,
   EUROPE_BOUNDS,
@@ -30,17 +22,12 @@ const el = (id) => document.getElementById(id);
 // ---- central render state; syncMap is its only consumer -------------------
 const renderState = {
   palette: readPalette(),
-  stops: rampStops({ startMs: 0, endMs: 3_600_000 }),
   cells: EMPTY,
   incidents: EMPTY,
 };
 
 let map = null;
 let mapReady = false;
-// Sticky: once the map runtime is gone the fallback panel owns the stage, and
-// no later snapshot state may put the live notice back on top of it.
-let runtimeUnavailable = false;
-let range = DEFAULT_RANGE;
 let snapshotState = { status: "loading" };
 let incidents = [];
 
@@ -49,16 +36,17 @@ function recompute() {
   const snapshot =
     snapshotState.status === "ok" || snapshotState.status === "stale" ? snapshotState.snapshot : null;
   if (!snapshot) {
+    // No snapshot, no live layer, no message about it. The curated record
+    // carries the map; the live dots appear the day the pipeline publishes.
     renderState.cells = EMPTY;
   } else {
-    const features = snapshot.reports.features;
-    const window = timeWindowOf(range, snapshot.manifest.generated_at, features);
-    renderState.stops = rampStops(window);
-    const visible = featuresInWindow(features, window);
-    renderState.cells = cellsToGeoJSON(collapseCells({ ...snapshot.reports, features: visible }), window);
+    renderState.cells = cellsToGeoJSON(
+      collapseCells(snapshot.reports),
+      snapshot.manifest.generated_at,
+    );
   }
   safeSync();
-  renderChrome(snapshot);
+  renderBar(snapshot);
 }
 
 /**
@@ -77,62 +65,28 @@ function safeSync() {
   }
 }
 
-// ---- chrome ---------------------------------------------------------------
-const NOTICE = {
-  loading: "Loading live reports.",
-  "never-loaded": "Live reports are not available right now. Documented incidents are shown.",
-  "too-old": "Live data is out of date and is not being shown. Documented incidents remain.",
-  "unsupported-schema": "This page needs updating before it can show live data. Please refresh.",
-};
-
-function renderChrome(snapshot) {
-  const notice = el("live-notice");
-  if (runtimeUnavailable) {
-    // There is no map under it to report on, and it would float over the
-    // fallback list.
-    notice.hidden = true;
-  } else if (snapshotState.status === "ok") {
-    notice.hidden = true;
-  } else if (snapshotState.status === "stale") {
-    notice.hidden = false;
-    notice.textContent = `Showing the last live data we could load, from ${relativeTime(
-      snapshot.manifest.generated_at,
-      Date.now(),
-    )}.`;
-  } else {
-    notice.hidden = false;
-    notice.textContent = NOTICE[snapshotState.reason ?? "loading"] ?? NOTICE.loading;
-  }
-
-  const strip = el("stats-strip");
+// ---- bottom bar and drawer ---------------------------------------------------
+function renderBar(snapshot) {
+  // The stats line is the live layer's entire on-map chrome. Without a
+  // snapshot it is absent, not apologising: an empty live layer makes no
+  // claim, so it needs no notice.
+  const stats = el("live-stats");
   if (snapshot) {
     const s = snapshot.stats;
-    strip.hidden = false;
-    strip.innerHTML = "";
-    for (const [value, label] of [
-      [s.reports_24h.toLocaleString("en"), "Last 24 hours"],
-      [s.reports_7d.toLocaleString("en"), "Last 7 days"],
-      [s.total_reports.toLocaleString("en"), "Reports all time"],
-      [relativeTime(snapshot.manifest.generated_at, Date.now()), "Updated"],
-    ]) {
-      const cell = document.createElement("div");
-      cell.className = "stat";
-      const v = document.createElement("span");
-      v.className = "stat-value";
-      v.textContent = value;
-      const l = document.createElement("span");
-      l.className = "stat-label";
-      l.textContent = label;
-      cell.append(v, l);
-      strip.append(cell);
-    }
+    stats.hidden = false;
+    stats.textContent =
+      `${s.reports_24h.toLocaleString("en")} reports last 24 h · ` +
+      `${s.reports_7d.toLocaleString("en")} last 7 d · ` +
+      `${s.total_reports.toLocaleString("en")} all time · ` +
+      `updated ${relativeTime(snapshot.manifest.generated_at, Date.now())}`;
   } else {
-    strip.hidden = true;
+    stats.hidden = true;
+    stats.textContent = "";
   }
 
   // The disclosure describes the live layer that is on screen. With no
-  // snapshot there is no delay to promise and nothing the promise covers, so
-  // the line goes away rather than asserting a figure from the markup.
+  // snapshot there is no delay to promise, so the line stays hidden rather
+  // than asserting a figure from the markup.
   const disclosure = el("disclosure");
   if (snapshot) {
     disclosure.hidden = false;
@@ -144,47 +98,37 @@ function renderChrome(snapshot) {
     disclosure.hidden = true;
     disclosure.textContent = "";
   }
-
-  // The range only reslices live reports. With no snapshot there is nothing to
-  // reslice, so the control is inoperable: leaving it live let a click fill a
-  // pill and move the legend to "over 24 h" while the heading still read
-  // "unavailable" and the map did not change.
-  el("range-control").disabled = !snapshot;
-
-  const active = TIME_RANGES.find((r) => r.key === range);
-  // "over All" reads wrong; the widest range names itself in time terms.
-  const rangeText = active.key === "all" ? "all time" : active.label;
-  el("legend-range").textContent = `over ${rangeText}`;
-  el("live-range-label").textContent =
-    snapshotState.status === "ok" || snapshotState.status === "stale" ? `· ${rangeText}` : "· unavailable";
 }
 
-// ---- controls ---------------------------------------------------------------
-function buildRangeControl() {
-  const holder = el("range-control");
-  for (const { key, label } of TIME_RANGES) {
-    const wrap = document.createElement("label");
-    wrap.className = "range-option";
-    const input = document.createElement("input");
-    input.type = "radio";
-    input.name = "range";
-    input.value = key;
-    input.checked = key === range;
-    input.addEventListener("change", () => {
-      range = key;
-      recompute();
-    });
-    wrap.append(input, document.createTextNode(label));
-    holder.append(wrap);
-  }
+function setupDrawer() {
+  const drawer = el("drawer");
+  const toggle = el("drawer-toggle");
+  const close = el("drawer-close");
+
+  const open = () => {
+    drawer.hidden = false;
+    toggle.setAttribute("aria-expanded", "true");
+    close.focus();
+  };
+  const shut = () => {
+    drawer.hidden = true;
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.focus();
+  };
+
+  toggle.addEventListener("click", () => (drawer.hidden ? open() : shut()));
+  close.addEventListener("click", shut);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !drawer.hidden) shut();
+  });
 }
 
 // ---- curated incident list ---------------------------------------------------
 /**
- * Two lists carry the same rows: the one in the aside, always present under a
- * collapsed disclosure, and the one in the fallback panel that replaces the
- * map when the runtime is gone. The aside copy is the reason the record is
- * reachable at all without WebGL, a pointer, or sighted map reading.
+ * Two lists carry the same rows: the one inside the drawer, always present
+ * under a collapsed disclosure, and the one in the fallback panel that
+ * replaces the map when the runtime is gone. The drawer copy is the reason
+ * the record is reachable without WebGL, a pointer, or sighted map reading.
  */
 function incidentLists() {
   return document.querySelectorAll(".incident-list");
@@ -218,9 +162,7 @@ function renderIncidentListFailure() {
 }
 
 function mapRuntimeUnavailable() {
-  runtimeUnavailable = true;
   el("map").hidden = true;
-  el("live-notice").hidden = true;
   el("map-fallback").hidden = false;
   renderIncidentList();
 }
@@ -302,7 +244,7 @@ function startMap() {
 }
 
 // ---- boot -------------------------------------------------------------------
-buildRangeControl();
+setupDrawer();
 startMap();
 
 fetch("../assets/threat-data.json")

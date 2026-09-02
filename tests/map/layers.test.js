@@ -14,6 +14,8 @@ import {
   markIconExpression,
   markIcons,
   markLayer,
+  RECENT_HOURS,
+  clusterRecencyColour,
   recencyColour,
   wedgeIcon,
   wedgeIconId,
@@ -30,10 +32,22 @@ test("bucket grid covers the clamp range and never widens a wedge", () => {
   assert.equal(bucketFor(MAX_HALF_ANGLE_DEG), MAX_HALF_ANGLE_DEG);
 });
 
-test("ramp stops stay strictly increasing in the paint expression", () => {
-  const colour = recencyColour(palette, { fullHours: 1, baseHours: 1 });
-  const stops = colour.slice(3); // [input, colour, input, colour, input, colour]
-  assert.ok(stops[2] < stops[4], "interpolate inputs must strictly increase");
+test("recency is a two-tone step at 24 h, for dots and clusters alike", () => {
+  assert.equal(RECENT_HOURS, 24);
+  assert.deepEqual(recencyColour(palette), [
+    "step",
+    ["get", "age_h"],
+    palette.amber,
+    RECENT_HOURS,
+    palette.amberDim,
+  ]);
+  assert.deepEqual(clusterRecencyColour(palette), [
+    "step",
+    ["get", "min_age_h"],
+    palette.amber,
+    RECENT_HOURS,
+    palette.amberDim,
+  ]);
 });
 
 test("icons are RGBA buffers with white colour channels (SDF)", () => {
@@ -57,7 +71,7 @@ test("a narrow wedge covers fewer pixels than a wide one", () => {
 });
 
 test("mark layer filters out 'none' and clusters, never culls overlapping icons", () => {
-  const layer = markLayer(palette, { fullHours: 24, baseHours: 168 });
+  const layer = markLayer(palette);
   assert.deepEqual(layer.filter, [
     "all",
     ["!", ["has", "point_count"]],
@@ -84,16 +98,16 @@ test("curated ring is hollow and the fallback style is a bare background", () =>
 });
 
 test("dot radius ramps count 1 to 50 into 4 to 14 px", () => {
-  const paint = cellCirclePaint(palette, { fullHours: 24, baseHours: 168 });
+  const paint = cellCirclePaint(palette);
   assert.deepEqual(paint["circle-radius"].slice(3), [1, 4, 50, 14]);
 });
 
 test("clusters aggregate report counts and freshest age, and never draw marks", () => {
   assert.deepEqual(CELL_SOURCE_OPTIONS.clusterProperties.sum_count, ["+", ["get", "count"]]);
   assert.deepEqual(CELL_SOURCE_OPTIONS.clusterProperties.min_age_h, ["min", ["get", "age_h"]]);
-  const cluster = clusterLayer(palette, { fullHours: 24, baseHours: 168 });
+  const cluster = clusterLayer(palette);
   assert.deepEqual(cluster.filter, ["has", "point_count"]);
-  const marks = markLayer(palette, { fullHours: 24, baseHours: 168 });
+  const marks = markLayer(palette);
   assert.deepEqual(marks.filter[1], ["!", ["has", "point_count"]]);
   const counts = clusterCountLayer(palette);
   assert.deepEqual(counts.filter, ["has", "point_count"]);
