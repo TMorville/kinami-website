@@ -257,6 +257,10 @@
       padding-bottom:2px; transition:border-color 0.3s ease;
     }
     .popup-source:hover, .popup-source:focus-visible { border-bottom-color:var(--signal); }
+    /* The UA ring is browser blue, the one colour this page does not own. */
+    .popup-source:focus-visible, .brand:focus-visible, .foot a:focus-visible {
+      outline:1px solid var(--signal); outline-offset:3px;
+    }
 
     /* ---- Narrow ------------------------------------------------------------ */
     @media (max-width:640px) {
