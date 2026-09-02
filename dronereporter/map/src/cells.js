@@ -82,26 +82,6 @@ export function ageHours(hourIso, refIso) {
   return Math.max(0, (Date.parse(refIso) - Date.parse(hourIso)) / HOUR_MS);
 }
 
-/** Human wording for a cell's age, from `age_h` (snapshot clock). */
-export function formatCellAge(ageH) {
-  if (ageH < 1) return "under 1 h ago";
-  if (ageH < 48) return `${Math.round(ageH)} h ago`;
-  return `${Math.round(ageH / 24)} d ago`;
-}
-
-/**
- * Popup body for a cell dot. Radius only hints at the count, so the click
- * states it. Inputs are the cell feature's own numeric properties; no user
- * text is interpolated, so no escaping is needed.
- */
-export function cellPopupHtml(props) {
-  const count = Number(props.count) || 0;
-  const age = formatCellAge(Number(props.age_h) || 0);
-  const label = count === 1 ? "1 report" : `${count} reports`;
-  const when = count === 1 ? age : `newest ${age}`;
-  return `<div class="popup-date">${when}</div><div class="popup-label">${label}</div>`;
-}
-
 /**
  * Projects cells into the GeoJSON MapLibre consumes, paint inputs
  * precomputed. `bearing` and `half_angle` are always present and `mark`

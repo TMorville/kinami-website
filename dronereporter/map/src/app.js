@@ -1,11 +1,8 @@
 // dronereporter/map/src/app.js
 import { createSnapshotStore } from "./snapshot.js";
-import { cellPopupHtml, cellsToGeoJSON, collapseCells } from "./cells.js";
+import { cellsToGeoJSON, collapseCells } from "./cells.js";
 import {
   BASEMAP_STYLE_URL,
-  CELL_LAYER_ID,
-  CELL_SOURCE_ID,
-  CLUSTER_LAYER_ID,
   EUROPE_BOUNDS,
   INCIDENT_GLOW_LAYER_ID,
   INCIDENT_LAYER_ID,
@@ -252,42 +249,8 @@ function startMap() {
     map.on("mouseenter", layerId, () => (map.getCanvas().style.cursor = "pointer"));
     map.on("mouseleave", layerId, () => (map.getCanvas().style.cursor = ""));
   }
-
-  // Curated incidents sit on top of live layers (Copenhagen: diamond over
-  // cluster). When both are under one click, the incident popup wins and
-  // the live-layer handler stands down.
-  const incidentUnder = (event) =>
-    map.queryRenderedFeatures(event.point, { layers: [INCIDENT_LAYER_ID, INCIDENT_GLOW_LAYER_ID] })
-      .length > 0;
-
-  // A numbered cluster reads as a button, so it behaves like one: click
-  // zooms to the level where the cluster breaks apart.
-  map.on("click", CLUSTER_LAYER_ID, async (event) => {
-    const feature = event.features?.[0];
-    if (!feature || incidentUnder(event)) return;
-    try {
-      const zoom = await map.getSource(CELL_SOURCE_ID).getClusterExpansionZoom(feature.properties.cluster_id);
-      map.easeTo({ center: feature.geometry.coordinates, zoom });
-    } catch {
-      // Source swapped mid-flight (restyle); the next click resolves fresh.
-    }
-  });
-
-  // A lone cell dot answers with its numbers: the count that its radius
-  // only hints at, and how fresh the newest report is.
-  map.on("click", CELL_LAYER_ID, (event) => {
-    const feature = event.features?.[0];
-    if (!feature || incidentUnder(event)) return;
-    popup
-      .setLngLat(feature.geometry.coordinates)
-      .setHTML(cellPopupHtml(feature.properties))
-      .addTo(map);
-  });
-
-  for (const layerId of [CLUSTER_LAYER_ID, CELL_LAYER_ID]) {
-    map.on("mouseenter", layerId, () => (map.getCanvas().style.cursor = "pointer"));
-    map.on("mouseleave", layerId, () => (map.getCanvas().style.cursor = ""));
-  }
+  // Live layers (dots, clusters) stay non-interactive by design: they are
+  // ambient signal, and the counts add nothing worth a tap.
 }
 
 // ---- boot -------------------------------------------------------------------
