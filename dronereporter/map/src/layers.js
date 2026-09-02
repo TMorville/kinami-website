@@ -311,7 +311,7 @@ export function readPalette(root = document.documentElement) {
   // yield empty strings and an invalid paint expression.
   return {
     amber: read("--map-amber", "#E8A33D"),
-    amberDim: read("--map-amber-dim", "#4a3a22"),
+    amberDim: read("--map-amber-dim", "#8a6b3a"),
     background: read("--map-bg", "#0A0907"),
   };
 }
@@ -371,6 +371,11 @@ export function cellCirclePaint(palette) {
     "circle-color": recencyColour(palette),
     "circle-opacity": 0.85,
     "circle-blur": 0.2,
+    // Visibility floor: a hairline amber rim keeps old (dim-filled) dots
+    // findable against the near-black basemap without reheating their fill.
+    "circle-stroke-width": 1,
+    "circle-stroke-color": palette.amber,
+    "circle-stroke-opacity": 0.35,
   };
 }
 
@@ -385,6 +390,9 @@ export function clusterLayer(palette) {
       "circle-color": clusterRecencyColour(palette),
       "circle-opacity": 0.85,
       "circle-blur": 0.2,
+      "circle-stroke-width": 1,
+      "circle-stroke-color": palette.amber,
+      "circle-stroke-opacity": 0.35,
     },
   };
 }

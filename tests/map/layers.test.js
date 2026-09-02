@@ -25,7 +25,7 @@ import {
 } from "../../dronereporter/map/src/layers.js";
 import { MAX_HALF_ANGLE_DEG, MIN_HALF_ANGLE_DEG } from "../../dronereporter/map/src/cells.js";
 
-const palette = { amber: "#E8A33D", amberDim: "#4a3a22", background: "#0A0907" };
+const palette = { amber: "#E8A33D", amberDim: "#8a6b3a", background: "#0A0907" };
 
 test("bucket grid covers the clamp range and never widens a wedge", () => {
   assert.equal(HALF_ANGLE_BUCKETS[0], MIN_HALF_ANGLE_DEG);
@@ -136,9 +136,9 @@ test("the diamond icon is a diamond, not a disc, and is registered", () => {
   assert.ok(markIcons().some((icon) => icon.id === INCIDENT_ICON_ID));
 });
 
-test("dot radius ramps count 1 to 50 into 4 to 14 px", () => {
+test("dot radius ramps count 1 to 50 into 5 to 14 px", () => {
   const paint = cellCirclePaint(palette);
-  assert.deepEqual(paint["circle-radius"].slice(3), [1, 4, 50, 14]);
+  assert.deepEqual(paint["circle-radius"].slice(3), [1, 5, 50, 14]);
 });
 
 test("clusters aggregate report counts and freshest age, and never draw marks", () => {

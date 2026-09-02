@@ -72,7 +72,7 @@ export function directionOf(cell) {
 }
 
 /** Size stops. Tuned visually once real data lands. */
-export const RADIUS_MIN_PX = 4;
+export const RADIUS_MIN_PX = 5;
 export const RADIUS_MAX_PX = 14;
 export const COUNT_AT_MIN_RADIUS = 1;
 export const COUNT_AT_MAX_RADIUS = 50;

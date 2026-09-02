@@ -49,7 +49,7 @@ const geo = (n) => ({
 });
 
 const rs = (cells, incidents) => ({
-  palette: { amber: "#E8A33D", amberDim: "#4a3a22", background: "#0A0907" },
+  palette: { amber: "#E8A33D", amberDim: "#8a6b3a", background: "#0A0907" },
   cells,
   incidents,
 });
