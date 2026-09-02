@@ -81,7 +81,7 @@
     #threat .threat-canvas { position:absolute; inset:0; width:100%; height:100%; z-index:1; display:block; }
     #threat .threat-box {
       position:absolute; z-index:3; left:8vw; top:50%; transform:translateY(-50%);
-      width:clamp(320px,34vw,440px); max-height:74vh; overflow-y:auto;
+      width:clamp(320px,34vw,440px); max-height:78vh; overflow-y:auto;
       background:rgba(12,10,4,0.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
       border:1px solid var(--line-strong); padding:32px;
     }
@@ -98,7 +98,8 @@
     #threat .threat-stat-value { display:block; font-family:var(--serif); font-weight:400; font-size:24px; line-height:1.1; color:var(--text); }
     #threat .threat-stat-label { display:block; font-family:var(--mono); font-weight:300; font-size:10px; line-height:1.5; letter-spacing:0.06em; color:var(--text-dim); margin-top:4px; }
     #threat .threat-stat:hover .threat-stat-value { color:var(--signal); }
-    #threat .threat-footline { font-family:var(--mono); font-weight:300; font-size:11px; letter-spacing:0.06em; color:var(--text-faint); margin:0; }
+    /* The one action on this view, sized like the hero's CTA. */
+    #threat .cta { margin-top:22px; font-size:13px; padding:16px 32px; }
     /* Fade the cut edge so a clipped panel reads as scrollable. Class set from threat-map.js,
        because the panel only overflows at some viewport heights and CSS cannot test for that. */
     #threat .threat-box.is-clipped { -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
@@ -201,7 +202,7 @@
       <h2>The sky over Europe is contested.</h2>
       <p>Since 2022, unidentified drones have shut airports and circled nuclear sites across Europe. The 2025 wave has not receded: in 2026 NATO jets downed four drones over Alliance soil.</p>
       <div class="threat-stats" id="threat-stats"></div>
-      <p class="threat-footline" id="threat-footline"></p>
+      <a class="cta" href="map/">Open the live map</a>
     </div>
   </section>
 

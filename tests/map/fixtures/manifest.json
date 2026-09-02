@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.1.0",
+  "snapshot_id": "dev-1",
+  "generated_at": "2026-09-02T09:18:22Z",
+  "cutoff_at": "2026-09-02T08:18:22Z",
+  "min_delay_minutes": 60,
+  "reports_url": "snapshots/dev-1/reports.json",
+  "stats_url": "snapshots/dev-1/stats.json"
+}

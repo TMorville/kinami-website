@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activity Map – Drone Reporter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../assets/logo/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/logo/apple-touch-icon.png">
+  <link rel="canonical" href="https://dronereporter.io/map/">
+  <meta property="og:title" content="Drone Activity Map">
+  <meta property="og:description" content="Documented drone incidents across Europe, and live crowd reports from the Drone Reporter network.">
+  <meta property="og:image" content="https://dronereporter.io/assets/logo/og.png">
+  <meta property="og:url" content="https://dronereporter.io/map/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://dronereporter.io/assets/logo/og.png">
+  <meta name="theme-color" content="#0A0907">
+  <link rel="stylesheet" href="vendor/maplibre-gl-6.6.0.css">
+  <style>
+    /* Tokens: copied from ../index.html :root, plus the three the map reads. */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --void:#0A0907; --panel:#12100B;
+      --text:#EDE7DA; --text-dim:#9A9180; --text-faint:rgba(237,231,218,0.40);
+      --line:rgba(220,180,100,0.10); --line-strong:rgba(220,180,100,0.24);
+      --signal:#E8A33D;
+      --serif:'Cormorant Infant', serif; --mono:'DM Mono', monospace;
+      --map-amber:#E8A33D; --map-amber-dim:#8a6b3a; --map-bg:#0A0907;
+      /* Depth is transparency, never shadow. */
+      --glass:rgba(12,10,4,0.78);
+      --whisper:rgba(220,180,100,0.06);
+      --tint:rgba(220,180,100,0.04);
+    }
+    body {
+      background:var(--void); color:var(--text); font-family:var(--serif);
+      height:100svh; overflow:hidden;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .visually-hidden {
+      position:absolute; width:1px; height:1px; margin:-1px; padding:0;
+      overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0;
+    }
+
+    /* ---- Stage: the map IS the page ---------------------------------------- */
+    .stage { position:fixed; inset:0; }
+    #map { position:absolute; inset:0; }
+    /* Back to the product page, mirroring MapLibre's control chrome so the
+       two corners read as one family. */
+    .map-back {
+      position:absolute; z-index:8; top:10px; left:10px;
+      display:flex; align-items:center; justify-content:center;
+      width:31px; height:31px; text-decoration:none;
+      background:var(--glass); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+      border:1px solid var(--line); color:var(--text-dim);
+      font-family:var(--mono); font-weight:300; font-size:15px; line-height:1;
+      transition:color 0.3s ease, background 0.3s ease;
+    }
+    .map-back:hover, .map-back:focus-visible { color:var(--signal); background:var(--tint); }
+    .map-back:focus-visible { outline:1px solid var(--signal); outline-offset:3px; }
+    .map-fallback {
+      position:absolute; z-index:6; inset:0; overflow-y:auto;
+      background:var(--void); padding:28px 26px 120px;
+    }
+    /* With scripts off the map cannot draw, so the stage says so instead of
+       sitting as an empty black rectangle. */
+    .stage noscript {
+      position:absolute; z-index:7; inset:0; display:block;
+      background:var(--void); padding:28px 26px;
+    }
+    .map-fallback .notice, .stage noscript p {
+      font-family:var(--mono); font-weight:300; font-size:11px; letter-spacing:0.06em;
+      line-height:1.6; color:var(--text-dim); max-width:60ch;
+      border-bottom:1px solid var(--line); padding-bottom:16px;
+    }
+    .incident-list { list-style:none; max-width:70ch; }
+    .incident-list li { border-bottom:1px solid var(--whisper); padding:16px 0; }
+
+    /* ---- Bottom bar --------------------------------------------------------- */
+    .bar {
+      position:absolute; z-index:10; left:0; right:0; bottom:0;
+      display:flex; align-items:center; gap:10px 22px; flex-wrap:wrap;
+      padding:10px 16px;
+      background:var(--glass); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+      border-top:1px solid var(--line);
+    }
+    .brand {
+      font-family:var(--mono); font-weight:300; font-size:11px;
+      text-transform:uppercase; letter-spacing:0.16em; color:var(--signal);
+      text-decoration:none; border-bottom:1px solid rgba(220,180,100,0.2);
+      padding-bottom:2px; transition:border-color 0.3s ease;
+    }
+    .brand:hover, .brand:focus-visible { border-bottom-color:rgba(220,180,100,0.5); }
+    .live-stats {
+      font-family:var(--mono); font-weight:300; font-size:10px;
+      letter-spacing:0.05em; color:var(--text-dim);
+    }
+    .bar-spacer { flex:1; }
+
+    /* Inline legend: swatch + label pairs at bar scale. */
+    .bar-legend { display:flex; align-items:center; gap:16px; list-style:none; }
+    .bar-legend li {
+      display:flex; align-items:center; gap:7px;
+      font-family:var(--mono); font-weight:300; font-size:10px;
+      letter-spacing:0.06em; color:var(--text-dim); white-space:nowrap;
+    }
+    /* Scoped under .bar-legend: the drawer defines same-named swatches at
+       its own larger scale further down. */
+    .bar-legend .swatch { width:14px; height:14px; flex:none; }
+    .bar-legend .swatch-bar-diamond {
+      background:var(--map-amber);
+      clip-path:polygon(50% 12%, 88% 50%, 50% 88%, 12% 50%);
+    }
+    .bar-legend .swatch-recent { background:radial-gradient(circle, var(--map-amber) 0 5px, transparent 5px); }
+    .bar-legend .swatch-older { background:radial-gradient(circle, var(--map-amber-dim) 0 5px, transparent 5px); }
+    .bar-legend .swatch-cluster {
+      display:inline-flex; align-items:center; justify-content:center;
+      border-radius:50%; background:var(--map-amber); color:var(--void);
+      font-family:var(--mono); font-size:8px; line-height:1;
+    }
+
+    /* Store badges, compacted to bar scale from ../index.html's pattern. */
+    .store-badges { display:flex; flex-wrap:wrap; gap:8px; }
+    .store-badge { display:inline-flex; align-items:center; gap:9px; text-decoration:none;
+      padding:6px 13px 6px 11px; border:1px solid var(--signal); color:var(--signal);
+      background:transparent; transition:background 0.3s ease, color 0.3s ease; }
+    .store-badge svg { width:15px; height:15px; flex:none; fill:currentColor; }
+    .store-badge .sb-text { display:flex; flex-direction:column; line-height:1.1; text-align:left; }
+    .store-badge .sb-top { font-family:var(--mono); font-weight:300; font-size:8px;
+      text-transform:uppercase; letter-spacing:0.12em; opacity:0.75; }
+    .store-badge .sb-name { font-family:var(--mono); font-size:11px; letter-spacing:0.03em; margin-top:2px; }
+    .store-badge:hover, .store-badge:focus-visible { background:var(--signal); color:var(--void); }
+    .store-badge.is-fill { background:var(--signal); color:var(--void); border-color:var(--signal); }
+    .store-badge.is-fill:hover, .store-badge.is-fill:focus-visible { background:transparent; color:var(--signal); }
+    .store-badge.is-soon { border-color:var(--line-strong); color:var(--text-faint);
+      cursor:default; pointer-events:none; }
+
+    .about-toggle {
+      cursor:pointer; background:var(--tint); color:var(--text-dim);
+      border:1px solid var(--line); border-radius:12px; padding:7px 15px;
+      font-family:var(--mono); font-weight:300; font-size:10px;
+      text-transform:uppercase; letter-spacing:0.1em;
+      transition:color 0.3s ease, border-color 0.3s ease;
+    }
+    .about-toggle:hover { color:var(--text); border-color:var(--line-strong); }
+    .about-toggle:focus-visible { outline:1px solid var(--signal); outline-offset:3px; }
+    .about-toggle[aria-expanded="true"] { color:var(--void); background:var(--signal); border-color:var(--signal); }
+
+    /* ---- Drawer: a bottom sheet over the bar -------------------------------- */
+    .drawer {
+      position:absolute; z-index:12; left:0; right:0; bottom:0;
+      max-height:min(72svh, 620px); overflow-y:auto;
+      background:var(--glass); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+      border-top:1px solid var(--line-strong);
+      padding:20px 20px 26px;
+    }
+    .drawer-inner { max-width:720px; margin:0 auto; }
+    .drawer-head { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:14px; }
+    .drawer-title {
+      font-family:var(--mono); font-weight:300; font-size:11px;
+      text-transform:uppercase; letter-spacing:0.12em; color:var(--text);
+    }
+    .drawer-close {
+      cursor:pointer; background:transparent; border:none; color:var(--text-dim);
+      font-family:var(--mono); font-weight:300; font-size:11px;
+      text-transform:uppercase; letter-spacing:0.1em; padding:4px 2px;
+      border-bottom:1px solid rgba(220,180,100,0.2);
+      transition:color 0.3s ease, border-color 0.3s ease;
+    }
+    .drawer-close:hover, .drawer-close:focus-visible { color:var(--signal); border-bottom-color:rgba(220,180,100,0.5); }
+    .drawer-close:focus-visible { outline:1px solid var(--signal); outline-offset:3px; }
+
+    .explain { list-style:none; }
+    .explain li {
+      display:flex; align-items:baseline; gap:11px; padding:8px 0;
+      font-family:var(--serif); font-size:15px; line-height:1.55; color:var(--text-dim);
+    }
+    .swatch { flex:none; width:18px; height:18px; align-self:center; }
+    /* The curated-incident swatch: the same diamond both maps draw. */
+    .swatch-incident {
+      background:var(--map-amber);
+      clip-path:polygon(50% 10%, 90% 50%, 50% 90%, 10% 50%);
+    }
+    .swatch-recent { background:radial-gradient(circle, var(--map-amber) 0 6px, transparent 6px); }
+    .swatch-older { background:radial-gradient(circle, var(--map-amber-dim) 0 6px, transparent 6px); }
+    .swatch-wedge { background:rgba(232,163,61,0.4); clip-path:polygon(50% 4%, 90% 88%, 10% 88%); }
+    .explain-note {
+      font-family:var(--serif); font-size:14px; line-height:1.55; color:var(--text-dim);
+      border-top:1px solid var(--line); margin-top:12px; padding-top:12px;
+    }
+    .disclosure {
+      font-family:var(--mono); font-weight:300; font-size:10px; line-height:1.7;
+      letter-spacing:0.05em; color:var(--text-dim); margin-top:10px;
+    }
+
+    .incident-details { margin-top:16px; border-top:1px solid var(--line); padding-top:13px; }
+    .incident-details summary {
+      cursor:pointer; font-family:var(--mono); font-weight:300; font-size:10px;
+      text-transform:uppercase; letter-spacing:0.1em; color:var(--text-dim);
+      transition:color 0.3s ease;
+    }
+    .incident-details summary:hover, .incident-details summary:focus-visible { color:var(--signal); }
+    /* The UA ring is browser blue, the one colour this page does not own. */
+    .incident-details summary:focus-visible { outline:1px solid var(--signal); outline-offset:3px; }
+    .incident-details .incident-list { margin-top:4px; }
+    #curated-since { color:var(--signal); }
+
+    .foot { display:flex; flex-wrap:wrap; gap:18px; border-top:1px solid var(--line); margin-top:18px; padding-top:14px; }
+    .foot a {
+      font-family:var(--mono); font-weight:300; font-size:10px;
+      text-transform:uppercase; letter-spacing:0.1em; color:var(--text-dim);
+      text-decoration:none; border-bottom:1px solid rgba(220,180,100,0.2);
+      padding-bottom:2px; transition:color 0.3s ease, border-color 0.3s ease;
+    }
+    .foot a:hover, .foot a:focus-visible { color:var(--signal); border-bottom-color:rgba(220,180,100,0.5); }
+
+    /* ---- MapLibre chrome, brought onto the palette ------------------------ */
+    .maplibregl-ctrl-group {
+      background:var(--glass); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+      border:1px solid var(--line); border-radius:0; box-shadow:none;
+    }
+    .maplibregl-ctrl-group button + button { border-top:1px solid var(--line); }
+    .maplibregl-ctrl-group button { background:transparent; }
+    .maplibregl-ctrl-group button:hover { background:var(--tint); }
+    .maplibregl-ctrl-group button .maplibregl-ctrl-icon { filter:invert(1) opacity(0.55); }
+    /* The bar owns the bottom edge, so MapLibre's attribution moves above it. */
+    .maplibregl-ctrl-bottom-right { bottom:52px; }
+    .maplibregl-ctrl-attrib.maplibregl-compact {
+      background:var(--glass); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+      border:1px solid var(--line); border-radius:0; box-shadow:none;
+    }
+    .maplibregl-ctrl-attrib, .maplibregl-ctrl-attrib-inner {
+      font-family:var(--mono); font-weight:300; font-size:10px; color:var(--text-faint);
+    }
+    .maplibregl-ctrl-attrib a { color:var(--text-dim); }
+    .maplibregl-ctrl-attrib-button { filter:invert(1) opacity(0.55); }
+
+    /* Popups: the same glass surface as everything else that floats. */
+    .maplibregl-popup-content {
+      background:var(--panel); color:var(--text); border:1px solid var(--line-strong);
+      border-radius:0; box-shadow:none; padding:15px 17px 16px; font-family:var(--serif);
+    }
+    .maplibregl-popup-close-button {
+      color:var(--text-dim); background:transparent; font-size:17px; padding:2px 7px 4px;
+      border-radius:0; transition:color 0.3s ease;
+    }
+    .maplibregl-popup-close-button:hover { color:var(--signal); background:transparent; }
+    .maplibregl-popup-anchor-top .maplibregl-popup-tip,
+    .maplibregl-popup-anchor-top-left .maplibregl-popup-tip,
+    .maplibregl-popup-anchor-top-right .maplibregl-popup-tip { border-bottom-color:var(--line-strong); }
+    .maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+    .maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,
+    .maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip { border-top-color:var(--line-strong); }
+    .maplibregl-popup-anchor-left .maplibregl-popup-tip { border-right-color:var(--line-strong); }
+    .maplibregl-popup-anchor-right .maplibregl-popup-tip { border-left-color:var(--line-strong); }
+
+    /* Popup and list body, both built by curated.js popupHtml. */
+    .popup-date, .incident-list .popup-date {
+      font-family:var(--mono); font-weight:300; font-size:10px;
+      text-transform:uppercase; letter-spacing:0.12em; color:var(--signal); margin-bottom:6px;
+    }
+    .popup-label, .incident-list .popup-label {
+      font-family:var(--serif); font-weight:400; font-size:19px; line-height:1.2; color:var(--text);
+    }
+    .popup-desc, .incident-list .popup-desc {
+      font-family:var(--serif); font-size:14px; line-height:1.5; color:var(--text-dim); margin-top:8px;
+    }
+    .popup-source, .incident-list .popup-source {
+      display:inline-block; margin-top:11px; font-family:var(--mono); font-weight:300;
+      font-size:10px; text-transform:uppercase; letter-spacing:0.12em; color:var(--signal);
+      text-decoration:none; border-bottom:1px solid rgba(220,180,100,0.3);
+      padding-bottom:2px; transition:border-color 0.3s ease;
+    }
+    .popup-source:hover, .popup-source:focus-visible { border-bottom-color:var(--signal); }
+    /* The UA ring is browser blue, the one colour this page does not own. */
+    .popup-source:focus-visible, .brand:focus-visible, .foot a:focus-visible {
+      outline:1px solid var(--signal); outline-offset:3px;
+    }
+
+    /* ---- Narrow ------------------------------------------------------------ */
+    @media (max-width:640px) {
+      .bar { gap:8px 14px; padding:9px 12px; }
+      .bar-legend { flex-basis:100%; order:4; }
+      .live-stats { flex-basis:100%; order:5; }
+      .maplibregl-ctrl-bottom-right { bottom:88px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <div id="map" role="region" aria-label="Map of documented drone incidents and live crowd reports across Europe"></div>
+    <a class="map-back" href="../" aria-label="Back to Drone Reporter"><span aria-hidden="true">&#8592;</span></a>
+    <noscript>
+      <p>The map needs JavaScript to draw. Turn it on to see the documented incidents and live reports.</p>
+    </noscript>
+    <div id="map-fallback" class="map-fallback" hidden>
+      <p class="notice">The interactive map could not start in this browser. The documented incidents are listed below.</p>
+      <ol id="fallback-incident-list" class="incident-list"></ol>
+    </div>
+
+    <aside id="drawer" class="drawer" hidden aria-labelledby="drawer-title">
+      <div class="drawer-inner">
+        <div class="drawer-head">
+          <h2 class="drawer-title" id="drawer-title">About this map</h2>
+          <button type="button" class="drawer-close" id="drawer-close">Close</button>
+        </div>
+        <ul class="explain">
+          <!-- One text span per row: the li is a flex container, so a bare
+               inline element would become its own flex item and the row gap
+               would split the sentence. -->
+          <li><span class="swatch swatch-incident"></span><span>A diamond is a documented incident, curated from public reporting <span id="curated-since">since 2018</span>. Tap one for the story and source.</span></li>
+          <li><span class="swatch swatch-recent"></span><span>A round dot is a live crowd report from the last 24 hours. Dots grow with the number of reports and group into numbered circles when zoomed out.</span></li>
+          <li><span class="swatch swatch-older"></span><span>A dim dot is older than 24 hours.</span></li>
+          <li><span class="swatch swatch-wedge"></span><span>Zoomed in, a wedge shows the direction reports agree on; a faint halo means they disagree.</span></li>
+        </ul>
+        <p class="explain-note">A dot shows where reports came from, never where a drone was, and it grows with the number of reports, not with certainty. Drone Reporter is a volunteer network in beta, not an official or verified source.</p>
+        <p class="disclosure" id="disclosure" hidden></p>
+        <details class="incident-details">
+          <summary>All documented incidents</summary>
+          <ol id="incident-list" class="incident-list"></ol>
+        </details>
+        <footer class="foot">
+          <a href="../">Drone Reporter</a>
+          <a href="../privacy/">Privacy</a>
+          <a href="https://kinami.io/">kinami.io</a>
+        </footer>
+      </div>
+    </aside>
+
+    <footer class="bar">
+      <a class="brand" href="../">Drone Reporter</a>
+      <ul class="bar-legend" aria-label="Map legend">
+        <li><span class="swatch swatch-bar-diamond" aria-hidden="true"></span>documented incident</li>
+        <li><span class="swatch swatch-recent" aria-hidden="true"></span>last 24 h</li>
+        <li><span class="swatch swatch-older" aria-hidden="true"></span>over 24 h</li>
+        <li><span class="swatch swatch-cluster" aria-hidden="true">7</span>grouped reports</li>
+      </ul>
+      <span class="live-stats" id="live-stats" hidden></span>
+      <span class="bar-spacer"></span>
+      <div class="store-badges">
+        <a class="store-badge is-fill" href="https://testflight.apple.com/join/N7uHVQMd" target="_blank" rel="noopener" aria-label="Join the iPhone beta on TestFlight">
+          <svg viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+          <span class="sb-text"><span class="sb-top">Beta on</span><span class="sb-name">TestFlight</span></span>
+        </a>
+        <span class="store-badge is-soon" aria-label="Android beta coming soon on Google Play">
+          <svg viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>
+          <span class="sb-text"><span class="sb-top">Coming soon</span><span class="sb-name">Google Play</span></span>
+        </span>
+      </div>
+      <button type="button" class="about-toggle" id="drawer-toggle" aria-expanded="false" aria-controls="drawer">About this map</button>
+    </footer>
+  </main>
+  <script type="module">
+    /* MapLibre 6 publishes an ES module and no UMD bundle, so the global that
+       app.js reads is set here rather than by a classic script tag. Non-async
+       module scripts evaluate in document order, so this always runs first. */
+    import * as maplibregl from "./vendor/maplibre-gl-6.6.0.mjs";
+    globalThis.maplibregl = maplibregl;
+  </script>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
