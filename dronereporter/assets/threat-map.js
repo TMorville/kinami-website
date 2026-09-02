@@ -253,17 +253,6 @@
     }
   }
 
-  function fillFootline() {
-    const el = document.getElementById('threat-footline');
-    if (!el || !data || !data.incidents) return;
-    const n = data.incidents.length;
-    const countries = new Set();
-    for (let i = 0; i < data.incidents.length; i++) {
-      if (data.incidents[i].country) countries.add(data.incidents[i].country);
-    }
-    el.textContent = n + ' reported incidents · ' + countries.size +
-      ' countries · every marker sourced';
-  }
 
   // --- Init ----------------------------------------------------------------
   function init() {
@@ -279,7 +268,6 @@
         geojson = res[0];
         data = res[1];
         fillStats();
-        fillFootline();
         resize();
       })
       .catch(function (err) {
