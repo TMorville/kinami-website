@@ -98,8 +98,9 @@
     #threat .threat-stat-value { display:block; font-family:var(--serif); font-weight:400; font-size:24px; line-height:1.1; color:var(--text); }
     #threat .threat-stat-label { display:block; font-family:var(--mono); font-weight:300; font-size:10px; line-height:1.5; letter-spacing:0.06em; color:var(--text-dim); margin-top:4px; }
     #threat .threat-stat:hover .threat-stat-value { color:var(--signal); }
-    /* The one action on this view, sized like the hero's CTA. */
-    #threat .cta { margin-top:22px; font-size:13px; padding:16px 32px; }
+    /* The one action on this view, sized like the hero's CTA. Sits directly
+       under the title so it never hides below the box's scroll fold. */
+    #threat .cta { margin:2px 0 26px; font-size:13px; padding:16px 32px; }
     /* Fade the cut edge so a clipped panel reads as scrollable. Class set from threat-map.js,
        because the panel only overflows at some viewport heights and CSS cannot test for that. */
     #threat .threat-box.is-clipped { -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
@@ -200,9 +201,9 @@
     <div class="threat-box">
       <div class="eyebrow">The threat</div>
       <h2>The sky over Europe is contested.</h2>
+      <a class="cta" href="map/">Open the live map</a>
       <p>Since 2022, unidentified drones have shut airports and circled nuclear sites across Europe. The 2025 wave has not receded: in 2026 NATO jets downed four drones over Alliance soil.</p>
       <div class="threat-stats" id="threat-stats"></div>
-      <a class="cta" href="map/">Open the live map</a>
     </div>
   </section>
 
