@@ -56,11 +56,10 @@ export function syncMap(map, renderState) {
   ensureSource(map, INCIDENT_SOURCE_ID, { type: "geojson" }, incidents);
   ensureSource(map, CELL_SOURCE_ID, CELL_SOURCE_OPTIONS, cells);
 
-  // Incident glow under its core, then clusters with their counts, then
-  // marks, then live dots; marks before dots so a dot draws over its own
-  // wedge apex.
-  if (!map.getLayer(INCIDENT_GLOW_LAYER_ID)) map.addLayer(curatedGlowLayer(palette));
-  if (!map.getLayer(INCIDENT_LAYER_ID)) map.addLayer(curatedDotLayer(palette));
+  // Live layers first — clusters with their counts, then marks, then dots
+  // (marks before dots so a dot draws over its own wedge apex) — and the
+  // curated incidents last, glow under core. Incidents are the interactive
+  // layer, so a live cluster must never paint over a diamond.
   if (!map.getLayer(CLUSTER_LAYER_ID)) map.addLayer(clusterLayer(palette));
   if (!map.getLayer(CLUSTER_COUNT_LAYER_ID)) map.addLayer(clusterCountLayer(palette));
   if (!map.getLayer(MARK_LAYER_ID)) map.addLayer(markLayer(palette));
@@ -73,6 +72,8 @@ export function syncMap(map, renderState) {
       paint: cellCirclePaint(palette),
     });
   }
+  if (!map.getLayer(INCIDENT_GLOW_LAYER_ID)) map.addLayer(curatedGlowLayer(palette));
+  if (!map.getLayer(INCIDENT_LAYER_ID)) map.addLayer(curatedDotLayer(palette));
   // Paint is static since the two-tone step (2026-09-02): the layers carry
   // their colour at addLayer time, and a restyle re-adds them through the
   // branch above. No per-sync paint refresh remains.

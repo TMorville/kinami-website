@@ -22,6 +22,9 @@ export function collapseCells(reports) {
     const [lon, lat] = feature.geometry.coordinates;
     const key = `${lon},${lat}`;
     const { hour, count, dir_x, dir_y } = feature.properties;
+    // A zero-count bucket is contract-valid but carries no reports; letting
+    // it through would paint a minimum-radius dot of apparent activity.
+    if (count === 0) continue;
     let cell = byCell.get(key);
     if (!cell) {
       cell = { lon, lat, count: 0, newestHour: hour, dirX: 0, dirY: 0, dirCount: 0 };

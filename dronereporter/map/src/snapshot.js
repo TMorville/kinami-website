@@ -187,7 +187,22 @@ export function createSnapshotStore({
       const snapshot = await fetcher(manifestUrl, { signal: ac.signal });
       if (mine !== epoch || destroyed) return;
       if (isTooOld(snapshot)) {
-        setState({ status: "unavailable", reason: "too-old" });
+        // A too-old publish (a stale edge, a producer rollback) must not
+        // blank a fresher snapshot already on screen.
+        if (lastGood && !isTooOld(lastGood)) {
+          setState({ status: "stale", snapshot: lastGood });
+        } else {
+          setState({ status: "unavailable", reason: "too-old" });
+        }
+        return;
+      }
+      if (
+        lastGood &&
+        Date.parse(snapshot.manifest.generated_at) < Date.parse(lastGood.manifest.generated_at)
+      ) {
+        // An edge served an older publish than the one on screen. Keep the
+        // newer; the next poll resolves forward.
+        setState({ status: "ok", snapshot: lastGood });
         return;
       }
       failures = 0;

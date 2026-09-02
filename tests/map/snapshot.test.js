@@ -246,3 +246,30 @@ test("store: destroy clears everything and ignores in-flight results", async (t)
   assert.equal(states.filter((s) => s.status === "ok").length, 0);
   t.after(() => {});
 });
+
+test("store: a too-old refetch keeps the fresher snapshot on screen as stale", async () => {
+  const fresh = goodSnapshot();
+  const old = goodSnapshot({ generated_at: "2026-08-01T10:00:00Z" });
+  let calls = 0;
+  const { store, states } = harness({ fetcher: async () => (++calls === 1 ? fresh : old) });
+  store.start();
+  await flush();
+  assert.equal(states.at(-1).status, "ok");
+  await store.load("poll");
+  assert.deepEqual(states.at(-1), { status: "stale", snapshot: fresh });
+  store.destroy();
+});
+
+test("store: an older-but-fresh refetch never replaces a newer snapshot", async () => {
+  const newer = goodSnapshot();
+  const older = goodSnapshot({ generated_at: "2026-09-01T08:00:00Z" });
+  let calls = 0;
+  const { store, states } = harness({ fetcher: async () => (++calls === 1 ? newer : older) });
+  store.start();
+  await flush();
+  await store.load("poll");
+  const last = states.at(-1);
+  assert.equal(last.status, "ok");
+  assert.equal(last.snapshot.manifest.generated_at, GEN);
+  store.destroy();
+});

@@ -86,3 +86,15 @@ test("cellsToGeoJSON measures age against generated_at and discriminates marks",
   assert.equal(geo.features[1].properties.age_h, 1);
 });
 
+
+test("zero-count buckets are dropped, never painted as activity", () => {
+  const cells = collapseCells({
+    features: [
+      { type: "Feature", geometry: { type: "Point", coordinates: [12.575, 55.685] }, properties: { hour: "2026-09-01T08:00:00Z", count: 0 } },
+      { type: "Feature", geometry: { type: "Point", coordinates: [10.005, 56.005] }, properties: { hour: "2026-09-01T08:00:00Z", count: 0 } },
+      { type: "Feature", geometry: { type: "Point", coordinates: [10.005, 56.005] }, properties: { hour: "2026-09-01T09:00:00Z", count: 2 } },
+    ],
+  });
+  assert.equal(cells.length, 1);
+  assert.equal(cells[0].count, 2);
+});

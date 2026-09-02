@@ -60,16 +60,17 @@ test("first sync creates icons, both sources with data, and layers in order", ()
   assert.ok(map.images.size > 0);
   assert.equal(map.sources.get(CELL_SOURCE_ID).data.features.length, 2);
   assert.equal(map.sources.get(INCIDENT_SOURCE_ID).data.features.length, 3);
-  // Incident glow under its core, clusters, cluster counts, marks, live dots.
+  // Live layers first, curated incidents on top (glow under core): the
+  // interactive diamonds must never be painted over by a cluster.
   assert.deepEqual(
     map.layers.map((l) => l.id),
     [
-      INCIDENT_GLOW_LAYER_ID,
-      INCIDENT_LAYER_ID,
       CLUSTER_LAYER_ID,
       CLUSTER_COUNT_LAYER_ID,
       MARK_LAYER_ID,
       CELL_LAYER_ID,
+      INCIDENT_GLOW_LAYER_ID,
+      INCIDENT_LAYER_ID,
     ],
   );
   // The cells source carries the cluster options.
