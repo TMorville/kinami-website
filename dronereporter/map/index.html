@@ -87,6 +87,24 @@
     }
     .bar-spacer { flex:1; }
 
+    /* Inline legend: swatch + label pairs at bar scale. */
+    .bar-legend { display:flex; align-items:center; gap:16px; list-style:none; }
+    .bar-legend li {
+      display:flex; align-items:center; gap:7px;
+      font-family:var(--mono); font-weight:300; font-size:10px;
+      letter-spacing:0.06em; color:var(--text-dim); white-space:nowrap;
+    }
+    /* Scoped under .bar-legend: the drawer defines same-named swatches at
+       its own larger scale further down. */
+    .bar-legend .swatch { width:14px; height:14px; flex:none; }
+    .bar-legend .swatch-recent { background:radial-gradient(circle, var(--map-amber) 0 5px, transparent 5px); }
+    .bar-legend .swatch-older { background:radial-gradient(circle, var(--map-amber-dim) 0 5px, transparent 5px); }
+    .bar-legend .swatch-cluster {
+      display:inline-flex; align-items:center; justify-content:center;
+      border-radius:50%; background:var(--map-amber); color:var(--void);
+      font-family:var(--mono); font-size:8px; line-height:1;
+    }
+
     /* Store badges, compacted to bar scale from ../index.html's pattern. */
     .store-badges { display:flex; flex-wrap:wrap; gap:8px; }
     .store-badge { display:inline-flex; align-items:center; gap:9px; text-decoration:none;
@@ -243,6 +261,7 @@
     /* ---- Narrow ------------------------------------------------------------ */
     @media (max-width:640px) {
       .bar { gap:8px 14px; padding:9px 12px; }
+      .bar-legend { flex-basis:100%; order:4; }
       .live-stats { flex-basis:100%; order:5; }
       .maplibregl-ctrl-bottom-right { bottom:88px; }
     }
@@ -290,6 +309,11 @@
 
     <footer class="bar">
       <a class="brand" href="../">Drone Reporter</a>
+      <ul class="bar-legend" aria-label="Map legend">
+        <li><span class="swatch swatch-recent" aria-hidden="true"></span>last 24 h</li>
+        <li><span class="swatch swatch-older" aria-hidden="true"></span>older</li>
+        <li><span class="swatch swatch-cluster" aria-hidden="true">7</span>grouped reports</li>
+      </ul>
       <span class="live-stats" id="live-stats" hidden></span>
       <span class="bar-spacer"></span>
       <div class="store-badges">
