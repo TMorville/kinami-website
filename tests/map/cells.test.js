@@ -6,7 +6,9 @@ import {
   MAX_HALF_ANGLE_DEG,
   MIN_HALF_ANGLE_DEG,
   ageHours,
+  cellPopupHtml,
   cellsToGeoJSON,
+  formatCellAge,
   collapseCells,
   directionOf,
 } from "../../dronereporter/map/src/cells.js";
@@ -84,4 +86,22 @@ test("cellsToGeoJSON measures age against generated_at and discriminates marks",
   assert.equal(geo.features[1].properties.mark, "none");
   assert.equal(geo.features[1].properties.bearing, 0);
   assert.equal(geo.features[1].properties.age_h, 1);
+});
+
+test("cell age wording: hours under two days, days after, floor at under 1 h", () => {
+  assert.equal(formatCellAge(0.4), "under 1 h ago");
+  assert.equal(formatCellAge(5.4), "5 h ago");
+  assert.equal(formatCellAge(47.4), "47 h ago");
+  assert.equal(formatCellAge(120), "5 d ago");
+});
+
+test("cell popup states the count its radius only hints at", () => {
+  assert.equal(
+    cellPopupHtml({ count: 1, age_h: 120 }),
+    '<div class="popup-date">5 d ago</div><div class="popup-label">1 report</div>',
+  );
+  assert.equal(
+    cellPopupHtml({ count: 3, age_h: 5 }),
+    '<div class="popup-date">newest 5 h ago</div><div class="popup-label">3 reports</div>',
+  );
 });
