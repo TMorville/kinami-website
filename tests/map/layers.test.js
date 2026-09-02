@@ -10,7 +10,9 @@ import {
   clusterLayer,
   curatedDotLayer,
   curatedGlowLayer,
+  diamondIcon,
   fallbackStyle,
+  INCIDENT_ICON_ID,
   haloIcon,
   markIconExpression,
   markIcons,
@@ -89,22 +91,49 @@ test("mark icon expression names the halo and every wedge bucket", () => {
   for (const angle of HALF_ANGLE_BUCKETS) assert.ok(expr.includes(wedgeIconId(angle)));
 });
 
-test("curated dots mirror the threat map: sized by category, crisp core over glow", () => {
+test("curated incidents are diamonds over a circular glow, sized by category", () => {
   const core = curatedDotLayer(palette);
-  // 4 px for an airport closure, 3 px otherwise, as threat-map.js draws.
-  assert.deepEqual(core.paint["circle-radius"], [
+  assert.equal(core.type, "symbol");
+  assert.equal(core.layout["icon-image"], INCIDENT_ICON_ID);
+  // Airport closures draw a touch larger, carrying the threat map's split.
+  assert.deepEqual(core.layout["icon-size"], [
     "case",
     ["==", ["get", "category"], "airport-closure"],
-    4,
-    3,
+    1,
+    0.8,
   ]);
-  assert.equal(core.paint["circle-color"], palette.amber);
+  assert.equal(core.layout["icon-allow-overlap"], true);
+  assert.equal(core.layout["icon-ignore-placement"], true);
+  assert.equal(core.paint["icon-color"], palette.amber);
   const glow = curatedGlowLayer(palette);
+  assert.equal(glow.type, "circle");
   assert.equal(glow.paint["circle-blur"], 1);
   assert.ok(glow.paint["circle-opacity"] < 1);
   const style = fallbackStyle(palette);
   assert.equal(style.layers.length, 1);
   assert.equal(style.layers[0].type, "background");
+});
+
+test("the diamond icon is a diamond, not a disc, and is registered", () => {
+  const inked = (image) => {
+    let n = 0;
+    for (let i = 3; i < image.data.length; i += 4) if (image.data[i] >= 192) n += 1;
+    return n;
+  };
+  // The L1 ball is a strict subset of the disc with the same radius.
+  const diamond = diamondIcon(6);
+  const disc = haloIcon(6);
+  assert.equal(diamond.width, disc.width);
+  assert.ok(inked(diamond) < inked(disc), `${inked(diamond)} vs ${inked(disc)}`);
+  assert.ok(inked(diamond) > 0);
+  // The discriminating pixel: (3.5, 3.5) from centre has |x|+|y| = 7 > 6,
+  // outside the diamond, while hypot = 4.95 < 6 keeps it inside the disc.
+  const size = diamond.width;
+  const centre = size / 2;
+  const idx = ((centre - 4) * size + centre + 3) * 4 + 3;
+  assert.ok(diamond.data[idx] < 192, "corner pixel must be outside the diamond");
+  assert.ok(disc.data[idx] >= 192, "corner pixel must be inside the disc");
+  assert.ok(markIcons().some((icon) => icon.id === INCIDENT_ICON_ID));
 });
 
 test("dot radius ramps count 1 to 50 into 4 to 14 px", () => {

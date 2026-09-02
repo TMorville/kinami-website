@@ -84,25 +84,35 @@
     for (let i = 0; i < incidents.length; i++) {
       const inc = incidents[i];
       const p = project(inc.lng, inc.lat);
-      const core = inc.category === 'airport-closure' ? 4 : 3;
+      // A diamond, not a dot: documented incidents keep their own form so
+      // they can never be confused with the live map's circular crowd
+      // reports. Half-diagonal 5 px for an airport closure, 4 px otherwise.
+      const r = inc.category === 'airport-closure' ? 5 : 4;
+
+      function diamondPath() {
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y - r);
+        ctx.lineTo(p.x + r, p.y);
+        ctx.lineTo(p.x, p.y + r);
+        ctx.lineTo(p.x - r, p.y);
+        ctx.closePath();
+      }
 
       // Soft amber glow
       ctx.save();
       ctx.shadowColor = 'rgba(232,163,61,0.9)';
       ctx.shadowBlur = 10;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, core, 0, Math.PI * 2);
+      diamondPath();
       ctx.fillStyle = SIGNAL;
       ctx.fill();
       ctx.restore();
 
-      // Solid core dot (no shadow, crisp)
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, core, 0, Math.PI * 2);
+      // Solid core (no shadow, crisp)
+      diamondPath();
       ctx.fillStyle = SIGNAL;
       ctx.fill();
 
-      markers.push({ x: p.x, y: p.y, r: core, incident: inc });
+      markers.push({ x: p.x, y: p.y, r: r, incident: inc });
     }
   }
 

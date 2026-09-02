@@ -110,6 +110,10 @@
     /* Scoped under .bar-legend: the drawer defines same-named swatches at
        its own larger scale further down. */
     .bar-legend .swatch { width:14px; height:14px; flex:none; }
+    .bar-legend .swatch-bar-diamond {
+      background:var(--map-amber);
+      clip-path:polygon(50% 12%, 88% 50%, 50% 88%, 12% 50%);
+    }
     .bar-legend .swatch-recent { background:radial-gradient(circle, var(--map-amber) 0 5px, transparent 5px); }
     .bar-legend .swatch-older { background:radial-gradient(circle, var(--map-amber-dim) 0 5px, transparent 5px); }
     .bar-legend .swatch-cluster {
@@ -175,9 +179,11 @@
       font-family:var(--serif); font-size:15px; line-height:1.55; color:var(--text-dim);
     }
     .swatch { flex:none; width:18px; height:18px; align-self:center; }
-    /* The curated-incident swatch: a crisp core in a soft glow, the same dot
-       the threat map draws. */
-    .swatch-incident { background:radial-gradient(circle, var(--map-amber) 0 4px, rgba(232,163,61,0.3) 4px 8px, transparent 8px); }
+    /* The curated-incident swatch: the same diamond both maps draw. */
+    .swatch-incident {
+      background:var(--map-amber);
+      clip-path:polygon(50% 10%, 90% 50%, 50% 90%, 10% 50%);
+    }
     .swatch-recent { background:radial-gradient(circle, var(--map-amber) 0 6px, transparent 6px); }
     .swatch-older { background:radial-gradient(circle, var(--map-amber-dim) 0 6px, transparent 6px); }
     .swatch-wedge { background:rgba(232,163,61,0.4); clip-path:polygon(50% 4%, 90% 88%, 10% 88%); }
@@ -305,8 +311,8 @@
           <!-- One text span per row: the li is a flex container, so a bare
                inline element would become its own flex item and the row gap
                would split the sentence. -->
-          <li><span class="swatch swatch-incident"></span><span>A dot with a soft glow is a documented incident, curated from public reporting <span id="curated-since">since 2018</span>. Tap one for the story and source.</span></li>
-          <li><span class="swatch swatch-recent"></span><span>A plain bright dot is a live crowd report from the last 24 hours. Dots grow with the number of reports and group into numbered circles when zoomed out.</span></li>
+          <li><span class="swatch swatch-incident"></span><span>A diamond is a documented incident, curated from public reporting <span id="curated-since">since 2018</span>. Tap one for the story and source.</span></li>
+          <li><span class="swatch swatch-recent"></span><span>A round dot is a live crowd report from the last 24 hours. Dots grow with the number of reports and group into numbered circles when zoomed out.</span></li>
           <li><span class="swatch swatch-older"></span><span>A dim dot is older than 24 hours.</span></li>
           <li><span class="swatch swatch-wedge"></span><span>Zoomed in, a wedge shows the direction reports agree on; a faint halo means they disagree.</span></li>
         </ul>
@@ -327,6 +333,7 @@
     <footer class="bar">
       <a class="brand" href="../">Drone Reporter</a>
       <ul class="bar-legend" aria-label="Map legend">
+        <li><span class="swatch swatch-bar-diamond" aria-hidden="true"></span>documented incident</li>
         <li><span class="swatch swatch-recent" aria-hidden="true"></span>last 24 h</li>
         <li><span class="swatch swatch-older" aria-hidden="true"></span>older</li>
         <li><span class="swatch swatch-cluster" aria-hidden="true">7</span>grouped reports</li>

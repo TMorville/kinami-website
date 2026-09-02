@@ -188,10 +188,30 @@ export function haloIcon(radiusPx = HALO_RADIUS_PX) {
   return rasterize(size, (x, y) => radiusPx - Math.hypot(x, y));
 }
 
-/** Every icon the mark layer can name, ready for `addImage`. */
+export const INCIDENT_ICON_ID = "incident-diamond";
+
+/**
+ * Half-diagonal of the incident diamond at icon-size 1, in screen pixels.
+ * Sized so a scraped event never reads as a live observation: live reports
+ * are circles, documented incidents are diamonds, on both of the site's
+ * maps.
+ */
+export const INCIDENT_DIAMOND_PX = 6;
+
+/**
+ * A filled diamond: the L1 ball, so the signed distance is
+ * (|x| + |y| - r) / sqrt(2), negated to make inside positive.
+ */
+export function diamondIcon(halfDiagPx = INCIDENT_DIAMOND_PX) {
+  const size = 2 * (halfDiagPx + PAD_PX);
+  return rasterize(size, (x, y) => (halfDiagPx - (Math.abs(x) + Math.abs(y))) * Math.SQRT1_2);
+}
+
+/** Every icon a symbol layer can name, ready for `addImage`. */
 export function markIcons() {
   return [
     { id: HALO_ICON_ID, image: haloIcon() },
+    { id: INCIDENT_ICON_ID, image: diamondIcon() },
     ...HALF_ANGLE_BUCKETS.map((angle) => ({
       id: wedgeIconId(angle),
       image: wedgeIcon(angle),
@@ -386,13 +406,15 @@ export function clusterCountLayer(palette) {
 }
 
 /**
- * The curated incidents, drawn to mirror the product page's threat map
- * (user decision 2026-09-02, superseding the hollow rings): a crisp amber
- * core, 4 px for an airport closure and 3 px otherwise, over a soft glow.
- * The threat map paints the glow with a canvas shadow; here it is a second,
- * blurred circle layer underneath, which is the MapLibre equivalent.
+ * The curated incidents: DIAMONDS, so a scraped event can never be misread
+ * as a live observation from the backend, which is always a circle (dot or
+ * cluster). User decision 2026-09-02, superseding the mirrored dots from
+ * earlier the same day; the product page's threat map draws the same
+ * diamond. The soft glow underneath stays circular: it is light, and light
+ * spreads round. An airport closure draws a touch larger than the rest,
+ * carrying over the threat map's 4:3 size split.
  */
-const INCIDENT_CORE_RADIUS = ["case", ["==", ["get", "category"], "airport-closure"], 4, 3];
+const INCIDENT_ICON_SIZE = ["case", ["==", ["get", "category"], "airport-closure"], 1, 0.8];
 
 export function curatedGlowLayer(palette) {
   return {
@@ -411,12 +433,19 @@ export function curatedGlowLayer(palette) {
 export function curatedDotLayer(palette) {
   return {
     id: INCIDENT_LAYER_ID,
-    type: "circle",
+    type: "symbol",
     source: INCIDENT_SOURCE_ID,
+    layout: {
+      "icon-image": INCIDENT_ICON_ID,
+      "icon-size": INCIDENT_ICON_SIZE,
+      // Symbol layers cull colliding icons by default; a dense incident
+      // corridor must not silently lose events.
+      "icon-allow-overlap": true,
+      "icon-ignore-placement": true,
+    },
     paint: {
-      "circle-radius": INCIDENT_CORE_RADIUS,
-      "circle-color": palette.amber,
-      "circle-opacity": 1,
+      "icon-color": palette.amber,
+      "icon-opacity": 1,
     },
   };
 }
