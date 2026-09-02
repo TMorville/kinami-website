@@ -42,6 +42,8 @@ test("GeoJSON projection carries the popup fields", () => {
   const geo = incidentsToGeoJSON([incident()]);
   assert.deepEqual(geo.features[0].geometry.coordinates, [12.5, 55.6]);
   assert.equal(geo.features[0].properties.label, "Test Airport");
+  // The dot layers size the core by category, mirroring the threat map.
+  assert.equal(geo.features[0].properties.category, "airport-closure");
   assert.equal(geo.features[0].properties.date, "2025-09-24");
 });
 

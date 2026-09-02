@@ -48,6 +48,19 @@
     /* ---- Stage: the map IS the page ---------------------------------------- */
     .stage { position:fixed; inset:0; }
     #map { position:absolute; inset:0; }
+    /* Back to the product page, mirroring MapLibre's control chrome so the
+       two corners read as one family. */
+    .map-back {
+      position:absolute; z-index:8; top:10px; left:10px;
+      display:flex; align-items:center; justify-content:center;
+      width:31px; height:31px; text-decoration:none;
+      background:var(--glass); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+      border:1px solid var(--line); color:var(--text-dim);
+      font-family:var(--mono); font-weight:300; font-size:15px; line-height:1;
+      transition:color 0.3s ease, background 0.3s ease;
+    }
+    .map-back:hover, .map-back:focus-visible { color:var(--signal); background:var(--tint); }
+    .map-back:focus-visible { outline:1px solid var(--signal); outline-offset:3px; }
     .map-fallback {
       position:absolute; z-index:6; inset:0; overflow-y:auto;
       background:var(--void); padding:28px 26px 120px;
@@ -162,10 +175,9 @@
       font-family:var(--serif); font-size:15px; line-height:1.55; color:var(--text-dim);
     }
     .swatch { flex:none; width:18px; height:18px; align-self:center; }
-    .swatch-ring {
-      border:1px solid rgba(232,163,61,0.85); border-radius:50%;
-      width:12px; height:12px;
-    }
+    /* The curated-incident swatch: a crisp core in a soft glow, the same dot
+       the threat map draws. */
+    .swatch-incident { background:radial-gradient(circle, var(--map-amber) 0 4px, rgba(232,163,61,0.3) 4px 8px, transparent 8px); }
     .swatch-recent { background:radial-gradient(circle, var(--map-amber) 0 6px, transparent 6px); }
     .swatch-older { background:radial-gradient(circle, var(--map-amber-dim) 0 6px, transparent 6px); }
     .swatch-wedge { background:rgba(232,163,61,0.4); clip-path:polygon(50% 4%, 90% 88%, 10% 88%); }
@@ -274,6 +286,7 @@
 <body>
   <main class="stage">
     <div id="map" role="region" aria-label="Map of documented drone incidents and live crowd reports across Europe"></div>
+    <a class="map-back" href="../" aria-label="Back to Drone Reporter"><span aria-hidden="true">&#8592;</span></a>
     <noscript>
       <p>The map needs JavaScript to draw. Turn it on to see the documented incidents and live reports.</p>
     </noscript>
@@ -292,8 +305,8 @@
           <!-- One text span per row: the li is a flex container, so a bare
                inline element would become its own flex item and the row gap
                would split the sentence. -->
-          <li><span class="swatch swatch-ring"></span><span>A ring is a documented incident, curated from public reporting <span id="curated-since">since 2018</span>. Tap one for the story and source.</span></li>
-          <li><span class="swatch swatch-recent"></span><span>A bright dot is a crowd report from the last 24 hours. Dots grow with the number of reports and group into larger circles when zoomed out.</span></li>
+          <li><span class="swatch swatch-incident"></span><span>A dot with a soft glow is a documented incident, curated from public reporting <span id="curated-since">since 2018</span>. Tap one for the story and source.</span></li>
+          <li><span class="swatch swatch-recent"></span><span>A plain bright dot is a live crowd report from the last 24 hours. Dots grow with the number of reports and group into numbered circles when zoomed out.</span></li>
           <li><span class="swatch swatch-older"></span><span>A dim dot is older than 24 hours.</span></li>
           <li><span class="swatch swatch-wedge"></span><span>Zoomed in, a wedge shows the direction reports agree on; a faint halo means they disagree.</span></li>
         </ul>

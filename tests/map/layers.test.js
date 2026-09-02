@@ -8,7 +8,8 @@ import {
   cellCirclePaint,
   clusterCountLayer,
   clusterLayer,
-  curatedRingLayer,
+  curatedDotLayer,
+  curatedGlowLayer,
   fallbackStyle,
   haloIcon,
   markIconExpression,
@@ -88,10 +89,19 @@ test("mark icon expression names the halo and every wedge bucket", () => {
   for (const angle of HALF_ANGLE_BUCKETS) assert.ok(expr.includes(wedgeIconId(angle)));
 });
 
-test("curated ring is hollow and the fallback style is a bare background", () => {
-  const ring = curatedRingLayer(palette);
-  assert.equal(ring.paint["circle-color"], "rgba(0, 0, 0, 0)");
-  assert.equal(ring.paint["circle-stroke-color"], palette.amber);
+test("curated dots mirror the threat map: sized by category, crisp core over glow", () => {
+  const core = curatedDotLayer(palette);
+  // 4 px for an airport closure, 3 px otherwise, as threat-map.js draws.
+  assert.deepEqual(core.paint["circle-radius"], [
+    "case",
+    ["==", ["get", "category"], "airport-closure"],
+    4,
+    3,
+  ]);
+  assert.equal(core.paint["circle-color"], palette.amber);
+  const glow = curatedGlowLayer(palette);
+  assert.equal(glow.paint["circle-blur"], 1);
+  assert.ok(glow.paint["circle-opacity"] < 1);
   const style = fallbackStyle(palette);
   assert.equal(style.layers.length, 1);
   assert.equal(style.layers[0].type, "background");

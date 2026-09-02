@@ -44,6 +44,8 @@ export function incidentsToGeoJSON(incidents) {
         country: incident.country ?? "",
         site: incident.site ?? "",
         date: incident.date,
+        // The dot layers size a core by category, mirroring the threat map.
+        category: incident.category ?? "",
         description: incident.description ?? "",
         source: incident.source ?? "",
       },

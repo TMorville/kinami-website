@@ -5,13 +5,15 @@ import {
   CLUSTER_COUNT_LAYER_ID,
   CLUSTER_LAYER_ID,
   HIDDEN_BASEMAP_LAYERS,
+  INCIDENT_GLOW_LAYER_ID,
   INCIDENT_LAYER_ID,
   INCIDENT_SOURCE_ID,
   MARK_LAYER_ID,
   cellCirclePaint,
   clusterCountLayer,
   clusterLayer,
-  curatedRingLayer,
+  curatedDotLayer,
+  curatedGlowLayer,
   markIcons,
   markLayer,
 } from "./layers.js";
@@ -54,9 +56,11 @@ export function syncMap(map, renderState) {
   ensureSource(map, INCIDENT_SOURCE_ID, { type: "geojson" }, incidents);
   ensureSource(map, CELL_SOURCE_ID, CELL_SOURCE_OPTIONS, cells);
 
-  // Rings, then clusters with their counts, then marks, then dots; marks
-  // before dots so a dot draws over its own wedge apex.
-  if (!map.getLayer(INCIDENT_LAYER_ID)) map.addLayer(curatedRingLayer(palette));
+  // Incident glow under its core, then clusters with their counts, then
+  // marks, then live dots; marks before dots so a dot draws over its own
+  // wedge apex.
+  if (!map.getLayer(INCIDENT_GLOW_LAYER_ID)) map.addLayer(curatedGlowLayer(palette));
+  if (!map.getLayer(INCIDENT_LAYER_ID)) map.addLayer(curatedDotLayer(palette));
   if (!map.getLayer(CLUSTER_LAYER_ID)) map.addLayer(clusterLayer(palette));
   if (!map.getLayer(CLUSTER_COUNT_LAYER_ID)) map.addLayer(clusterCountLayer(palette));
   if (!map.getLayer(MARK_LAYER_ID)) map.addLayer(markLayer(palette));

@@ -4,6 +4,7 @@ import { cellsToGeoJSON, collapseCells } from "./cells.js";
 import {
   BASEMAP_STYLE_URL,
   EUROPE_BOUNDS,
+  INCIDENT_GLOW_LAYER_ID,
   INCIDENT_LAYER_ID,
   fallbackStyle,
   readPalette,
@@ -230,17 +231,24 @@ function startMap() {
   });
   observer.observe(container);
 
-  // Curated popups.
-  map.on("click", INCIDENT_LAYER_ID, (event) => {
-    const feature = event.features?.[0];
-    if (!feature) return;
-    new maplibregl.Popup({ closeButton: true, maxWidth: "320px" })
-      .setLngLat(feature.geometry.coordinates)
-      .setHTML(popupHtml(feature.properties))
-      .addTo(map);
-  });
-  map.on("mouseenter", INCIDENT_LAYER_ID, () => (map.getCanvas().style.cursor = "pointer"));
-  map.on("mouseleave", INCIDENT_LAYER_ID, () => (map.getCanvas().style.cursor = ""));
+  // Curated popups. Handlers sit on the glow layer as well as the core: the
+  // core is 3 to 4 px and too small a target on its own; the glow gives the
+  // same dot the threat map's forgiving hit area. ONE reused popup, because
+  // a click on the core fires both layers' handlers and two fresh popups
+  // would stack.
+  const popup = new maplibregl.Popup({ closeButton: true, maxWidth: "320px" });
+  for (const layerId of [INCIDENT_LAYER_ID, INCIDENT_GLOW_LAYER_ID]) {
+    map.on("click", layerId, (event) => {
+      const feature = event.features?.[0];
+      if (!feature) return;
+      popup
+        .setLngLat(feature.geometry.coordinates)
+        .setHTML(popupHtml(feature.properties))
+        .addTo(map);
+    });
+    map.on("mouseenter", layerId, () => (map.getCanvas().style.cursor = "pointer"));
+    map.on("mouseleave", layerId, () => (map.getCanvas().style.cursor = ""));
+  }
 }
 
 // ---- boot -------------------------------------------------------------------

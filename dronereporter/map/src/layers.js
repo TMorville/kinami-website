@@ -221,7 +221,8 @@ export const CELL_LAYER_ID = "cell-dots";
 export const MARK_LAYER_ID = "cell-marks";
 
 export const INCIDENT_SOURCE_ID = "incidents";
-export const INCIDENT_LAYER_ID = "incident-rings";
+export const INCIDENT_LAYER_ID = "incident-dots";
+export const INCIDENT_GLOW_LAYER_ID = "incident-glow";
 
 /**
  * Basemap layers hidden beneath the data, applied with
@@ -385,20 +386,37 @@ export function clusterCountLayer(palette) {
 }
 
 /**
- * The curated incidents: a hollow ring, so a years-old documented incident
- * can never be misread as a live crowd report (a filled, recency-ramped dot).
+ * The curated incidents, drawn to mirror the product page's threat map
+ * (user decision 2026-09-02, superseding the hollow rings): a crisp amber
+ * core, 4 px for an airport closure and 3 px otherwise, over a soft glow.
+ * The threat map paints the glow with a canvas shadow; here it is a second,
+ * blurred circle layer underneath, which is the MapLibre equivalent.
  */
-export function curatedRingLayer(palette) {
+const INCIDENT_CORE_RADIUS = ["case", ["==", ["get", "category"], "airport-closure"], 4, 3];
+
+export function curatedGlowLayer(palette) {
+  return {
+    id: INCIDENT_GLOW_LAYER_ID,
+    type: "circle",
+    source: INCIDENT_SOURCE_ID,
+    paint: {
+      "circle-radius": ["case", ["==", ["get", "category"], "airport-closure"], 9, 8],
+      "circle-color": palette.amber,
+      "circle-blur": 1,
+      "circle-opacity": 0.55,
+    },
+  };
+}
+
+export function curatedDotLayer(palette) {
   return {
     id: INCIDENT_LAYER_ID,
     type: "circle",
     source: INCIDENT_SOURCE_ID,
     paint: {
-      "circle-radius": ["interpolate", ["linear"], ["zoom"], 3, 5, 8, 9],
-      "circle-color": "rgba(0, 0, 0, 0)",
-      "circle-stroke-color": palette.amber,
-      "circle-stroke-width": 1.5,
-      "circle-stroke-opacity": 0.85,
+      "circle-radius": INCIDENT_CORE_RADIUS,
+      "circle-color": palette.amber,
+      "circle-opacity": 1,
     },
   };
 }
