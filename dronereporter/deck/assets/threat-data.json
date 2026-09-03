@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-31",
+  "updated": "2026-09-03",
   "stats": [
     {
       "value": "800 g",
@@ -425,7 +425,7 @@
       "country": "Estonia",
       "site": "Near Poltsamaa",
       "lat": 58.65,
-      "lng": 26.0,
+      "lng": 26,
       "date": "2026-05-19",
       "category": "military-site",
       "description": "A Romanian Air Force F-16 on NATO Baltic Air Policing shot down a stray drone over Estonia, the first time an Allied fighter downed an aircraft in Estonian airspace.",
@@ -538,6 +538,42 @@
       "category": "infrastructure",
       "description": "Romanian F-16s destroyed an explosive-laden sea drone with cannon fire at the Neptun Deep gas field, after NATO transferred engagement authority to Romanian forces.",
       "source": "https://www.grosswald.org/russian-drone-and-missile-incursions-nato-territory/"
+    },
+    {
+      "id": "moldova-stefan-voda-2026-08",
+      "label": "Five drones over Stefan Voda district",
+      "country": "Moldova",
+      "site": "Palanca and neighbouring villages, Stefan Voda district, on the Ukrainian border",
+      "lat": 46.41,
+      "lng": 30.09,
+      "date": "2026-08-27",
+      "category": "sighting",
+      "description": "Five drones crossed Moldova's southeastern frontier between 03:56 and 06:02 on Independence Day, one flying inland through Palanca, Crocmaz, Olanesti, Purcari and Rascaeti. Moldova's National Army Air Operations Service confirmed the flights and lost two drones from tracking. The parade in Chisinau went ahead.",
+      "source": "https://www.aerotime.aero/articles/moldova-five-drones-airspace-independence-day-parade"
+    },
+    {
+      "id": "estonia-southeast-2026-09",
+      "label": "Drone crossed into southeastern Estonia",
+      "country": "Estonia",
+      "site": "Southeastern Estonia, Voru County border with Russia. Exact crossing point not released; marker at county level.",
+      "lat": 57.75,
+      "lng": 27.45,
+      "date": "2026-09-01",
+      "category": "military-site",
+      "description": "About a dozen drones were tracked along Estonia's eastern border during Ukrainian strikes on western Russia. One crossed into southeastern Estonia and another turned away short of Narva, said Air Force Commander Brigadier General Riivo Valge. Turkish F-16s scrambled from Amari and eight counties received an EE-ALARM shelter warning between 03:11 and 05:30. No drone fell and no aircraft fired.",
+      "source": "https://news.err.ee/1610124799/drone-crossed-estonia-s-border-in-southeast-says-air-force-commander"
+    },
+    {
+      "id": "romania-viisoara-2026-09",
+      "label": "Explosive drone found near Viisoara",
+      "country": "Romania",
+      "site": "Field outside Viisoara, Vaslui County, about 30 km from the Moldovan border",
+      "lat": 46.38,
+      "lng": 27.88,
+      "date": "2026-09-01",
+      "category": "sighting",
+      "description": "A damaged drone was found in a field outside Viisoara during a large Russian air attack on Ukraine. Romanian Intelligence Service specialists found it carried explosives and destroyed it in a controlled detonation. No casualties or damage.",
+      "source": "https://kyivindependent.com/estonia-romania-report-drone-incidents-amid-russian-and-ukrainian-aerial-attacks/"
     }
   ]
 }
