@@ -8,6 +8,7 @@ import {
   CLUSTER_LAYER_ID,
   INCIDENT_GLOW_LAYER_ID,
   INCIDENT_LAYER_ID,
+  INCIDENT_PING_LAYER_ID,
   INCIDENT_SOURCE_ID,
   MARK_LAYER_ID,
 } from "../../dronereporter/map/src/layers.js";
@@ -69,6 +70,7 @@ test("first sync creates icons, both sources with data, and layers in order", ()
       CLUSTER_COUNT_LAYER_ID,
       MARK_LAYER_ID,
       CELL_LAYER_ID,
+      INCIDENT_PING_LAYER_ID,
       INCIDENT_GLOW_LAYER_ID,
       INCIDENT_LAYER_ID,
     ],
@@ -86,7 +88,7 @@ test("a restyle that wiped sources gets CURRENT data back, not empty seeds", () 
   syncMap(map, grown); // styledata fires -> sync again
   assert.equal(map.sources.get(CELL_SOURCE_ID).data.features.length, 5);
   assert.equal(map.sources.get(INCIDENT_SOURCE_ID).data.features.length, 4);
-  assert.equal(map.layers.length, 6);
+  assert.equal(map.layers.length, 7);
 });
 
 test("a rejecting setData is caught, never an unhandled rejection", async () => {
@@ -102,7 +104,7 @@ test("repeat syncs update data without duplicating layers, and paint rides addLa
   const map = fakeMap();
   syncMap(map, rs(geo(1), geo(1)));
   syncMap(map, rs(geo(2), geo(1)));
-  assert.equal(map.layers.length, 6);
+  assert.equal(map.layers.length, 7);
   assert.equal(map.sources.get(CELL_SOURCE_ID).data.features.length, 2);
   // Two-tone paint is static: it arrives with the layer, never via
   // setPaintProperty, so a restyle re-adding the layers restores it too.
