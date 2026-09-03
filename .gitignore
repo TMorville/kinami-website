@@ -3,5 +3,7 @@ dist
 *.local
 .DS_Store
 /screenshots/
-.claude/
+# Local Claude Code state stays out; repo skills (.claude/skills/) are versioned.
+.claude/*
+!.claude/skills/
 .playwright-mcp/
