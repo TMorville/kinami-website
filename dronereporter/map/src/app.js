@@ -306,7 +306,15 @@ const store = createSnapshotStore({
 });
 store.start();
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") store.onVisible();
+  if (document.visibilityState !== "visible") return;
+  store.onVisible();
+  // Freshness is a statement about now. A tab left open for days would
+  // otherwise keep pinging rows that crossed the seven-day line while hidden;
+  // the ping layer's filter drops them on the next sync.
+  if (incidents.length > 0) {
+    renderState.incidents = incidentsToGeoJSON(incidents);
+    safeSync();
+  }
 });
 
 recompute();

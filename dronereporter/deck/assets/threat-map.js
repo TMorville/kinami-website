@@ -388,6 +388,14 @@
       });
 
     window.addEventListener('resize', resize);
+    // Recompute freshness when the tab comes back: a row that crossed the
+    // seven-day line while the tab was hidden stops pinging on the next frame.
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible' || !data) return;
+      const now = Date.now();
+      fresh = (data.incidents || []).filter(function (inc) { return isFresh(inc.date, now); });
+      render(currentPhase());
+    });
     canvas.addEventListener('mousemove', onMove);
     canvas.addEventListener('mouseleave', hideTooltip);
     canvas.addEventListener('touchstart', onTouch, { passive: true });

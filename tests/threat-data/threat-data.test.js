@@ -1,16 +1,18 @@
 // tests/threat-data/threat-data.test.js
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   SYNC_FILES,
   addIncidents,
+  localDateIso,
   nearDuplicates,
   sync,
   validateData,
   validateIncident,
+  writeJsonAtomic,
 } from "../../scripts/threat-data.mjs";
 
 const SITE = "dronereporter/assets";
@@ -139,6 +141,51 @@ test("sync copies each listed file from the site tree to the deck tree", async (
   for (const name of SYNC_FILES) {
     assert.equal(await readFile(join(root, DECK, name), "utf8"), `site ${name}`);
   }
+});
+
+// ---- Codex review round, 2026-09-03 -------------------------------------------------
+
+test("validateIncident rejects calendar-invalid dates that Date.parse would normalise", () => {
+  for (const date of ["2026-02-30", "2026-04-31", "2025-02-29"]) {
+    const errors = validateIncident(row({ date }), { today: TODAY });
+    assert.ok(errors.some((e) => e.startsWith("date:")), `${date} should be rejected`);
+  }
+  assert.deepEqual(validateIncident(row({ id: "testland-runway-2024-02", date: "2024-02-29" }), { today: TODAY }), []);
+});
+
+test("validateIncident requires the id's yyyy-mm suffix to match the date", () => {
+  const errors = validateIncident(row({ id: "testland-runway-2026-07", date: "2026-08-20" }), { today: TODAY });
+  assert.ok(errors.some((e) => e.startsWith("id:") && e.includes("2026-08")));
+});
+
+test("addIncidents refuses two candidates that are near each other within the batch", () => {
+  const a = row({ id: "x-a-2026-08", lat: 60.0, lng: 20.0, date: "2026-08-10" });
+  const b = row({ id: "x-b-2026-08", lat: 60.05, lng: 20.0, date: "2026-08-11" });
+  const result = addIncidents(data([row()]), [a, b], { today: TODAY });
+  assert.equal(result.added.length, 0);
+  assert.ok(result.errors.some((e) => e.includes("near") && e.includes("x-a-2026-08")));
+});
+
+test("validateData reports a null row instead of throwing in the sort", () => {
+  let errors;
+  assert.doesNotThrow(() => {
+    errors = validateData(data([row(), null]), { today: TODAY });
+  });
+  assert.ok(errors.some((e) => e.includes("incidents[1]")));
+});
+
+test("localDateIso uses the operator's local calendar date, not UTC", () => {
+  // 00:30 local on 3 September; in any zone east of UTC toISOString() says 2 September.
+  assert.equal(localDateIso(new Date(2026, 8, 3, 0, 30)), "2026-09-03");
+  assert.equal(localDateIso(new Date(2026, 0, 9, 23, 59)), "2026-01-09");
+});
+
+test("writeJsonAtomic writes pretty JSON with a trailing newline and leaves no temp file", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "threat-atomic-"));
+  const path = join(dir, "threat-data.json");
+  await writeJsonAtomic(path, { a: 1 });
+  assert.equal(await readFile(path, "utf8"), '{\n  "a": 1\n}\n');
+  assert.deepEqual(await readdir(dir), ["threat-data.json"]);
 });
 
 test("the deck copies are byte-identical to the site copies", async () => {

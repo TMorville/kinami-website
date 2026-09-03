@@ -13,7 +13,8 @@
 //
 // Pure functions are exported for tests/threat-data/.
 
-import { copyFile, readFile, writeFile } from "node:fs/promises";
+import { realpathSync } from "node:fs";
+import { copyFile, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -36,8 +37,21 @@ const DAY_MS = 86_400_000;
 
 const isNonEmptyString = (v) => typeof v === "string" && v.trim().length > 0;
 
+/**
+ * Strict calendar check. Date.parse would quietly turn 2026-02-30 into
+ * 2 March, so the components are round-tripped through a UTC date instead.
+ */
 function validDate(iso) {
-  return DATE_RE.test(iso) && Number.isFinite(Date.parse(iso));
+  if (typeof iso !== "string" || !DATE_RE.test(iso)) return false;
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
+}
+
+/** The operator's local calendar date. toISOString() is UTC and says yesterday until 02:00 in Copenhagen. */
+export function localDateIso(date = new Date()) {
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
 /** Errors as "field: message". An empty array means the row is acceptable. */
@@ -52,9 +66,15 @@ export function validateIncident(row, { today }) {
     if (!isNonEmptyString(row[field])) errors.push(`${field}: required, non-empty string`);
   }
   if (!validDate(row.date)) {
-    errors.push(`date: expected YYYY-MM-DD, got ${JSON.stringify(row.date)}`);
-  } else if (Date.parse(row.date) > Date.parse(today)) {
-    errors.push(`date: ${row.date} is after today (${today})`);
+    errors.push(`date: expected a real YYYY-MM-DD calendar date, got ${JSON.stringify(row.date)}`);
+  } else {
+    if (Date.parse(row.date) > Date.parse(today)) {
+      errors.push(`date: ${row.date} is after today (${today})`);
+    }
+    const month = row.date.slice(0, 7);
+    if (typeof row.id === "string" && ID_RE.test(row.id) && !row.id.endsWith(`-${month}`)) {
+      errors.push(`id: suffix must be the event month ${month}, got ${JSON.stringify(row.id)}`);
+    }
   }
   if (!CATEGORIES.includes(row.category)) {
     errors.push(`category: expected one of ${CATEGORIES.join(", ")}, got ${JSON.stringify(row.category)}`);
@@ -98,9 +118,11 @@ export function validateData(data, { today }) {
 
 /** Sorted copy: by date, then id, so a re-run writes the same bytes. */
 export function sortIncidents(rows) {
+  // Optional access: validateData sorts before it has proven every row is an
+  // object, and a null row must surface as a report line, not a throw.
   return [...rows].sort((a, b) => {
-    const byDate = String(a.date).localeCompare(String(b.date));
-    return byDate !== 0 ? byDate : String(a.id).localeCompare(String(b.id));
+    const byDate = String(a?.date).localeCompare(String(b?.date));
+    return byDate !== 0 ? byDate : String(a?.id).localeCompare(String(b?.id));
   });
 }
 
@@ -132,6 +154,9 @@ export function addIncidents(data, candidates, { today, allowNear = false }) {
   const errors = [];
   const existingIds = new Set(data.incidents.map((r) => r.id));
   const batchIds = new Set();
+  // Earlier candidates count as existing for the near check, so two rows in
+  // one batch describing the same event are caught too.
+  const seenRows = [...data.incidents];
 
   candidates.forEach((row, i) => {
     const prefix = `candidates[${i}]${row && row.id ? ` (${row.id})` : ""}`;
@@ -141,7 +166,8 @@ export function addIncidents(data, candidates, { today, allowNear = false }) {
     if (batchIds.has(row.id)) errors.push(`${prefix} id repeated in the batch`);
     batchIds.add(row.id);
     if (!allowNear && Number.isFinite(row.lat) && Number.isFinite(row.lng)) {
-      const near = nearDuplicates(row, data.incidents);
+      const near = nearDuplicates(row, seenRows);
+      seenRows.push(row);
       if (near.length > 0) {
         errors.push(
           `${prefix} near existing ${near.map((n) => n.id).join(", ")} ` +
@@ -171,16 +197,19 @@ export async function sync(root) {
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
-function todayIso() {
-  return new Date().toISOString().slice(0, 10);
-}
-
 async function readData(root) {
   return JSON.parse(await readFile(join(root, SITE_DIR, DATA_FILE), "utf8"));
 }
 
+/** Write to a sibling temp file and rename, so an interrupted write never leaves half a JSON file. */
+export async function writeJsonAtomic(path, obj) {
+  const tmp = `${path}.tmp-${process.pid}`;
+  await writeFile(tmp, `${JSON.stringify(obj, null, 2)}\n`);
+  await rename(tmp, path);
+}
+
 async function writeData(root, data) {
-  await writeFile(join(root, SITE_DIR, DATA_FILE), `${JSON.stringify(data, null, 2)}\n`);
+  await writeJsonAtomic(join(root, SITE_DIR, DATA_FILE), data);
 }
 
 function fail(lines) {
@@ -190,7 +219,7 @@ function fail(lines) {
 
 async function main(argv) {
   const [command, ...rest] = argv;
-  const today = todayIso();
+  const today = localDateIso();
 
   if (command === "validate") {
     const errors = validateData(await readData(REPO_ROOT), { today });
@@ -229,6 +258,12 @@ async function main(argv) {
   }
 
   if (command === "sync") {
+    // A hand-edited, broken site copy must not be copied over a good deck copy.
+    const errors = validateData(await readData(REPO_ROOT), { today });
+    if (errors.length > 0) {
+      console.error(`${DATA_FILE} is invalid; nothing synced:`);
+      fail(errors);
+    }
     const copied = await sync(REPO_ROOT);
     console.log(`synced ${copied.join(", ")} to ${DECK_DIR}`);
     return;
@@ -237,6 +272,8 @@ async function main(argv) {
   fail(["usage: threat-data.mjs validate | add <candidates.json> [--allow-near] | sync"]);
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+// realpath on both sides so a symlinked bin entry still runs the CLI.
+const invokedAs = process.argv[1] ? pathToFileURL(realpathSync(resolve(process.argv[1]))).href : null;
+if (invokedAs === pathToFileURL(realpathSync(fileURLToPath(import.meta.url))).href) {
   main(process.argv.slice(2)).catch((error) => fail([error.message]));
 }
