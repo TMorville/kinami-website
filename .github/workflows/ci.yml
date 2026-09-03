@@ -1,0 +1,36 @@
+name: CI
+
+# The map at dronereporter/map/ has 53 node:test cases under tests/map/. Until
+# 2026-09-03 nothing ran them before a deploy: Cloudflare Pages builds main on
+# merge with no build step, so a broken parser shipped green. This job runs
+# them on every PR and every push to main. No npm install: the tests import
+# only node:* modules and the map's own ESM sources.
+
+on:
+  pull_request:
+    paths:
+      - 'dronereporter/map/**'
+      - 'tests/**'
+      - '.github/workflows/ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'dronereporter/map/**'
+      - 'tests/**'
+      - '.github/workflows/ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  map-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run map tests
+        run: node --test tests/map/*.test.js
