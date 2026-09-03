@@ -458,6 +458,49 @@ export function curatedDotLayer(palette) {
   };
 }
 
+/**
+ * The radar ping: one expanding, fading ring under each incident whose
+ * `fresh` flag is set (event date under seven days old, curated.js). A ring
+ * rather than a disc so it never reads as a bigger, brighter incident; a
+ * stroke at falling opacity is the same figure a radar scope draws.
+ *
+ * This is the ONE layer whose paint moves after addLayer. app.js drives it
+ * through applyPing on a requestAnimationFrame loop that runs only while a
+ * fresh incident exists; every other layer's paint is static.
+ */
+export const INCIDENT_PING_LAYER_ID = "incident-ping";
+/** Starts at the diamond's half-diagonal and grows to six times it. */
+export const PING_MIN_PX = INCIDENT_DIAMOND_PX;
+export const PING_MAX_PX = 6 * INCIDENT_DIAMOND_PX;
+export const PING_OPACITY = 0.6;
+export const PING_PERIOD_MS = 2400;
+
+/** Paint for a phase in [0, 1]: radius eases out, opacity falls to zero. */
+export function pingPaint(phase) {
+  const p = Math.min(1, Math.max(0, phase));
+  const eased = 1 - (1 - p) * (1 - p);
+  return {
+    "circle-radius": PING_MIN_PX + (PING_MAX_PX - PING_MIN_PX) * eased,
+    "circle-stroke-opacity": PING_OPACITY * (1 - p),
+  };
+}
+
+export function pingLayer(palette) {
+  return {
+    id: INCIDENT_PING_LAYER_ID,
+    type: "circle",
+    source: INCIDENT_SOURCE_ID,
+    filter: ["==", ["get", "fresh"], true],
+    paint: {
+      ...pingPaint(0),
+      "circle-color": palette.amber,
+      "circle-opacity": 0,
+      "circle-stroke-width": 1.5,
+      "circle-stroke-color": palette.amber,
+    },
+  };
+}
+
 /** Opacity of the marks. Low: they qualify the dot, they do not compete with it. */
 export const WEDGE_OPACITY = 0.22;
 export const HALO_OPACITY = 0.16;

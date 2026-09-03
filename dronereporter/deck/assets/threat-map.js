@@ -27,6 +27,36 @@
   let markers = [];
   let cssW = 0, cssH = 0;
   let proj = null; // current projection closure
+  // Country polygons drawn once per resize into an offscreen canvas, so the
+  // ping loop below composites a bitmap per frame instead of refilling Europe.
+  let land = null;
+
+  // --- Radar ping for fresh incidents ---------------------------------------
+  // Mirrors map/src/curated.js: an incident is fresh for seven days after its
+  // event date, measured on the reader's clock. This file is a classic script
+  // shared with the gated deck, so it carries its own copy of the rule.
+  const FRESH_MS = 7 * 86400000;
+  const PING_PERIOD_MS = 2400;
+  const PING_MAX_FACTOR = 6; // the ring grows to six half-diagonals
+  const PING_OPACITY = 0.6;
+  let fresh = []; // incidents under seven days old
+  let pingT0 = 0;
+
+  function isFresh(dateIso, nowMs) {
+    const t = Date.parse(dateIso);
+    return isFinite(t) && nowMs - t < FRESH_MS;
+  }
+
+  function reducedMotion() {
+    return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  // Phase in [0, 1) of the ping cycle. Reduced motion holds one mid-cycle ring.
+  function currentPhase() {
+    if (fresh.length === 0) return 0;
+    if (reducedMotion()) return 0.5;
+    return ((performance.now() - pingT0) % PING_PERIOD_MS) / PING_PERIOD_MS;
+  }
 
   function buildProjection(canvasCssWidth, canvasCssHeight) {
     const s = canvasCssHeight / (mercY(LATtop) - mercY(LATbot));
@@ -39,42 +69,76 @@
     };
   }
 
-  function drawRing(ring, project) {
+  function drawRing(g, ring, project) {
     if (!ring || ring.length === 0) return;
     for (let i = 0; i < ring.length; i++) {
       const p = project(ring[i][0], ring[i][1]);
-      if (i === 0) ctx.moveTo(p.x, p.y);
-      else ctx.lineTo(p.x, p.y);
+      if (i === 0) g.moveTo(p.x, p.y);
+      else g.lineTo(p.x, p.y);
     }
-    ctx.closePath();
+    g.closePath();
   }
 
-  function drawPolygon(rings, project) {
+  function drawPolygon(g, rings, project) {
     // rings: [outer, hole, hole, ...]; canvas even-odd handles holes.
-    ctx.beginPath();
-    for (let r = 0; r < rings.length; r++) drawRing(rings[r], project);
-    ctx.fill('evenodd');
-    ctx.stroke();
+    g.beginPath();
+    for (let r = 0; r < rings.length; r++) drawRing(g, rings[r], project);
+    g.fill('evenodd');
+    g.stroke();
   }
 
-  function drawLand(project) {
+  function drawLand(g, project) {
     if (!geojson) return;
-    ctx.fillStyle = LAND_FILL;
-    ctx.strokeStyle = LAND_STROKE;
-    ctx.lineWidth = 0.75;
-    ctx.lineJoin = 'round';
+    g.fillStyle = LAND_FILL;
+    g.strokeStyle = LAND_STROKE;
+    g.lineWidth = 0.75;
+    g.lineJoin = 'round';
     const feats = geojson.features || [];
     for (let f = 0; f < feats.length; f++) {
       const geom = feats[f].geometry;
       if (!geom) continue;
       if (geom.type === 'Polygon') {
-        drawPolygon(geom.coordinates, project);
+        drawPolygon(g, geom.coordinates, project);
       } else if (geom.type === 'MultiPolygon') {
-        for (let g = 0; g < geom.coordinates.length; g++) {
-          drawPolygon(geom.coordinates[g], project);
+        for (let m = 0; m < geom.coordinates.length; m++) {
+          drawPolygon(g, geom.coordinates[m], project);
         }
       }
     }
+  }
+
+  // Render the land once per resize at device resolution.
+  function paintLand(project) {
+    const dpr = window.devicePixelRatio || 1;
+    land = document.createElement('canvas');
+    land.width = Math.max(1, Math.round(cssW * dpr));
+    land.height = Math.max(1, Math.round(cssH * dpr));
+    const g = land.getContext('2d');
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    drawLand(g, project);
+  }
+
+  // One expanding, fading ring per fresh incident, drawn under the diamonds.
+  // A stroke, not a disc, so it never reads as a bigger, brighter incident.
+  function drawPings(project, phase) {
+    if (fresh.length === 0) return;
+    const p = Math.min(1, Math.max(0, phase));
+    const eased = 1 - (1 - p) * (1 - p);
+    const alpha = PING_OPACITY * (1 - p);
+    if (alpha <= 0) return;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(232,163,61,' + alpha.toFixed(3) + ')';
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < fresh.length; i++) {
+      const inc = fresh[i];
+      const pt = project(inc.lng, inc.lat);
+      const r0 = inc.category === 'airport-closure' ? 5 : 4;
+      const radius = r0 + (PING_MAX_FACTOR - 1) * r0 * eased;
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, radius, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.restore();
   }
 
   function drawMarkers(project) {
@@ -84,33 +148,44 @@
     for (let i = 0; i < incidents.length; i++) {
       const inc = incidents[i];
       const p = project(inc.lng, inc.lat);
-      const core = inc.category === 'airport-closure' ? 4 : 3;
+      // A diamond, not a dot: documented incidents keep their own form so
+      // they can never be confused with the live map's circular crowd
+      // reports. Half-diagonal 5 px for an airport closure, 4 px otherwise.
+      const r = inc.category === 'airport-closure' ? 5 : 4;
+
+      function diamondPath() {
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y - r);
+        ctx.lineTo(p.x + r, p.y);
+        ctx.lineTo(p.x, p.y + r);
+        ctx.lineTo(p.x - r, p.y);
+        ctx.closePath();
+      }
 
       // Soft amber glow
       ctx.save();
       ctx.shadowColor = 'rgba(232,163,61,0.9)';
       ctx.shadowBlur = 10;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, core, 0, Math.PI * 2);
+      diamondPath();
       ctx.fillStyle = SIGNAL;
       ctx.fill();
       ctx.restore();
 
-      // Solid core dot (no shadow, crisp)
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, core, 0, Math.PI * 2);
+      // Solid core (no shadow, crisp)
+      diamondPath();
       ctx.fillStyle = SIGNAL;
       ctx.fill();
 
-      markers.push({ x: p.x, y: p.y, r: core, incident: inc });
+      markers.push({ x: p.x, y: p.y, r: r, incident: inc });
     }
   }
 
-  function render() {
+  function render(phase) {
     if (!ctx) return;
     ctx.clearRect(0, 0, cssW, cssH);
     proj = buildProjection(cssW, cssH);
-    drawLand(proj);
+    if (land) ctx.drawImage(land, 0, 0, cssW, cssH);
+    drawPings(proj, phase || 0);
     drawMarkers(proj);
   }
 
@@ -125,7 +200,27 @@
     canvas.width = Math.round(cssW * dpr);
     canvas.height = Math.round(cssH * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // draw in CSS px
-    render();
+    paintLand(buildProjection(cssW, cssH));
+    render(currentPhase());
+  }
+
+  // The loop exists only while a fresh incident exists and motion is allowed;
+  // otherwise resize() has already drawn the one static frame. Frames are
+  // skipped while the canvas is scrolled out of view.
+  function startPing() {
+    if (fresh.length === 0 || reducedMotion()) return;
+    pingT0 = performance.now();
+    let visible = true;
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        visible = entries[0].isIntersecting;
+      }).observe(canvas);
+    }
+    function frame() {
+      if (visible) render(currentPhase());
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
   }
 
   // --- Hover tooltip -------------------------------------------------------
@@ -253,6 +348,8 @@
     }
   }
 
+  // The gated deck's copy of the explainer has a footline; the product page
+  // does not. One script serves both roots, so this is a no-op without it.
   function fillFootline() {
     const el = document.getElementById('threat-footline');
     if (!el || !data || !data.incidents) return;
@@ -278,9 +375,12 @@
       .then(function (res) {
         geojson = res[0];
         data = res[1];
+        const now = Date.now();
+        fresh = (data.incidents || []).filter(function (inc) { return isFresh(inc.date, now); });
         fillStats();
         fillFootline();
         resize();
+        startPing();
       })
       .catch(function (err) {
         // Map is decorative-with-data; a fetch failure shouldn't break the page.
@@ -288,6 +388,14 @@
       });
 
     window.addEventListener('resize', resize);
+    // Recompute freshness when the tab comes back: a row that crossed the
+    // seven-day line while the tab was hidden stops pinging on the next frame.
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible' || !data) return;
+      const now = Date.now();
+      fresh = (data.incidents || []).filter(function (inc) { return isFresh(inc.date, now); });
+      render(currentPhase());
+    });
     canvas.addEventListener('mousemove', onMove);
     canvas.addEventListener('mouseleave', hideTooltip);
     canvas.addEventListener('touchstart', onTouch, { passive: true });

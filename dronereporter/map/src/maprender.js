@@ -7,6 +7,7 @@ import {
   HIDDEN_BASEMAP_LAYERS,
   INCIDENT_GLOW_LAYER_ID,
   INCIDENT_LAYER_ID,
+  INCIDENT_PING_LAYER_ID,
   INCIDENT_SOURCE_ID,
   MARK_LAYER_ID,
   cellCirclePaint,
@@ -16,6 +17,8 @@ import {
   curatedGlowLayer,
   markIcons,
   markLayer,
+  pingLayer,
+  pingPaint,
 } from "./layers.js";
 
 function ensureSource(map, id, options, data) {
@@ -72,9 +75,23 @@ export function syncMap(map, renderState) {
       paint: cellCirclePaint(palette),
     });
   }
+  if (!map.getLayer(INCIDENT_PING_LAYER_ID)) map.addLayer(pingLayer(palette));
   if (!map.getLayer(INCIDENT_GLOW_LAYER_ID)) map.addLayer(curatedGlowLayer(palette));
   if (!map.getLayer(INCIDENT_LAYER_ID)) map.addLayer(curatedDotLayer(palette));
   // Paint is static since the two-tone step (2026-09-02): the layers carry
   // their colour at addLayer time, and a restyle re-adds them through the
-  // branch above. No per-sync paint refresh remains.
+  // branch above. No per-sync paint refresh remains. The one exception is
+  // the ping ring, which applyPing moves from app.js's animation loop.
+}
+
+/**
+ * Advance the radar ping to a phase in [0, 1]. A no-op until the ping layer
+ * exists, so the animation loop can start before the first styledata and
+ * survive a restyle that drops the layer for a frame.
+ */
+export function applyPing(map, phase) {
+  if (!map.getLayer(INCIDENT_PING_LAYER_ID)) return;
+  for (const [key, value] of Object.entries(pingPaint(phase))) {
+    map.setPaintProperty(INCIDENT_PING_LAYER_ID, key, value);
+  }
 }

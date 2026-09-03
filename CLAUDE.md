@@ -71,16 +71,22 @@ Consequences for the `dronereporter/` subtree:
   above `dronereporter/`. The icons and `og.png` are copied into
   `dronereporter/assets/logo/`; the originals in `/assets/logo/` stay because the
   kinami.io root page uses them. Change one, copy to the other.
-- **`dronereporter/deck/assets/` is a THIRD copy, and it drifts.** The gated deck is
-  its own document root, so it cannot reference `../assets/` and keeps duplicates of
+- **`dronereporter/deck/assets/` is a THIRD copy.** The gated deck is its own
+  document root, so it cannot reference `../assets/` and keeps duplicates of
   `threat-data.json`, `threat-map.js`, `europe.min.geojson`, `hero.mp4` and
-  `hero-poster.jpg`. Nothing keeps them in sync and no test catches divergence. On
-  2026-09-01 the site copy of `threat-data.json` was found two months behind the deck
-  copy one directory over (29 incidents vs 36), and it also lacked the cache-buster
-  the deck copy had gained *because* the map was serving stale data on reload — so the
-  public site had the older data and the bug that makes old data stick. **After
-  editing either copy, `cmp` the pair and copy across.** Verify the served file, not
-  the repo file.
+  `hero-poster.jpg`. It drifted for two months in 2026 (site copy 29 incidents, deck
+  copy 36, and the site lacked the deck's cache-buster). Since 2026-09-03 the first
+  two files are managed: **never hand-edit `threat-data.json`**; run
+  `node scripts/threat-data.mjs add <candidates.json>` (validates, sorts, bumps
+  `updated`, copies to the deck) or `node scripts/threat-data.mjs sync`, and
+  `tests/threat-data/` fails when the site and deck copies differ. The deck's HTML is
+  a staticrypt payload, so `threat-map.js` keeps a `fillFootline` no-op for the
+  deck's `#threat-footline` and one file serves both roots. The other three files are
+  still unmanaged: `cmp` after editing. Verify the served file, not the repo file.
+- **Finding new incidents is a daily procedure**, the repo-local skill
+  `.claude/skills/threat-intake/SKILL.md` (`/threat-intake`). Declined candidates go
+  to `scripts/threat-intake/rejected.json`. Both maps ping incidents whose event date
+  is under 7 days old; the window is sized to that daily cadence.
 - Absolute URLs are correct in exactly two places: crawler metadata
   (`og:*`, `twitter:*`, `canonical`) points at `https://dronereporter.io/`, and
   the "kinami.io" back-links point at `https://kinami.io/` because they are now

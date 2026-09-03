@@ -6,11 +6,12 @@ import {
   EUROPE_BOUNDS,
   INCIDENT_GLOW_LAYER_ID,
   INCIDENT_LAYER_ID,
+  PING_PERIOD_MS,
   fallbackStyle,
   readPalette,
 } from "./layers.js";
-import { syncMap } from "./maprender.js";
-import { incidentsToGeoJSON, oldestYear, parseIncidents, popupHtml } from "./curated.js";
+import { applyPing, syncMap } from "./maprender.js";
+import { hasFresh, incidentsToGeoJSON, oldestYear, parseIncidents, popupHtml } from "./curated.js";
 import { formatDelay, relativeTime } from "./format.js";
 
 /** The only line that changes when the data host moves. */
@@ -61,9 +62,33 @@ function safeSync() {
   if (!map || !mapReady) return;
   try {
     syncMap(map, renderState);
+    // A restyle re-adds the ping layer at phase 0; the held frame must follow.
+    if (pingStarted && REDUCED_MOTION) applyPing(map, 0.5);
   } catch (error) {
     console.warn("Map sync deferred to the next styledata.", error);
   }
+}
+
+// ---- radar ping ---------------------------------------------------------------
+/**
+ * Fresh incidents (event date under seven days, curated.js) ping. The loop
+ * starts once, after the curated rows load, and only if one is fresh; with
+ * none the page has no animation frame at all. Under reduced motion the ring
+ * holds mid-cycle instead of moving.
+ */
+const REDUCED_MOTION = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let pingStarted = false;
+
+function startPing() {
+  if (pingStarted || !hasFresh(renderState.incidents)) return;
+  pingStarted = true;
+  if (REDUCED_MOTION) return safeSync();
+  const t0 = performance.now();
+  const frame = (t) => {
+    if (map && mapReady) applyPing(map, ((t - t0) % PING_PERIOD_MS) / PING_PERIOD_MS);
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
 }
 
 // ---- bottom bar and drawer ---------------------------------------------------
@@ -264,6 +289,7 @@ fetch("../assets/threat-data.json")
     renderState.incidents = incidentsToGeoJSON(incidents);
     el("curated-since").textContent = `since ${oldestYear(incidents)}`;
     safeSync();
+    startPing();
     renderIncidentList();
   })
   .catch((error) => {
@@ -280,7 +306,15 @@ const store = createSnapshotStore({
 });
 store.start();
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") store.onVisible();
+  if (document.visibilityState !== "visible") return;
+  store.onVisible();
+  // Freshness is a statement about now. A tab left open for days would
+  // otherwise keep pinging rows that crossed the seven-day line while hidden;
+  // the ping layer's filter drops them on the next sync.
+  if (incidents.length > 0) {
+    renderState.incidents = incidentsToGeoJSON(incidents);
+    safeSync();
+  }
 });
 
 recompute();

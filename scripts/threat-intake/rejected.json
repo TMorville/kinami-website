@@ -1,0 +1,4 @@
+{
+  "_comment": "Candidates declined during /threat-intake. The skill reads this so a daily run does not re-propose them. Append, never edit history. Fields: id (what the candidate would have been), date, source, reason, rejected (YYYY-MM-DD).",
+  "rejected": []
+}
