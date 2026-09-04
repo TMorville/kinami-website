@@ -272,17 +272,11 @@
         if (!vid.muted && vid.paused) { vid.play().catch(function () { vid.muted = true; }); }
         updateLabel();
       });
-      // Default to sound ON: browsers block audible autoplay, so unmute on the first user gesture.
-      function enableSound(e) {
-        if (e && e.target && e.target.closest && e.target.closest('#soundToggle')) return; // let the toggle handle its own clicks
-        if (!vid.muted) return;
-        vid.muted = false;
-        if (vid.paused) vid.play().catch(function () { vid.muted = true; });
-        updateLabel();
-      }
-      ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (ev) {
-        window.addEventListener(ev, enableSound, { once: true, capture: true, passive: true });
-      });
+      // Sound stays OFF until the visitor asks for it with the toggle. There was
+      // an auto-unmute on the first pointerdown/keydown/wheel/touchstart here.
+      // This is a full-page scroll pager, so the first gesture is near-certain to
+      // be a scroll, which made audio start on its own for almost every visitor.
+      // Unrequested sound is a close-the-tab reflex. Removed 2026-09-04.
       updateLabel();
     }());
   </script>
