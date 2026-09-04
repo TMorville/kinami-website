@@ -43,10 +43,44 @@ from `updated` to today.
    Query shape: `drone airport closed <country> <Month YYYY>`,
    `drone sighting military base <country> <Month YYYY>`,
    `drone incursion NATO <Month YYYY>`.
+4. Repeat the regional pass in the local language. English-language search
+   surfaces an incident only once a wire service picks it up, which is often a
+   day late and sometimes never. The national broadcaster and the defence
+   ministry publish first, in their own language, and that is where the
+   coordinate, the timeline and the official quote live. Run at least the
+   country whose border the war is nearest, and any country the English pass
+   hinted at without detail.
+
+   | Country | Query language | Words that work |
+   |---|---|---|
+   | Finland | Finnish | `drooni`, `alueloukkaus`, `Puolustusvoimat`, `Rajavartiolaitos` |
+   | Sweden | Swedish | `drönare`, `flygplats stängd`, `Försvarsmakten` |
+   | Norway | Norwegian | `drone`, `flyplass stengt`, `Forsvaret` |
+   | Denmark | Danish | `drone`, `lufthavn lukket`, `Forsvaret` |
+   | Estonia | Estonian | `droon`, `õhuruum`, `Kaitsevägi` |
+   | Latvia | Latvian | `drons`, `gaisa telpa`, `NBS` |
+   | Lithuania | Lithuanian | `dronas`, `oro erdvė`, `kariuomenė` |
+   | Poland | Polish | `dron`, `przestrzeń powietrzna`, `wojsko` |
+   | Romania | Romanian | `dronă`, `spațiul aerian`, `MApN` |
+   | Bulgaria | Bulgarian | `дрон`, `въздушно пространство` |
+   | Moldova | Romanian or Russian | `dronă`, `беспилотник`, `Ministerul Apărării` |
+   | Germany | German | `Drohne`, `Flughafen gesperrt`, `Bundeswehr` |
+   | Netherlands | Dutch | `drone`, `luchthaven gesloten`, `vliegbasis` |
+   | France | French | `drone`, `aéroport fermé`, `survol base militaire` |
+
+   Add the month and year in the local form too. A hit in the local language
+   still needs an English or official source for the `source` field where one
+   exists, but the local report is usually the better `source` when it is the
+   national broadcaster or the ministry.
 
 Read the primary report where the search hit is a summary. Prefer national
 outlets, wire services, the operator or ministry statement, and Wikipedia
 articles that cite them.
+
+Some official sites reject automated fetches with 403 (globalsecurity.org,
+lsm.lv's Latvian edition, balkaninsight.com). Reach the same story through the
+outlet's English edition, the government's own release page, or another outlet
+carrying the statement, rather than dropping a real incident for a fetch error.
 
 ## 3. Inclusion bar
 

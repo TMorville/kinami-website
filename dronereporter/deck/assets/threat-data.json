@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-03",
+  "updated": "2026-09-04",
   "stats": [
     {
       "value": "800 g",
@@ -562,6 +562,30 @@
       "category": "military-site",
       "description": "About a dozen drones were tracked along Estonia's eastern border during Ukrainian strikes on western Russia. One crossed into southeastern Estonia and another turned away short of Narva, said Air Force Commander Brigadier General Riivo Valge. Turkish F-16s scrambled from Amari and eight counties received an EE-ALARM shelter warning between 03:11 and 05:30. No drone fell and no aircraft fired.",
       "source": "https://news.err.ee/1610124799/drone-crossed-estonia-s-border-in-southeast-says-air-force-commander"
+    },
+    {
+      "id": "finland-pellinki-2026-09",
+      "label": "Russian mapping drone washed up at Pellinki",
+      "country": "Finland",
+      "site": "Sando island, Pellinki archipelago off Porvoo. Marker at archipelago level.",
+      "lat": 60.19,
+      "lng": 25.88,
+      "date": "2026-09-01",
+      "category": "sighting",
+      "description": "A member of the public found a large fixed-wing drone on the shoreline rocks of an island in the Pellinki archipelago off Porvoo. The Border Guard identified it as a Russian-made Geoscan 701 mapping drone with a 3.3 metre wingspan, found no explosives on it, and is investigating the find as a possible territorial violation.",
+      "source": "https://yle.fi/a/7-10104702"
+    },
+    {
+      "id": "latvia-aluksne-2026-09",
+      "label": "Air threat warnings along Latvia's eastern border",
+      "country": "Latvia",
+      "site": "Aluksne and Ludza districts, eastern Latvia",
+      "lat": 57.42,
+      "lng": 27.05,
+      "date": "2026-09-01",
+      "category": "military-site",
+      "description": "Drones flew along Latvia's eastern border overnight and the National Armed Forces sent air threat warnings to Ludza district at 02:00 and Aluksne district at 03:37, lifting both within half an hour. NATO Baltic Air Policing fighters were scrambled and the drones carried on north into Estonian airspace.",
+      "source": "https://eng.lsm.lv/article/society/defence/01.09.2026-airspace-alert-over-in-latvias-aluksne-district.a661158/"
     },
     {
       "id": "romania-viisoara-2026-09",

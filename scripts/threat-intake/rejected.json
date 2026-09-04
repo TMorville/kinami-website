@@ -1,4 +1,12 @@
 {
   "_comment": "Candidates declined during /threat-intake. The skill reads this so a daily run does not re-propose them. Append, never edit history. Fields: id (what the candidate would have been), date, source, reason, rejected (YYYY-MM-DD).",
-  "rejected": []
+  "rejected": [
+    {
+      "id": "estonia-northeast-2026-09",
+      "date": "2026-09-03",
+      "source": "https://www.err.ee/1610044855/kaitsevagi-drooniohtu-kontrollimisel-ei-tuvastatud",
+      "reason": "Estonian Defence Forces warned eight counties and activated ground units and Baltic Air Policing fighters early on 3 September, then found no air threat and sent an all-clear. No drone was confirmed in Estonian airspace, so the inclusion bar is not met.",
+      "rejected": "2026-09-04"
+    }
+  ]
 }
