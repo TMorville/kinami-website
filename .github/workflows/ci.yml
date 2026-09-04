@@ -1,21 +1,35 @@
 name: CI
 
-# The map at dronereporter/map/ has 53 node:test cases under tests/map/. Until
-# 2026-09-03 nothing ran them before a deploy: Cloudflare Pages builds main on
-# merge with no build step, so a broken parser shipped green. This job runs
-# them on every PR and every push to main. No npm install: the tests import
-# only node:* modules and the map's own ESM sources.
+# Runs every node:test suite under tests/ on each PR and each push to main.
+# Cloudflare Pages builds main on merge with no build step, so nothing else
+# stands between a bad commit and the live site. No npm install: the tests
+# import only node:* modules and the repo's own ESM sources.
+#
+# Two suites live here today:
+#   tests/map/         the activity map at dronereporter/map/
+#   tests/threat-data/ the incident data, scripts/threat-data.mjs, and the
+#                      assertion that the deck copies under
+#                      dronereporter/deck/assets/ are byte-identical to the
+#                      site copies under dronereporter/assets/
+#
+# The trigger paths and the test glob are both deliberately wider than the
+# suites that exist now. Until 2026-09-04 this job filtered on
+# 'dronereporter/map/**' and ran only tests/map/*.test.js, so a threat-data
+# PR triggered no run at all and the deck-drift assertion, written to catch
+# exactly that change, had never executed in CI.
 
 on:
   pull_request:
     paths:
-      - 'dronereporter/map/**'
+      - 'dronereporter/**'
+      - 'scripts/**'
       - 'tests/**'
       - '.github/workflows/ci.yml'
   push:
     branches: [main]
     paths:
-      - 'dronereporter/map/**'
+      - 'dronereporter/**'
+      - 'scripts/**'
       - 'tests/**'
       - '.github/workflows/ci.yml'
 
@@ -23,7 +37,7 @@ permissions:
   contents: read
 
 jobs:
-  map-tests:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,5 +46,9 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Run map tests
-        run: node --test tests/map/*.test.js
+      # tests/*/*.test.js is expanded by the shell, not by node, so it behaves
+      # the same on every node version. `node --test tests/` does not: node 22
+      # recurses into the directory, node 26 resolves it as a module and dies.
+      # A new suite directory under tests/ is picked up with no change here.
+      - name: Run tests
+        run: node --test tests/*/*.test.js
