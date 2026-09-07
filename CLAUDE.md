@@ -22,6 +22,28 @@ Each page is its own `index.html`; there is no single "main page".
 - `dronetracker/` — legacy paths, now three redirect stubs pointing at
   `https://dronereporter.io/`. No content of its own.
 
+### The gated deck is built in another repo
+
+`dronereporter/deck/index.html` is a **StatiCrypt payload, not source.** Editing it
+here is not how a slide changes, and grep cannot read it. The plaintext lives in
+`TMorville/dronetracker` at `deck/` (`index.html`, `deck.js`, `gate-template.html`,
+its own `assets/`), and `deck/DEPLOY.md` there carries the publish flow.
+
+To change the deck: edit the plaintext there, re-encrypt with StatiCrypt using the
+**same password** (shared out of band, never committed — it keeps every `?ref=`
+tracking link in an investor inbox working), then copy **only `out/index.html`**
+into `dronereporter/deck/` on a branch. Never copy `assets/` or `deck.js` across:
+this repo is the authority for those, and the dronetracker copies are a local
+rendering convenience that goes stale by design.
+
+To verify a rebuilt payload, decrypt it rather than trusting the file size. Read
+`staticryptSaltUniqueVariableName` and `staticryptEncryptedMsgUniqueVariableName`
+out of the page, reproduce the three PBKDF2 rounds (1k SHA-1, then 14k and 585k
+SHA-256, with the salt used as its own hex *string*), take the first 32 hex chars of
+the payload as the IV, and decrypt AES-256-CBC. Diff that plaintext against the
+deck currently on `main` — the diff should be exactly the lines you meant to change.
+Run a wrong password as the control; it must fail to decrypt.
+
 ### Vite config is stale
 
 `vite.config.js` lists 47 rollup inputs. 46 of them are `pages/*.html` exploration
@@ -83,6 +105,9 @@ Consequences for the `dronereporter/` subtree:
   a staticrypt payload, so `threat-map.js` keeps a `fillFootline` no-op for the
   deck's `#threat-footline` and one file serves both roots. The other three files are
   still unmanaged: `cmp` after editing. Verify the served file, not the repo file.
+  A **fourth** copy of these files sits in the dronetracker `deck/` dir next to the
+  deck's plaintext source; it is outside all of the above and is expected to be stale
+  (see "The gated deck is built in another repo").
 - **Finding new incidents is a daily procedure**, the repo-local skill
   `.claude/skills/threat-intake/SKILL.md` (`/threat-intake`). Declined candidates go
   to `scripts/threat-intake/rejected.json`. Both maps ping incidents whose event date
