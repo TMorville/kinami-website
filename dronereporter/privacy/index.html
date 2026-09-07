@@ -220,7 +220,7 @@
     <h2>2. How We Use Your Data</h2>
     <ul>
       <li><strong>Provide the service</strong>: Display drone observations on the map, manage your account, and let you review or delete your reports.</li>
-      <li><strong>Improve the service</strong>: Aggregate, anonymised observation data may be used to identify drone activity patterns.</li>
+      <li><strong>Improve the service</strong>: Aggregated observation data may be used to identify drone activity patterns.</li>
       <li><strong>Send drone alerts</strong>: If you turn alerts on, we use the last position your device reported to decide whether a confirmed sighting is near you.</li>
       <li><strong>Fix problems</strong>: We read feedback and the context attached to it to reproduce bugs and decide what to build next.</li>
       <li><strong>Communicate with you</strong>: We may email you about important changes to your account or this policy. We do not send marketing emails.</li>
@@ -274,8 +274,10 @@
     <h2>5. Data Retention</h2>
     <ul>
       <li><strong>Account data</strong> is retained as long as your account is active.</li>
-      <li><strong>Observations</strong> are retained until you delete them or delete your account. After account deletion, what remains is an anonymous record of the time and place of the sighting, with the link to you destroyed.</li>
-      <li><strong>Tracking samples</strong> have no fixed retention period. Deleting old samples is a manual operation that an administrator runs. It is not on a schedule, so we do not state a retention period for them. Deleting your account deletes your tracking sessions and every sample in them.</li>
+      <li><strong>Observations.</strong> Deleting an observation, or your account, destroys the link between you and the sighting. The sighting itself is kept and stays on the shared map without you attached to it. What remains is the location, the time, the direction the camera was pointed, the drone type and any description you wrote. We also delete the photo and the record pointing at it. In the rare case where the storage deletion fails, the photo is no longer reachable from the app and the failure is logged so we can remove the file.</li>
+      <li><strong>Live-tracking trails.</strong> A tracking session records where you stood and where you pointed your phone, about once a second. <strong>We keep the link between you and a trail until that session has been inactive for 90 days.</strong> After that the link is permanently removed and the measurements are kept without you attached to them. Deleting your account removes the link immediately, for every trail, however recent.</li>
+      <li><strong>What "removing the link" does and does not mean.</strong> It destroys the identifier that ties the data to your account, and it cannot be undone. We do not call the result anonymous, because removing an identifier is not the same as making data impossible to trace back to a person. A detailed record of one person's movements can sometimes be recognised from the movements alone, whoever it is stored under. A single report is far less revealing than a trail, but it still records a place and a time where somebody stood. If that concerns you, delete your account, which removes the link straight away, or avoid live tracking.</li>
+      <li><strong>An administrator can delete tracking samples outright</strong> when there is a reason to, such as a takedown request or a report of misuse. This is a manual operation, not a schedule.</li>
       <li><strong>Feedback submissions</strong> are kept with the text and the context you sent. They carry no link to your account, so deleting your account does not remove them and we cannot tell which ones are yours.</li>
       <li><strong>Server logs</strong> (IP addresses, request metadata) are retained for up to 30 days.</li>
     </ul>
@@ -288,7 +290,9 @@
       <li><strong>Delete your account</strong> in the app, under Settings, then Account, then Delete account. You can also email us at <a href="mailto:tomo@dronereporter.io">tomo@dronereporter.io</a>, or follow the steps on our <a href="../delete-account/">account deletion page</a>.</li>
       <li><strong>Request a copy</strong> of your data by contacting us at the same address.</li>
     </ul>
-    <p>Deleting your account deletes the account record, your email address and name, the sign-in identifier that links your Apple or Google account to Drone Reporter, your registered devices, your tracking sessions and their samples, and the photos you uploaded. Every report you submitted is withdrawn from the shared map, from the agency view and from alerts. Each one stays only as an anonymous record of the time and place of the sighting. This cannot be undone.</p>
+    <p>Deleting your account <strong>deletes</strong> the account record, your email address and name, the sign-in identifier that links your Apple or Google account to Drone Reporter, and your registered devices. Your uploaded photos are deleted too, on the same best-effort basis described in section 5: the records pointing at them are always removed, and a storage failure is logged so we can delete the file.</p>
+    <p>Your reports and your live-tracking trails are <strong>kept, with every link to you destroyed</strong>. Your reports stay on the shared map with nothing connecting them to you: the location, time, camera direction, drone type and any description you wrote remain. They are removed from the agency view and from alerts. Your tracking trails are kept the same way, with you detached from them. Section 5 explains what removing the link does and does not mean, and it applies here too.</p>
+    <p>None of this can be undone. If you want a sighting itself gone rather than detached from you, email us at <a href="mailto:tomo@dronereporter.io">tomo@dronereporter.io</a> before deleting your account.</p>
     <p>If you are in the EU/EEA, you have additional rights under the GDPR, including the right to access, rectify, port, and restrict processing of your data. To exercise these rights, contact us at <a href="mailto:tomo@dronereporter.io">tomo@dronereporter.io</a>.</p>
 
     <h2>7. Children's Privacy</h2>
