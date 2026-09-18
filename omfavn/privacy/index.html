@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy | omfavn</title>
+  <meta name="description" content="What omfavn records, who is on a recording, and what happens to it.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png">
+  <link rel="canonical" href="https://omfavn.app/privacy/">
+  <meta name="theme-color" content="#F5F0E8">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --paper:#F5F0E8; --card:#EDE6DA; --ink:#2A2520;
+      --ink-dim:rgba(42,37,32,0.66); --ink-faint:rgba(42,37,32,0.38);
+      --line:rgba(160,82,45,0.14); --line-strong:rgba(160,82,45,0.34);
+      --sienna:#A0522D;
+      --serif:'Cormorant Infant', Georgia, serif; --mono:'DM Mono', ui-monospace, monospace;
+    }
+    html { -webkit-text-size-adjust:100%; }
+    body {
+      background:var(--paper); color:var(--ink);
+      font-family:var(--serif); -webkit-font-smoothing:antialiased; line-height:1.55;
+    }
+    .wrap { max-width:680px; margin:0 auto; padding:0 24px; }
+    .back { display:inline-block; margin-top:clamp(32px,6vh,56px);
+      font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.14em;
+      color:var(--ink-dim); text-decoration:none; transition:color .2s ease; }
+    .back:hover { color:var(--sienna); }
+    .back::before { content:"\2190\00a0\00a0"; }
+
+    h1 { font-weight:300; font-size:clamp(30px,5.2vw,48px); line-height:1.14;
+      letter-spacing:-0.005em; margin-top:clamp(28px,5vh,44px); }
+    .updated { font-family:var(--mono); font-size:11px; text-transform:uppercase;
+      letter-spacing:.14em; color:var(--ink-faint); margin-top:14px; }
+
+    section { margin-top:clamp(36px,6vh,56px); padding-top:22px; border-top:1px solid var(--line); }
+    h2 { font-family:var(--mono); font-weight:400; font-size:11px; text-transform:uppercase;
+      letter-spacing:.14em; color:var(--sienna); }
+    p { font-size:clamp(16px,1.9vw,19px); color:var(--ink-dim); margin-top:12px; max-width:56ch; }
+    p strong { font-weight:400; color:var(--ink); }
+
+    .note { margin-top:clamp(36px,6vh,56px); background:var(--card);
+      border-left:2px solid var(--sienna); padding:24px 26px; }
+    .note p { margin-top:0; }
+
+    footer {
+      margin-top:clamp(52px,9vh,88px); padding:22px 0 48px;
+      border-top:1px solid var(--line);
+      display:flex; flex-wrap:wrap; gap:10px 28px; align-items:baseline;
+      font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.14em;
+      color:var(--ink-dim);
+    }
+    footer a { color:var(--ink-dim); text-decoration:none; transition:color .2s ease; }
+    footer a:hover { color:var(--sienna); }
+    footer .sp { margin-left:auto; }
+    a:focus-visible { outline:2px solid var(--sienna); outline-offset:4px; border-radius:2px; }
+    @media (max-width:560px) { footer .sp { margin-left:0; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <a class="back" href="../">omfavn</a>
+
+    <h1>Privacy</h1>
+    <div class="updated">Last updated 18 September 2026</div>
+
+    <section>
+      <h2>What the app records</h2>
+      <p>Omfavn records audio in your home, when you start a recording. It records <strong>the room</strong>, not a single person, so everyone present is on the recording: you, your partner, your children, and anyone else who happens to be there.</p>
+    </section>
+
+    <section>
+      <h2>People who are not part of your household</h2>
+      <p>If someone outside your household is in the room, ask them before you record. A friend visiting, another family&rsquo;s child, a grandparent. They have not agreed to anything by being in your kitchen.</p>
+    </section>
+
+    <section>
+      <h2>What happens to a recording</h2>
+      <p>Recordings leave your phone. They are transcribed, separated by speaker, and analysed, and that is what Oline&rsquo;s written reflection is produced from.</p>
+    </section>
+
+    <div class="note">
+      <p>Omfavn is in development and the full privacy policy is not published yet. This page covers the part that affects what you do in your own home. The complete policy, naming every service that processes a recording and how long anything is kept, comes before the app is available to anyone outside Kinami.</p>
+    </div>
+
+    <footer>
+      <span>Kinami</span>
+      <a href="../">omfavn</a>
+      <a href="../beta/">Closed beta</a>
+      <a href="https://kinami.io/">kinami.io</a>
+      <span class="sp">omfavn.app/privacy</span>
+    </footer>
+
+  </div>
+</body>
+</html>
