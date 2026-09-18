@@ -46,8 +46,11 @@
         var(--paper);
       overflow:clip;
     }
-    .mark { width:var(--d); aspect-ratio:1; }
-    .mark img { display:block; width:100%; height:100%; user-select:none; -webkit-user-select:none; -webkit-user-drag:none; }
+    .mark { position:relative; width:var(--d); aspect-ratio:1; }
+    .mark img { position:absolute; inset:0; display:block; width:100%; height:100%; user-select:none; -webkit-user-select:none; -webkit-user-drag:none; }
+    /* the still waits hidden under the painting and takes over once decoded (see the script) */
+    .ink-still, .mark.settled .ink-paint { visibility:hidden; }
+    .mark.settled .ink-still { visibility:visible; }
     .word {
       /* the painted ring fills ~84% of its image box, so pull the word up into that margin */
       margin-top:calc(var(--d) * -0.05);
@@ -116,6 +119,8 @@
       html { scroll-behavior:auto; }
       .cue::after { animation:none; }
       .word, .tag, .cue { animation:none; opacity:1; }
+      .ink-paint { visibility:hidden; }
+      .ink-still { visibility:visible; }
     }
   </style>
 </head>
@@ -123,6 +128,7 @@
   <main>
     <section class="hero" aria-label="omfavn">
       <div class="mark">
+        <img class="ink-still" src="assets/ink.webp" alt="" aria-hidden="true" draggable="false" fetchpriority="low">
         <img class="ink-paint" src="assets/paint.webp" alt="" aria-hidden="true" draggable="false" fetchpriority="high">
       </div>
       <h1 class="word">omfavn</h1>
@@ -151,14 +157,19 @@
   </main>
 
   <script>
-    // The painting plays once on load, then rests on its final frame.
-    // Reduced motion skips straight to that frame.
+    // The painting plays once on load, then hands over to a still of its final frame.
+    // The still is decoded before the handover, so no frame shows an empty image.
+    // Reduced motion shows the still from the start (CSS).
     (function () {
-      var paint = document.querySelector('.ink-paint');
-      var STILL = 'assets/ink.webp';
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { paint.src = STILL; return; }
-      var settle = function () { setTimeout(function () { paint.src = STILL; }, 2800); };
-      if (paint.complete) settle(); else paint.addEventListener('load', settle, { once: true });
+      var mark = document.querySelector('.mark');
+      var paint = mark.querySelector('.ink-paint');
+      var still = mark.querySelector('.ink-still');
+      var played = new Promise(function (done) {
+        var wait = function () { setTimeout(done, 2800); };
+        if (paint.complete) wait(); else paint.addEventListener('load', wait, { once: true });
+      });
+      // if the still fails to load, the painting keeps its last frame
+      Promise.all([played, still.decode()]).then(function () { mark.classList.add('settled'); }, function () {});
     })();
   </script>
 </body>
