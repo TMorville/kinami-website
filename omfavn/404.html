@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found | omfavn</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" data-root>
+  <meta name="theme-color" content="#F5F0E8">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --paper:#F5F0E8; --ink:#2A2520;
+      --ink-dim:rgba(42,37,32,0.66); --ink-faint:rgba(42,37,32,0.38);
+      --line:rgba(160,82,45,0.14); --line-strong:rgba(160,82,45,0.34);
+      --sienna:#A0522D;
+      --serif:'Cormorant Infant', Georgia, serif; --mono:'DM Mono', ui-monospace, monospace;
+    }
+    html { -webkit-text-size-adjust:100%; }
+    body {
+      background:var(--paper); color:var(--ink);
+      font-family:var(--serif); -webkit-font-smoothing:antialiased; line-height:1.5;
+      min-height:100svh; display:flex; flex-direction:column; justify-content:center;
+      padding:48px 24px;
+    }
+    .wrap { max-width:720px; margin:0 auto; width:100%; }
+    .mono { font-family:var(--mono); font-weight:300; text-transform:uppercase; letter-spacing:.14em; }
+    .topbar {
+      display:flex; justify-content:space-between; align-items:baseline; gap:16px;
+      font-size:11px; color:var(--ink-dim); margin-bottom:clamp(28px,6vh,52px);
+    }
+    .topbar .code { color:var(--sienna); }
+    h1 { font-weight:300; font-size:clamp(30px,5.6vw,52px); line-height:1.14; letter-spacing:-0.005em; }
+    p { font-size:clamp(16px,1.9vw,19px); color:var(--ink-dim); margin-top:18px; max-width:46ch; }
+    nav {
+      margin-top:clamp(32px,6vh,48px); padding-top:20px;
+      border-top:1px solid var(--line-strong);
+      display:flex; flex-wrap:wrap; gap:14px 28px;
+      font-size:11px;
+    }
+    nav a { color:var(--ink-dim); text-decoration:none; transition:color .2s ease; }
+    nav a:hover { color:var(--sienna); }
+
+    /* Keyboard focus stays visible everywhere: sienna on paper is ~4.9:1. */
+    a:focus-visible { outline:2px solid var(--sienna); outline-offset:4px; border-radius:2px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar mono">
+      <span>omfavn</span>
+      <span class="code">Error 404</span>
+    </div>
+    <h1>This page does not exist.</h1>
+    <p>The address may be mistyped, or the page may have moved. The links below still work.</p>
+    <nav class="mono">
+      <a href="/" data-root>Home</a>
+      <a href="/beta/" data-root>Closed beta</a>
+      <a href="https://kinami.io/">kinami.io</a>
+    </nav>
+  </div>
+
+  <script>
+    // The same subtree is served both at the root of omfavn.app and under /omfavn/
+    // on kinami.io. A 404 can be served at any depth, so relative links are
+    // unreliable here. Prefix the root-absolute links when needed.
+    (function () {
+      var prefix = location.pathname.indexOf('/omfavn/') === 0 ? '/omfavn' : '';
+      if (!prefix) return;
+      document.querySelectorAll('[data-root]').forEach(function (el) {
+        el.setAttribute('href', prefix + el.getAttribute('href'));
+      });
+    })();
+  </script>
+</body>
+</html>
