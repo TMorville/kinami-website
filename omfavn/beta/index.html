@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Closed beta | omfavn</title>
+  <meta name="description" content="The omfavn closed beta: who it is for, what it involves, and how to put your name down.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png">
+  <link rel="canonical" href="https://omfavn.app/beta/">
+  <meta property="og:title" content="omfavn closed beta">
+  <meta property="og:description" content="Danish-speaking households with children at home. An iPhone, and an evening you would record.">
+  <meta property="og:image" content="https://omfavn.app/assets/og.png">
+  <meta property="og:url" content="https://omfavn.app/beta/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://omfavn.app/assets/og.png">
+  <meta name="theme-color" content="#F5F0E8">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --paper:#F5F0E8; --card:#EDE6DA; --ink:#2A2520;
+      --ink-dim:rgba(42,37,32,0.66); --ink-faint:rgba(42,37,32,0.38);
+      --line:rgba(160,82,45,0.14); --line-strong:rgba(160,82,45,0.34);
+      --sienna:#A0522D;
+      --serif:'Cormorant Infant', Georgia, serif; --mono:'DM Mono', ui-monospace, monospace;
+    }
+    html { -webkit-text-size-adjust:100%; }
+    body {
+      background:var(--paper); color:var(--ink);
+      font-family:var(--serif); -webkit-font-smoothing:antialiased; line-height:1.5;
+    }
+    .wrap { max-width:720px; margin:0 auto; padding:0 24px; }
+    .mono { font-family:var(--mono); font-weight:300; text-transform:uppercase; letter-spacing:.14em; }
+
+    .back { display:inline-block; margin-top:clamp(32px,6vh,56px);
+      font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.14em;
+      color:var(--ink-dim); text-decoration:none; transition:color .2s ease; }
+    .back:hover { color:var(--sienna); }
+
+    /* Keyboard focus stays visible everywhere: sienna on paper is ~4.9:1. */
+    a:focus-visible { outline:2px solid var(--sienna); outline-offset:4px; border-radius:2px; }
+    .back::before { content:"\2190\00a0\00a0"; }
+
+    .mark { display:block; width:clamp(48px,6vw,58px); height:auto; color:var(--sienna); margin-top:clamp(28px,5vh,44px); }
+    .kicker { font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:.16em; color:var(--sienna); margin-top:24px; }
+    h1 {
+      font-weight:300; font-size:clamp(32px,6.4vw,58px); line-height:1.12;
+      letter-spacing:-0.005em; margin-top:16px; max-width:19ch;
+    }
+    h1 .accent { display:block; color:var(--sienna); }
+    .lede { font-size:clamp(18px,2.4vw,22px); color:var(--ink-dim); margin-top:24px; max-width:46ch; }
+
+    .facts { margin-top:clamp(44px,8vh,72px); }
+    .fact { padding:20px 0; border-top:1px solid var(--line); }
+    .fact h2 { font-family:var(--mono); font-weight:400; font-size:11px; text-transform:uppercase; letter-spacing:.14em; color:var(--sienna); }
+    .fact p { font-size:clamp(16px,1.9vw,19px); color:var(--ink-dim); margin-top:10px; max-width:52ch; }
+    .fact p strong { font-weight:400; color:var(--ink); }
+
+    .signup { margin-top:clamp(44px,8vh,72px); background:var(--card); border-left:2px solid var(--sienna); padding:28px 30px; }
+    .signup p { font-size:clamp(17px,2vw,20px); max-width:48ch; }
+    .signup p + p { margin-top:12px; color:var(--ink-dim); }
+    .cta { display:inline-block; margin-top:22px; font-family:var(--mono); font-size:12px;
+      text-transform:uppercase; letter-spacing:.14em; color:var(--sienna);
+      text-decoration:none; border-bottom:1px solid var(--line-strong); padding-bottom:5px;
+      transition:color .2s ease, border-color .2s ease; word-break:break-word; }
+    .cta:hover { color:var(--ink); border-color:var(--ink); }
+
+    footer {
+      margin-top:clamp(56px,10vh,96px); padding:24px 0 48px;
+      border-top:1px solid var(--line);
+      display:flex; flex-wrap:wrap; gap:10px 28px; align-items:baseline;
+      font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.14em;
+      color:var(--ink-dim);
+    }
+    footer a { color:var(--ink-dim); text-decoration:none; transition:color .2s ease; }
+    footer a:hover { color:var(--sienna); }
+    footer .sp { margin-left:auto; }
+    @media (max-width:560px) {
+      .signup { padding:24px 22px; }
+      footer .sp { margin-left:0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <a class="back" href="../">omfavn</a>
+
+    <header>
+      <svg class="mark" viewBox="0 0 200 200" role="img" aria-label="omfavn">
+        <path d="M 150 52 C 182 82, 180 152, 130 162 C 78 175, 32 148, 34 100 C 36 62, 66 42, 96 46"
+              fill="none" stroke="currentColor" stroke-width="26" stroke-linecap="round"/>
+      </svg>
+      <div class="kicker">Closed beta</div>
+      <h1>Are you a parent?<span class="accent">Join the beta.</span></h1>
+      <p class="lede">Danish-speaking households with children at home. An iPhone, and an evening you would record.</p>
+    </header>
+
+    <main>
+      <section class="facts" aria-label="What the beta involves">
+        <div class="fact">
+          <h2>Not open yet</h2>
+          <p>No build has gone to TestFlight. Omfavn&rsquo;s backend is being rebuilt first, so there is nothing to install today. Putting your name down now means you hear when there is.</p>
+        </div>
+        <div class="fact">
+          <h2>What you would do</h2>
+          <p>Record a few real moments at home over a few weeks, in Danish, and read what Oline writes back. Then say where she was wrong.</p>
+        </div>
+        <div class="fact">
+          <h2>It records children</h2>
+          <p>That is the point of it, and it is also the part that needs care. The privacy assessment for recording children is not finished. <strong>No family outside Kinami&rsquo;s own joins before it is.</strong></p>
+        </div>
+      </section>
+
+      <section class="signup" aria-label="How to join">
+        <p>There is no sign-up form yet. Send an email and you go on the list.</p>
+        <p>Tell me how old your children are and which iPhone you have. Nothing else.</p>
+        <a class="cta" href="mailto:tomo@kinami.io?subject=Omfavn%20closed%20beta">tomo@kinami.io</a>
+      </section>
+    </main>
+
+    <footer>
+      <span>Kinami</span>
+      <a href="../">omfavn</a>
+      <a href="https://kinami.io/">kinami.io</a>
+      <span class="sp">omfavn.app/beta</span>
+    </footer>
+
+  </div>
+</body>
+</html>

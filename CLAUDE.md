@@ -19,6 +19,10 @@ Each page is its own `index.html`; there is no single "main page".
   `docs/`. Its PR ([#9](https://github.com/TMorville/kinami-website/pull/9)) was
   closed 2026-09-01 without merging; the branch is still there.
 - `dronereporter/` — product page + `privacy/`, `terms/`, `deck/`
+- `omfavn/` — the omfavn.app landing page + `beta/` and `404.html`. Light "Embrace"
+  palette (paper/ink/sienna), not the amber-on-black system the other pages use;
+  the source of truth for it is the seed deck in `TMorville/kinami-one` at
+  `deck/` on `deck/seed-2026-09`.
 - `dronetracker/` — legacy paths, now three redirect stubs pointing at
   `https://dronereporter.io/`. No content of its own.
 
@@ -74,16 +78,25 @@ hairline borders and blur.
 
 ## Deployment
 
-Two hosts build from this one repo, both off `main`. A push to `main` triggers
-both.
+Several hosts build from this one repo, all off `main`. A push to `main` triggers
+all of them.
 
 1. **GitHub Pages** serves the whole repo root at **kinami.io**.
 2. **Cloudflare Pages** (project `dronereporter`) serves the **`dronereporter/`
    subtree as its own document root** at **dronereporter.io**. Build command is
    empty, framework preset None, build output directory `dronereporter`. Every
    branch also gets a preview deployment, so a PR branch has its own URL.
+3. **omfavn.app** is the same arrangement for the **`omfavn/`** subtree, build
+   output directory `omfavn`. **Not stood up yet** as of 2026-09-18: the domain is
+   registered at Name.com and still on Name.com nameservers, so nothing serves it.
+   The subtree is written and verified locally against both roots.
 
-Consequences for the `dronereporter/` subtree:
+   `.app` is on the browser **HSTS preload list**, so `http://omfavn.app` is refused
+   before a request is sent. Verify only over `https://`, expect the site to be
+   completely unreachable (not merely insecure) between attaching the domain and the
+   certificate issuing, and set the zone to SSL **Full** with **Always Use HTTPS**.
+
+Consequences for the `dronereporter/` and `omfavn/` subtrees alike:
 
 - **Keep every internal path relative.** The subtree is served at two different
   roots at once (`/` on dronereporter.io, `/dronereporter/` on kinami.io), so
