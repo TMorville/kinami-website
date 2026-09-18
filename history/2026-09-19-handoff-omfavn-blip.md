@@ -49,6 +49,13 @@ The gap was about 40 ms on this fast connection. It will be longer on a phone.
 Keep the reduced-motion branch, which sets `ink.webp` immediately. After the fix, re-run the
 blip probe under "How to verify": no sample after ~650 ms may show `naturalWidth` 0.
 
+**Fixed 2026-09-19 with option 1, in `5f93dad`.** The still is a hidden layer under the animation
+and the handover waits for `still.decode()`. Reduced motion is now CSS. The probe (per animation
+frame, `ink.webp` delayed 400 ms) found 25 empty frames on the old page in Chromium and in WebKit,
+and 0 on the new page in both. With a 5000 ms delay the painting held its last frame until the
+still was ready. The last frame of `paint.webp` and `ink.webp` differ by 0.04% RMSE, so the
+handover is not visible.
+
 ## Decisions already made
 
 - The brush-painted ensō: "i like the effect a lot".
@@ -119,7 +126,7 @@ blip probe under "How to verify": no sample after ~650 ms may show `naturalWidth
 
 ## Not done
 
-- The blip fix. That is the next task.
+- The blip fix is committed (`5f93dad`) but not yet verified on the branch preview.
 - No 301 from `kinami.io/omfavn/*` to `omfavn.app`. dronereporter has the equivalent; nobody
   asked for this one.
 - `apple-app-site-association` is not hosted on `omfavn.app` (from the vault README).
