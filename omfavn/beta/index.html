@@ -4,20 +4,110 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Closed beta | omfavn</title>
-  <meta name="robots" content="noindex">
-  <!-- The deck prints omfavn.app/beta. The sign-up now lives on the home page.
-       Relative target, so this works at omfavn.app/beta/ and kinami.io/omfavn/beta/. -->
-  <meta http-equiv="refresh" content="0; url=../#beta">
-  <link rel="canonical" href="https://omfavn.app/">
+  <meta name="description" content="Sign up for the omfavn closed beta.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png">
+  <link rel="canonical" href="https://omfavn.app/beta/">
+  <meta property="og:title" content="omfavn closed beta">
+  <meta property="og:description" content="An AI parenting coach grounded in your family's everyday moments. Sign up for the closed beta.">
+  <meta property="og:image" content="https://omfavn.app/assets/og.png">
+  <meta property="og:url" content="https://omfavn.app/beta/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#F5F0E8">
   <style>
-    body { background:#F5F0E8; color:#2A2520; font:16px/1.5 ui-rounded, system-ui, sans-serif;
-      min-height:100svh; display:grid; place-items:center; }
-    a { color:#A0522D; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --paper:#F5F0E8; --ink:#2A2520; --ink-dim:rgba(42,37,32,0.66);
+      --sienna:#A0522D; --ochre:#C4A265;
+      --serif:'Cormorant Infant', Georgia, serif;
+      --mono:'DM Mono', ui-monospace, monospace;
+      --body:ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    html { -webkit-text-size-adjust:100%; }
+    body {
+      min-height:100svh; background:
+        radial-gradient(circle at 100% 0%, rgba(196,162,101,0.22), transparent 50%), var(--paper);
+      color:var(--ink); font-family:var(--serif); -webkit-font-smoothing:antialiased;
+      display:flex; flex-direction:column;
+    }
+    .wrap { width:100%; max-width:640px; margin:0 auto; padding:0 20px; flex:1; display:flex; flex-direction:column; }
+
+    .back {
+      align-self:flex-start; margin-top:clamp(24px,5svh,44px);
+      font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.14em;
+      color:var(--ink-dim); text-decoration:none; transition:color .2s ease;
+    }
+    .back::before { content:"\2190\00a0\00a0"; }
+    .back:hover { color:var(--sienna); }
+
+    header { margin-top:clamp(36px,8svh,72px); display:flex; align-items:center; gap:clamp(16px,3vw,24px); }
+    header img { width:clamp(64px,14vw,92px); height:auto; flex:none; }
+    h1 { font-weight:300; font-size:clamp(42px,7vw,64px); line-height:1; letter-spacing:-0.01em; }
+
+    .lede {
+      margin-top:clamp(20px,3svh,28px); font-weight:300;
+      font-size:clamp(24px,2vw + 14px,30px); line-height:1.3; color:var(--ink-dim); max-width:22em;
+    }
+
+    .form { margin-top:clamp(28px,5svh,44px); min-height:320px; }
+    .form iframe { width:100%; border:0; display:block; }
+    .fallback { font-family:var(--body); font-size:16px; color:var(--ink-dim); }
+    .fallback a { color:var(--sienna); }
+
+    .note {
+      margin:16px 0 clamp(56px,10svh,96px); font-family:var(--body); font-size:14px; line-height:1.55; color:var(--ink-dim); max-width:44ch;
+    }
+    .note a { color:var(--sienna); text-underline-offset:.15em; }
+
+    footer {
+      margin-top:auto; padding:22px 0 32px; border-top:1px solid rgba(160,82,45,0.14);
+      display:flex; flex-wrap:wrap; gap:10px 28px; align-items:baseline;
+      font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.14em; color:var(--ink-dim);
+    }
+    footer a { color:var(--ink-dim); text-decoration:none; transition:color .2s ease; }
+    footer a:hover { color:var(--sienna); }
+    a:focus-visible { outline:2px solid var(--sienna); outline-offset:4px; border-radius:2px; }
   </style>
-  <script>location.replace('../#beta');</script>
 </head>
 <body>
-  <p><a href="../#beta">Go to the omfavn closed beta</a></p>
+  <div class="wrap">
+    <a class="back" href="../">omfavn</a>
+
+    <header>
+      <img src="../assets/ink.webp" alt="" aria-hidden="true">
+      <h1>Closed beta</h1>
+    </header>
+    <p class="lede">For Danish-speaking families with children at home. We&rsquo;ll write when there&rsquo;s something to install.</p>
+
+    <div class="form">
+      <iframe data-tally-src="https://tally.so/embed/ODRBAk?alignLeft=1&amp;hideTitle=1&amp;transparentBackground=1&amp;dynamicHeight=1"
+              loading="lazy" height="320" title="Closed beta sign-up form"></iframe>
+      <noscript><p class="fallback">The form needs JavaScript. <a href="https://tally.so/r/ODRBAk">Open it on Tally</a> instead.</p></noscript>
+    </div>
+    <p class="note">We use what you send only to contact you about the closed beta. The form is run by Tally, which stores it in the EU. <a href="../privacy/">Privacy</a></p>
+
+    <footer>
+      <span>Kinami</span>
+      <a href="../">omfavn</a>
+      <a href="../privacy/">Privacy</a>
+      <a href="https://kinami.io/">kinami.io</a>
+    </footer>
+  </div>
+
+  <script>
+    // Tally's standard embed loader: resizes the iframe to the form's height.
+    var d = document, w = 'https://tally.so/widgets/embed.js',
+        v = function () {
+          if (typeof Tally !== 'undefined') Tally.loadEmbeds();
+          else d.querySelectorAll('iframe[data-tally-src]:not([src])').forEach(function (e) { e.src = e.dataset.tallySrc; });
+        };
+    if (typeof Tally !== 'undefined') v();
+    else if (!d.querySelector('script[src="' + w + '"]')) {
+      var s = d.createElement('script'); s.src = w; s.onload = v; s.onerror = v; d.body.appendChild(s);
+    }
+  </script>
 </body>
 </html>

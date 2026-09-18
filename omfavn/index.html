@@ -30,8 +30,8 @@
       --on-ink:#F5F0E8; --on-ink-dim:rgba(245,240,232,0.66);
       --serif:'Cormorant Infant', Georgia, serif;
       --mono:'DM Mono', ui-monospace, monospace;
-      /* one size drives the mark and the word inside it */
-      --d: min(84vw, 62svh, 640px);
+      /* one size drives the mark and the word under it */
+      --d: min(84vw, 54svh, 600px);
     }
     html { -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
     body { background:var(--paper); color:var(--ink); font-family:var(--serif); -webkit-font-smoothing:antialiased; }
@@ -39,76 +39,40 @@
     /* ---------- hero ---------- */
     .hero {
       position:relative; min-height:100svh;
-      display:grid; place-items:center; align-content:center; gap:clamp(18px,3.2svh,32px);
-      padding:48px 16px 88px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      padding:40px 16px 88px;
       background:
         radial-gradient(circle at 100% 0%, rgba(196,162,101,0.26), transparent 52%),
         var(--paper);
       overflow:clip;
     }
-    .mark { position:relative; width:var(--d); aspect-ratio:1; display:grid; place-items:center; }
-    .mark img {
-      position:absolute; inset:0; width:100%; height:100%;
-      pointer-events:none; user-select:none; -webkit-user-select:none; -webkit-user-drag:none;
-    }
-    .ink-ghost { opacity:0; transition:opacity .25s ease; }
-    .halo {
-      position:absolute; left:50%; top:50%; width:74%; height:34%;
-      transform:translate(-50%,-50%);
-      background:radial-gradient(ellipse at center, rgba(160,82,45,0.20), rgba(196,162,101,0.10) 45%, transparent 70%);
-      filter:blur(22px); opacity:.6; pointer-events:none;
-      animation:breathe 3.6s ease-in-out infinite;
-    }
-    @keyframes breathe { 0%,100%{ opacity:.45; transform:translate(-50%,-50%) scale(1); } 50%{ opacity:.9; transform:translate(-50%,-50%) scale(1.1); } }
-
+    .mark { width:var(--d); aspect-ratio:1; }
+    .mark img { display:block; width:100%; height:100%; user-select:none; -webkit-user-select:none; -webkit-user-drag:none; }
     .word {
-      position:relative; z-index:2; pointer-events:none;
-      font-weight:300; letter-spacing:-0.012em; line-height:1;
-      font-size:calc(var(--d) * 0.15);
-      color:var(--sienna);
-      transform:translateY(-0.05em);
-      opacity:0; animation:rise 1s cubic-bezier(.2,.7,.2,1) 1.55s forwards;
+      /* the painted ring fills ~84% of its image box, so pull the word up into that margin */
+      margin-top:calc(var(--d) * -0.05);
+      font-weight:300; letter-spacing:-0.015em; line-height:1;
+      font-size:calc(var(--d) * 0.19);
+      color:var(--ink);
+      opacity:0; animation:rise 1s cubic-bezier(.2,.7,.2,1) 1.7s forwards;
     }
-    .holding .word {
-      -webkit-mask-image:linear-gradient(90deg, #000 var(--fill,0%), rgba(0,0,0,.22) var(--fill,0%));
-              mask-image:linear-gradient(90deg, #000 var(--fill,0%), rgba(0,0,0,.22) var(--fill,0%));
-    }
-    .holding .ink-ghost { opacity:.22; }
-    .holding .halo { animation:none; opacity:1; transform:translate(-50%,-50%) scale(1.12); transition:all .4s ease; }
-
-    /* the whole mark is the control; the word and images let events through */
-    .hold {
-      position:absolute; inset:6%; z-index:3; border-radius:50%;
-      background:none; border:0; cursor:pointer;
-      touch-action:manipulation; -webkit-touch-callout:none; user-select:none; -webkit-user-select:none;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .hold:focus-visible { outline:2px solid var(--sienna); outline-offset:6px; }
-
     .tag {
-      display:flex; align-items:center; gap:12px;
+      display:flex; align-items:center; gap:12px; margin-top:clamp(14px,2.4svh,22px);
       font-family:var(--mono); font-weight:300; font-size:13px; letter-spacing:.06em; color:var(--ink-dim);
-      opacity:0; animation:rise .9s ease 2.15s forwards;
-      /* the painted ring fills ~84% of its image box; close the gap it leaves */
-      margin-top:calc(var(--d) * -0.07);
+      opacity:0; animation:rise .9s ease 2.2s forwards;
     }
     .tag::before, .tag::after { content:""; width:20px; height:1px; background:rgba(196,162,101,0.6); }
     .tag i { font-family:var(--serif); font-style:italic; font-size:17px; letter-spacing:.01em; color:var(--sienna); }
-    .hint {
-      font-family:var(--mono); font-weight:300; font-size:11px; text-transform:uppercase; letter-spacing:.16em;
-      color:var(--ink-dim); opacity:0; animation:fade .9s ease 3.2s forwards;
-    }
     .cue {
       position:absolute; left:50%; bottom:24px; transform:translateX(-50%);
-      width:24px; height:44px; display:block; opacity:0; animation:fade .9s ease 3.6s forwards;
+      width:24px; height:44px; display:block; opacity:0; animation:fade .9s ease 3s forwards;
     }
     .cue::after {
       content:""; position:absolute; left:50%; top:0; width:1px; height:100%;
-      background:var(--sienna); transform-origin:top; animation:drip 2.4s cubic-bezier(.5,0,.3,1) 3.6s infinite;
+      background:var(--sienna); transform-origin:top; animation:drip 2.4s cubic-bezier(.5,0,.3,1) 3s infinite;
     }
     .cue:focus-visible { outline:2px solid var(--sienna); outline-offset:4px; border-radius:2px; }
-    @keyframes rise { from { opacity:0; transform:translateY(calc(-0.05em + 10px)); } to { opacity:1; } }
-    .tag { transform:none; }
+    @keyframes rise { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
     @keyframes fade { to { opacity:1; } }
     @keyframes drip { 0%{ transform:scaleY(0); opacity:1; } 60%{ transform:scaleY(1); opacity:1; } 100%{ transform:scaleY(1); opacity:0; } }
 
@@ -129,17 +93,13 @@
       color:var(--on-ink); max-width:26em;
     }
     .block p .dim { color:var(--on-ink-dim); }
-    .mail {
-      display:inline-flex; align-items:baseline; gap:.5em; margin-top:28px;
-      font-family:var(--mono); font-weight:400; font-size:clamp(15px,1vw + 10px,19px); letter-spacing:.04em;
-      color:var(--ember); text-decoration:none;
-      border-bottom:1px solid rgba(232,165,116,0.4); padding-bottom:6px;
-      transition:color .2s ease, border-color .2s ease;
+    .block p a {
+      color:var(--ember); text-decoration:underline; text-decoration-thickness:1px;
+      text-underline-offset:.18em; text-decoration-color:rgba(232,165,116,0.5);
+      transition:color .2s ease, text-decoration-color .2s ease;
     }
-    .mail::after { content:"\2192"; transition:transform .25s ease; }
-    .mail:hover { color:var(--on-ink); border-color:var(--on-ink); }
-    .mail:hover::after { transform:translateX(4px); }
-    .mail:focus-visible, footer a:focus-visible { outline:2px solid var(--ember); outline-offset:4px; border-radius:2px; }
+    .block p a:hover { color:var(--on-ink); text-decoration-color:var(--on-ink); }
+    .block p a:focus-visible, footer a:focus-visible { outline:2px solid var(--ember); outline-offset:4px; border-radius:2px; }
 
     footer {
       width:100%; max-width:880px; margin:clamp(48px,8svh,80px) auto 0; padding:22px 0 36px;
@@ -154,8 +114,8 @@
 
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior:auto; }
-      .halo, .cue::after { animation:none; }
-      .word, .tag, .hint, .cue { animation:none; opacity:1; }
+      .cue::after { animation:none; }
+      .word, .tag, .cue { animation:none; opacity:1; }
     }
   </style>
 </head>
@@ -163,14 +123,10 @@
   <main>
     <section class="hero" aria-label="omfavn">
       <div class="mark">
-        <div class="halo" aria-hidden="true"></div>
-        <img class="ink-ghost" src="assets/ink.webp" alt="" aria-hidden="true" draggable="false">
         <img class="ink-paint" src="assets/paint.webp" alt="" aria-hidden="true" draggable="false" fetchpriority="high">
-        <h1 class="word">omfavn</h1>
-        <button class="hold" type="button" aria-label="Press and hold to go to the closed beta" aria-describedby="hold-hint"></button>
       </div>
+      <h1 class="word">omfavn</h1>
       <p class="tag"><i>om&middot;fawn</i>to embrace</p>
-      <p class="hint" id="hold-hint">Press and hold</p>
       <a class="cue" href="#about" aria-label="Scroll to what omfavn is"></a>
     </section>
 
@@ -178,12 +134,11 @@
       <div class="inner">
         <div class="block">
           <h2>What it is</h2>
-          <p>Omfavn is a parenting coach on your iPhone. You record an ordinary evening at home, and Oline, the coach inside the app, writes back about it. <span class="dim">She hears how things were said as well as the words.</span></p>
+          <p>Record dinner or bedtime on your iPhone, in Danish. Oline, Omfavn&rsquo;s AI parenting coach, listens to the words and the tone, then writes you one reflection on the moment.</p>
         </div>
-        <div class="block" id="beta" tabindex="-1">
+        <div class="block">
           <h2>Closed beta</h2>
-          <p>For Danish-speaking families with children at home. It isn&rsquo;t open yet. <span class="dim">Send an email and you&rsquo;re on the list. We&rsquo;ll write when there&rsquo;s something to install.</span></p>
-          <a class="mail" href="mailto:hello@omfavn.app?subject=Omfavn%20closed%20beta">hello@omfavn.app</a>
+          <p>Omfavn is in closed beta until we are ready to share it. <span class="dim">If you are interested in the closed beta, <a href="beta/">see here</a>.</span></p>
         </div>
       </div>
       <footer>
@@ -196,71 +151,14 @@
   </main>
 
   <script>
-    // Press and hold, as in the app: the mark ghosts, then repaints while held.
-    // When the stroke closes, the page carries you to the closed beta.
+    // The painting plays once on load, then rests on its final frame.
+    // Reduced motion skips straight to that frame.
     (function () {
-      var root = document.documentElement;
-      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var paint = document.querySelector('.ink-paint');
-      var word = document.querySelector('.word');
-      var btn = document.querySelector('.hold');
-      var beta = document.getElementById('beta');
       var STILL = 'assets/ink.webp';
-      var HOLD_MS = 2000;           // the brush closes the circle at ~2.0 s
-      var blob = null, url = null, t0 = 0, raf = 0, holding = false;
-
-      if (reduce) {
-        paint.src = STILL;
-      } else {
-        // The painting plays once on load; settle on the still afterwards.
-        var settle = function () { setTimeout(function () { if (!holding) paint.src = STILL; }, 2800); };
-        if (paint.complete) settle(); else paint.addEventListener('load', settle, { once: true });
-        fetch('assets/paint.webp').then(function (r) { return r.blob(); }).then(function (b) { blob = b; }).catch(function () {});
-      }
-
-      function replay() {
-        if (!blob) return;
-        var next = URL.createObjectURL(blob);
-        paint.src = next;
-        if (url) { var old = url; setTimeout(function () { URL.revokeObjectURL(old); }, 4000); }
-        url = next;
-      }
-      function tick(now) {
-        var p = Math.min(1, (now - t0) / HOLD_MS);
-        word.style.setProperty('--fill', (p * 100).toFixed(1) + '%');
-        if (p >= 1) { finish(true); return; }
-        raf = requestAnimationFrame(tick);
-      }
-      function begin(e) {
-        if (e.button > 0 || holding) return;
-        holding = true;
-        root.classList.add('holding');
-        if (!reduce) replay();
-        t0 = performance.now();
-        raf = requestAnimationFrame(tick);
-        if (btn.setPointerCapture && e.pointerId !== undefined) btn.setPointerCapture(e.pointerId);
-      }
-      function finish(completed) {
-        if (!holding) return;
-        holding = false;
-        cancelAnimationFrame(raf);
-        root.classList.remove('holding');
-        word.style.removeProperty('--fill');
-        paint.src = STILL;
-        if (completed) go();
-      }
-      function go() {
-        if (navigator.vibrate) navigator.vibrate(12);
-        beta.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
-        beta.focus({ preventScroll: true });
-      }
-
-      btn.addEventListener('pointerdown', begin);
-      btn.addEventListener('pointerup', function () { finish(false); });
-      btn.addEventListener('pointercancel', function () { finish(false); });
-      btn.addEventListener('contextmenu', function (e) { e.preventDefault(); });
-      // Keyboard (Enter/Space arrive as a click with detail 0) skips the hold, as the app's accessibility action does.
-      btn.addEventListener('click', function (e) { if (e.detail === 0) go(); });
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { paint.src = STILL; return; }
+      var settle = function () { setTimeout(function () { paint.src = STILL; }, 2800); };
+      if (paint.complete) settle(); else paint.addEventListener('load', settle, { once: true });
     })();
   </script>
 </body>
