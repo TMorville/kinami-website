@@ -17,11 +17,17 @@ name: CI
 # 'dronereporter/map/**' and ran only tests/map/*.test.js, so a threat-data
 # PR triggered no run at all and the deck-drift assertion, written to catch
 # exactly that change, had never executed in CI.
+#
+# 'omfavn/**' is listed for the same reason, not because a suite covers it
+# yet: a new top-level subtree that no trigger path names produces a PR with
+# zero runs, which reads as green. Add tests/omfavn/ when there is something
+# to assert.
 
 on:
   pull_request:
     paths:
       - 'dronereporter/**'
+      - 'omfavn/**'
       - 'scripts/**'
       - 'tests/**'
       - '.github/workflows/ci.yml'
@@ -29,6 +35,7 @@ on:
     branches: [main]
     paths:
       - 'dronereporter/**'
+      - 'omfavn/**'
       - 'scripts/**'
       - 'tests/**'
       - '.github/workflows/ci.yml'
