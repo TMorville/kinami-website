@@ -34,6 +34,7 @@
       display:flex; flex-direction:column;
     }
     .wrap { width:100%; max-width:640px; margin:0 auto; padding:0 20px; flex:1; display:flex; flex-direction:column; }
+    main { display:flex; flex-direction:column; }
 
     .back {
       align-self:flex-start; margin-top:clamp(24px,5svh,44px);
@@ -74,20 +75,22 @@
 </head>
 <body>
   <div class="wrap">
-    <a class="back" href="../">omfavn</a>
+    <main>
+      <a class="back" href="../">omfavn</a>
 
-    <header>
-      <img src="../assets/ink.webp" alt="" aria-hidden="true">
-      <h1>Closed beta</h1>
-    </header>
-    <p class="lede">For Danish-speaking families with children at home. We&rsquo;ll write when there&rsquo;s something to install.</p>
+      <header>
+        <img src="../assets/ink.webp" alt="" aria-hidden="true">
+        <h1>Closed beta</h1>
+      </header>
+      <p class="lede">For Danish-speaking families with children at home. We&rsquo;ll write when there&rsquo;s something to install.</p>
 
-    <div class="form">
-      <iframe data-tally-src="https://tally.so/embed/ODRBAk?alignLeft=1&amp;hideTitle=1&amp;transparentBackground=1&amp;dynamicHeight=1"
-              loading="lazy" height="320" title="Closed beta sign-up form"></iframe>
-      <noscript><p class="fallback">The form needs JavaScript. <a href="https://tally.so/r/ODRBAk">Open it on Tally</a> instead.</p></noscript>
-    </div>
-    <p class="note">We use what you send only to contact you about the closed beta. The form is run by Tally, which stores it in the EU. <a href="../privacy/">Privacy</a></p>
+      <div class="form">
+        <iframe data-tally-src="https://tally.so/embed/ODRBAk?alignLeft=1&amp;hideTitle=1&amp;transparentBackground=1&amp;dynamicHeight=1"
+                loading="lazy" height="320" title="Closed beta sign-up form"></iframe>
+        <noscript><p class="fallback">The form needs JavaScript. <a href="https://tally.so/r/ODRBAk">Open it on Tally</a> instead.</p></noscript>
+      </div>
+      <p class="note">We use what you send only to contact you about the closed beta. The form is run by Tally, which stores it in the EU. <a href="../privacy/">Privacy</a></p>
+    </main>
 
     <footer>
       <span>Kinami</span>
