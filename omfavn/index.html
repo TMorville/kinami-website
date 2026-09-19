@@ -33,7 +33,11 @@
       /* one size drives the mark and the word under it */
       --d: min(84vw, 54svh, 600px);
     }
-    html { -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+    /* scroll moves a whole page at a time. WebKit stops only at snap points, so the footer
+       gets one too: on a short screen the second page is taller than the viewport */
+    html { -webkit-text-size-adjust:100%; scroll-behavior:smooth; scroll-snap-type:y mandatory; }
+    .hero, .about { scroll-snap-align:start; }
+    footer { scroll-snap-align:end; }
     body { background:var(--paper); color:var(--ink); font-family:var(--serif); -webkit-font-smoothing:antialiased; }
 
     /* ---------- hero ---------- */
@@ -56,13 +60,13 @@
       margin-top:calc(var(--d) * -0.05);
       font-weight:300; letter-spacing:-0.015em; line-height:1;
       font-size:calc(var(--d) * 0.19);
-      color:var(--ink);
-      opacity:0; animation:rise 1s cubic-bezier(.2,.7,.2,1) 1.7s forwards;
+      color:var(--sienna);                  /* the app's onboarding wordmark */
+      opacity:0; animation:rise 1.8s cubic-bezier(.2,.7,.2,1) 1.7s forwards;
     }
     .tag {
       display:flex; align-items:center; gap:12px; margin-top:clamp(14px,2.4svh,22px);
       font-family:var(--mono); font-weight:300; font-size:13px; letter-spacing:.06em; color:var(--ink-dim);
-      opacity:0; animation:rise .9s ease 2.2s forwards;
+      opacity:0; animation:rise .9s ease 2.6s forwards;
     }
     .tag::before, .tag::after { content:""; width:20px; height:1px; background:rgba(196,162,101,0.6); }
     .tag i { font-family:var(--serif); font-style:italic; font-size:17px; letter-spacing:.01em; color:var(--sienna); }
@@ -81,7 +85,8 @@
 
     /* ---------- the ink page ---------- */
     .about {
-      min-height:100svh; background:var(--ink); color:var(--on-ink);
+      /* lvh, not svh: on a phone the toolbar is collapsed by the time this page is on screen */
+      min-height:100lvh; background:var(--ink); color:var(--on-ink);
       display:grid; grid-template-rows:1fr auto; padding:clamp(64px,12svh,120px) 16px 0;
     }
     .about .inner { width:100%; max-width:880px; margin:0 auto; align-self:center; display:grid; gap:clamp(40px,7svh,72px); }
@@ -95,7 +100,6 @@
       font-size:clamp(26px, 1.6vw + 14px, 36px); line-height:1.28; letter-spacing:-0.005em;
       color:var(--on-ink); max-width:26em;
     }
-    .block p .dim { color:var(--on-ink-dim); }
     .block p a {
       color:var(--ember); text-decoration:underline; text-decoration-thickness:1px;
       text-underline-offset:.18em; text-decoration-color:rgba(232,165,116,0.5);
@@ -140,11 +144,11 @@
       <div class="inner">
         <div class="block">
           <h2>What it is</h2>
-          <p>Record dinner or bedtime on your iPhone, in Danish. Oline, Omfavn&rsquo;s AI parenting coach, listens to the words and the tone, then writes you one reflection on the moment.</p>
+          <p>Omfavn helps parents reflect on everyday moments. Record dinner or bedtime and get a fresh perspective from Oline, your AI parenting coach.</p>
         </div>
         <div class="block">
           <h2>Closed beta</h2>
-          <p>Omfavn is in closed beta until we are ready to share it. <span class="dim">If you are interested in the closed beta, <a href="beta/">see here</a>.</span></p>
+          <p>If you are interested in trying it out early, <a href="beta/">sign up here</a>.</p>
         </div>
       </div>
       <footer>
