@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
-  <link rel="preload" as="image" href="assets/paint.webp" fetchpriority="high">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
   <link rel="canonical" href="https://omfavn.app/">
@@ -50,11 +49,9 @@
         var(--paper);
       overflow:clip;
     }
-    .mark { position:relative; width:var(--d); aspect-ratio:1; }
-    .mark img { position:absolute; inset:0; display:block; width:100%; height:100%; user-select:none; -webkit-user-select:none; -webkit-user-drag:none; }
-    /* the still waits hidden under the painting and takes over once decoded (see the script) */
-    .ink-still, .mark.settled .ink-paint { visibility:hidden; }
-    .mark.settled .ink-still { visibility:visible; }
+    .mark { width:var(--d); aspect-ratio:1; }
+    .mark img { display:block; width:100%; height:100%; user-select:none; -webkit-user-select:none; -webkit-user-drag:none; }
+    .mark img:not([src]) { display:none; }   /* the painting until the script gives it a source */
     .word {
       /* the painted ring fills ~84% of its image box, so pull the word up into that margin */
       margin-top:calc(var(--d) * -0.05);
@@ -89,6 +86,7 @@
       min-height:100lvh; background:var(--ink); color:var(--on-ink);
       display:grid; grid-template-rows:1fr auto; padding:clamp(64px,12svh,120px) 16px 0;
     }
+    .about:focus { outline:none; }   /* focused by the scroll cue, as a target, not a control */
     .about .inner { width:100%; max-width:880px; margin:0 auto; align-self:center; display:grid; gap:clamp(40px,7svh,72px); }
     .block h2 {
       display:flex; align-items:center; gap:12px;
@@ -123,8 +121,6 @@
       html { scroll-behavior:auto; }
       .cue::after { animation:none; }
       .word, .tag, .cue { animation:none; opacity:1; }
-      .ink-paint { visibility:hidden; }
-      .ink-still { visibility:visible; }
     }
   </style>
 </head>
@@ -132,15 +128,15 @@
   <main>
     <section class="hero" aria-label="omfavn">
       <div class="mark">
-        <img class="ink-still" src="assets/ink.webp" alt="" aria-hidden="true" draggable="false" fetchpriority="low">
-        <img class="ink-paint" src="assets/paint.webp" alt="" aria-hidden="true" draggable="false" fetchpriority="high">
+        <img class="ink-paint" alt="" aria-hidden="true" draggable="false">
+        <noscript><img src="assets/ink.webp" alt="" aria-hidden="true" draggable="false"></noscript>
       </div>
       <h1 class="word">omfavn</h1>
       <p class="tag"><i>om&middot;fawn</i>to embrace</p>
       <a class="cue" href="#about" aria-label="Scroll to what omfavn is"></a>
     </section>
 
-    <section class="about" id="about" aria-label="About omfavn">
+    <section class="about" id="about" aria-label="About omfavn" tabindex="-1">
       <div class="inner">
         <div class="block">
           <h2>What it is</h2>
@@ -161,19 +157,56 @@
   </main>
 
   <script>
-    // The painting plays once on load, then hands over to a still of its final frame.
-    // The still is decoded before the handover, so no frame shows an empty image.
-    // Reduced motion shows the still from the start (CSS).
+    // The painting plays once, then its img switches to a still of the final frame.
+    // It plays from a new blob URL on every page load. Measured in WebKit (2026-09-19): with
+    // the plain URL, a same-tab reload reused the finished animation of the cached paint.webp
+    // and showed its end frame. The still is decoded before the switch; in Chrome and WebKit
+    // that switch showed no empty frame. Reduced motion, or a failed fetch, shows the still.
     (function () {
-      var mark = document.querySelector('.mark');
-      var paint = mark.querySelector('.ink-paint');
-      var still = mark.querySelector('.ink-still');
-      var played = new Promise(function (done) {
-        var wait = function () { setTimeout(done, 2800); };
-        if (paint.complete) wait(); else paint.addEventListener('load', wait, { once: true });
+      var paint = document.querySelector('.ink-paint');
+      var STILL = 'assets/ink.webp';
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { paint.src = STILL; return; }
+      var url;
+      var played = fetch('assets/paint.webp')
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); })
+        .then(function (blob) {
+          return new Promise(function (done, fail) {
+            paint.addEventListener('load', done, { once: true });
+            paint.addEventListener('error', fail, { once: true });
+            paint.src = url = URL.createObjectURL(blob);
+          });
+        })
+        .then(function () { return new Promise(function (done) { setTimeout(done, 2800); }); });
+      // The still loads after the window load event. Started earlier, it delayed that event,
+      // and WebKit painted nothing on the page until it arrived.
+      var stillReady = new Promise(function (done) {
+        if (document.readyState === 'complete') done(); else window.addEventListener('load', done, { once: true });
+      }).then(function () {
+        var still = new Image();
+        still.src = STILL;
+        return still.decode();
       });
-      // if the still fails to load, the painting keeps its last frame
-      Promise.all([played, still.decode()]).then(function () { mark.classList.add('settled'); }, function () {});
+      played.catch(function () {
+        if (url) URL.revokeObjectURL(url);
+        paint.src = STILL;
+      });
+      // if the still fails, the painting keeps its last frame
+      Promise.all([played, stillReady]).then(function () {
+        paint.src = STILL;
+        URL.revokeObjectURL(url);
+      }, function () {});
+    })();
+
+    // The scroll cue moves to the second page without writing #about into the address.
+    // With the hash in the URL, every reload of the tab opened on the second page.
+    (function () {
+      var about = document.getElementById('about');
+      document.querySelector('.cue').addEventListener('click', function (e) {
+        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        about.scrollIntoView();                 // smooth, or instant under reduced motion (CSS)
+        about.focus({ preventScroll: true });   // keyboard focus follows, as it would for #about
+      });
     })();
   </script>
 </body>
