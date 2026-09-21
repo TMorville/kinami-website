@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-04",
+  "updated": "2026-09-21",
   "stats": [
     {
       "value": "800 g",
@@ -598,6 +598,78 @@
       "category": "sighting",
       "description": "A damaged drone was found in a field outside Viisoara during a large Russian air attack on Ukraine. Romanian Intelligence Service specialists found it carried explosives and destroyed it in a controlled detonation. No casualties or damage.",
       "source": "https://kyivindependent.com/estonia-romania-report-drone-incidents-amid-russian-and-ukrainian-aerial-attacks/"
+    },
+    {
+      "id": "belgium-brussels-2026-09",
+      "label": "Drones over Brussels Airport on two nights",
+      "country": "Belgium",
+      "site": "Zaventem, on 11 and 12 September",
+      "lat": 50.9014,
+      "lng": 4.4844,
+      "date": "2026-09-11",
+      "category": "airport-closure",
+      "description": "A supervising air traffic controller and airport security staff saw a drone over Brussels Airport on the evening of 11 September, and skeyes stopped traffic from about 21:45 to 22:10 while three inbound flights diverted. A drone returned the next evening at about 20:00 and skeyes picked it up on its detection equipment as well as by eye, with the federal police investigating both nights.",
+      "source": "https://www.vrt.be/vrtnws/nl/2026/09/12/tweede-dag-op-rij-drone-waargenomen-boven-brussels-airport/"
+    },
+    {
+      "id": "germany-wunstorf-2026-09",
+      "label": "Crashed drone beside Wunstorf air base",
+      "country": "Germany",
+      "site": "Open ground east of the Steinhuder Meer, about 2 km from Wunstorf air base, Lower Saxony",
+      "lat": 52.46,
+      "lng": 9.4,
+      "date": "2026-09-14",
+      "category": "military-site",
+      "description": "Investigators recovered parts of a crashed drone from open, uninhabited ground about two kilometres from the Bundeswehr air base at Wunstorf, and the Lower Saxony state criminal police searched the site through the week. Security sources described a custom-built aircraft with 3D-printed parts resembling the explosive drone found at Leipzig/Halle in August, and the federal prosecutor said it would examine any link.",
+      "source": "https://www.onvista.de/news/2026/09-18-roundup-2-drohnenfund-bundesanwaltschaft-prueft-verbindung-zu-leipzig-0-10-26554914"
+    },
+    {
+      "id": "lithuania-pratkunai-2026-09",
+      "label": "NATO jets shoot down a drone over Lithuania",
+      "country": "Lithuania",
+      "site": "Pratkunai village, Kaisiadorys district, near the Kruonis pumped-storage plant",
+      "lat": 54.8,
+      "lng": 24.25,
+      "date": "2026-09-15",
+      "category": "military-site",
+      "description": "Two Italian Eurofighters on NATO air policing duty from Siauliai shot down a drone that crossed from Belarus and stayed over Lithuania for about thirty minutes. It was the first drone shot down in Lithuanian airspace, the wreckage fell near the Kruonis pumped-storage plant, and President Gitanas Nauseda said it was a Gerbera-2 aimed at Ukraine.",
+      "source": "https://www.npr.org/2026/09/15/g-s1-143284/nato-jets-down-drone-in-lithuanian-airspace"
+    },
+    {
+      "id": "belgium-charleroi-2026-09",
+      "label": "Drone halts flights at Charleroi Airport",
+      "country": "Belgium",
+      "site": "Brussels South Charleroi Airport, Gosselies",
+      "lat": 50.46,
+      "lng": 4.4528,
+      "date": "2026-09-16",
+      "category": "airport-closure",
+      "description": "Skeyes detected a drone over Brussels South Charleroi Airport at about 14:00 and suspended operations for roughly 25 minutes, holding one arriving aircraft and disembarking passengers from another. Police traced and arrested the remote pilot, a private individual who faces a fine, so this flight was not part of the unexplained activity over other Belgian sites.",
+      "source": "https://www.lalibre.be/belgique/societe/2026/09/16/un-drone-a-survole-laeroport-de-charleroi-ce-mercredi-les-operations-ont-ete-interrompues-lengin-a-ete-immediatement-intercepte-CHA4TXT2TNC4PL4FAYNKOTJOMU/"
+    },
+    {
+      "id": "poland-lublin-rzeszow-2026-09",
+      "label": "Lublin and Rzeszow airports stop for a drone alert",
+      "country": "Poland",
+      "site": "Lublin Airport at Swidnik and Rzeszow-Jasionka Airport, eastern Poland",
+      "lat": 51.2403,
+      "lng": 22.7136,
+      "date": "2026-09-17",
+      "category": "airport-closure",
+      "description": "Polish radar tracked a fast Russian drone approaching the border, the air force began operations at 11:40 and the Government Centre for Security sent air attack alerts to the Lublin and Subcarpathian voivodeships. PANSA suspended flights at Lublin and Rzeszow-Jasionka to give military aviation room to work, and the operational command later said the drone came down three to four kilometres inside Ukraine without crossing into Poland.",
+      "source": "https://www.aerotime.aero/articles/poland-air-attack-alert-russian-jet-drone-border"
+    },
+    {
+      "id": "luxembourg-findel-2026-09",
+      "label": "Luxembourg Airport suspends flights over drones",
+      "country": "Luxembourg",
+      "site": "Findel, Niederanven",
+      "lat": 49.6233,
+      "lng": 6.2044,
+      "date": "2026-09-18",
+      "category": "airport-closure",
+      "description": "Luxembourg Airport detected several unauthorised drones near and then over the aerodrome on the evening of 18 September and suspended all flight operations as a precaution until the early hours of the next day. The airport said it did not know where the drones came from or who flew them, and an inbound flight from London diverted to Liege.",
+      "source": "https://www.euronews.com/my-europe/2026/09/19/operations-resume-at-luxembourg-airport-after-unauthorised-drones-halt-flights"
     }
   ]
 }
