@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About | Drone Reporter</title>
+  <meta name="description" content="Who builds Drone Reporter: Tobias Morville, founder, in Denmark.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0c0a04;
+      font-family: 'Cormorant Infant', serif;
+      color: rgba(220, 180, 100, 0.82);
+      min-height: 100vh;
+      padding: 60px 24px;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .back-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(220, 180, 100, 0.55);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      display: inline-block;
+      margin-bottom: 48px;
+    }
+
+    .back-link:hover {
+      color: rgba(220, 180, 100, 0.88);
+    }
+
+    h1 {
+      font-size: 36px;
+      font-weight: 400;
+      color: rgba(220, 180, 100, 0.92);
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(220, 180, 100, 0.55);
+      margin-bottom: 48px;
+    }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 400;
+      color: rgba(220, 180, 100, 0.88);
+      margin-top: 40px;
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: rgba(220, 180, 100, 0.82);
+      margin-bottom: 12px;
+    }
+
+    strong {
+      font-weight: 400;
+      color: rgba(220, 180, 100, 0.92);
+    }
+
+    a {
+      color: rgba(220, 180, 100, 0.82);
+      text-decoration: underline;
+      text-decoration-color: rgba(220, 180, 100, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    a:hover {
+      color: rgba(220, 180, 100, 0.92);
+      text-decoration-color: rgba(220, 180, 100, 0.5);
+    }
+
+    /* Profile links. Google's startup programme asks for founder information on the
+       domain that a reviewer can verify through third-party public links, so these
+       two are load-bearing and should not be removed. */
+    .profiles {
+      list-style: none;
+      margin: 16px 0 0;
+      padding: 0;
+    }
+
+    .profiles li {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .profiles .label {
+      display: inline-block;
+      min-width: 92px;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(220, 180, 100, 0.55);
+    }
+
+    /* Below ~480px the longer handle no longer fits beside its label, and one row
+       wraps while the other does not. Stack both the same way instead. */
+    @media (max-width: 480px) {
+      .profiles li { margin-bottom: 14px; }
+      .profiles .label { display: block; min-width: 0; margin-bottom: 2px; }
+    }
+
+    .footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(220, 180, 100, 0.06);
+    }
+
+    .footer p {
+      font-size: 14px;
+      color: rgba(220, 180, 100, 0.55);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../" class="back-link">&larr; dronereporter.io</a>
+
+    <h1>About</h1>
+    <div class="subtitle">Drone Reporter &middot; Who builds it</div>
+
+    <p>Drone Reporter is built by <strong>Tobias Morville</strong> in Denmark. He is the only person working on it so far.</p>
+
+    <h2>The founder</h2>
+    <p>Tobias writes the app, the backend and this site. His background is in data science and machine learning. You can check that yourself:</p>
+    <ul class="profiles">
+      <li><span class="label">LinkedIn</span><a href="https://www.linkedin.com/in/tobiasmorville" target="_blank" rel="noopener">linkedin.com/in/tobiasmorville</a></li>
+      <li><span class="label">GitHub</span><a href="https://github.com/TMorville" target="_blank" rel="noopener">github.com/TMorville</a></li>
+    </ul>
+
+    <h2>The product</h2>
+    <p>Anyone can report a drone from their phone. The app records where you stand, which way you are pointing and how high you are aiming. Two reports of the same drone from different places are enough to work out roughly where it is, and a trail of reports shows where it went. The map at <a href="../map/">dronereporter.io/map</a> is open to everyone.</p>
+    <p>The app is in open beta on <a href="https://testflight.apple.com/join/N7uHVQMd" target="_blank" rel="noopener">TestFlight</a> and <a href="https://play.google.com/store/apps/details?id=io.kinami.dronetracker" target="_blank" rel="noopener">Google Play</a>. It is free, and it always will be for the people reporting.</p>
+
+    <h2>The company</h2>
+    <p>Drone Reporter is operated by <strong>Kinami</strong>, a business registered in Denmark. The same entity is named in the <a href="../privacy/">privacy policy</a> and the <a href="../terms/">terms</a>.</p>
+
+    <h2>Contact</h2>
+    <p>Write to <a href="mailto:tomo@dronereporter.io">tomo@dronereporter.io</a>. It reaches Tobias.</p>
+
+    <div class="footer">
+      <p>Last updated: September 21, 2026</p>
+    </div>
+  </div>
+</body>
+</html>
