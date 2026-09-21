@@ -7,6 +7,20 @@
       "source": "https://www.err.ee/1610044855/kaitsevagi-drooniohtu-kontrollimisel-ei-tuvastatud",
       "reason": "Estonian Defence Forces warned eight counties and activated ground units and Baltic Air Policing fighters early on 3 September, then found no air threat and sent an all-clear. No drone was confirmed in Estonian airspace, so the inclusion bar is not met.",
       "rejected": "2026-09-04"
+    },
+    {
+      "id": "uk-heathrow-2026-09",
+      "date": "2026-09-16",
+      "source": "https://airlive.net/incident/2026/09/16/all-departure-operations-halted-at-london-heathrow-following-drone-sighting-over-terminal-5/",
+      "reason": "A claimed departure halt at Terminal 5 from 10:07 to 10:19 BST appears only on content aggregators (airlive, london999, cedarnews, travelandtourworld), with no wire service or UK national carrying it. Mainstream Heathrow drone coverage is all from January 2019, and the real September 2026 UK disruption was the NATS flight-data processing failure on 8 and 9 September. No reputable source and no official statement, so criteria 2 and 3 are not met.",
+      "rejected": "2026-09-21"
+    },
+    {
+      "id": "finland-loviisa-2026-09",
+      "date": "2026-09-16",
+      "source": "https://eestinen.fi/2026/09/soome-tuumajaama-lahedal-margati-drooni-politsei-uurib-asja/",
+      "reason": "East Uusimaa police investigated a drone flying inside the Loviisa nuclear power plant restriction zone, questioned the operator, and concluded it was a hobbyist with no hybrid intent and no threat to the plant. Nothing was disrupted and the cause was identified as benign.",
+      "rejected": "2026-09-21"
     }
   ]
 }

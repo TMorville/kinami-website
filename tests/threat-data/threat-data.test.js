@@ -34,11 +34,25 @@ const row = (over = {}) => ({
 
 const data = (incidents, updated = "2026-08-31") => ({ updated, stats: [], incidents });
 
+// Fixed, so the synthetic rows below stay deterministic. The real data file is
+// checked against the actual calendar day instead: it gains rows dated after
+// any constant we could freeze here.
 const TODAY = "2026-09-03";
 
 test("the real threat-data.json has zero violations", async () => {
   const raw = JSON.parse(await readFile(`${SITE}/threat-data.json`, "utf8"));
-  assert.deepEqual(validateData(raw, { today: TODAY }), []);
+  assert.deepEqual(validateData(raw, { today: localDateIso() }), []);
+});
+
+test("the real threat-data.json check still fails on a future-dated row", async () => {
+  const raw = JSON.parse(await readFile(`${SITE}/threat-data.json`, "utf8"));
+  const future = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  raw.incidents.push(row({ id: `testland-future-${future.slice(0, 7)}`, date: future }));
+  const errors = validateData(raw, { today: localDateIso() });
+  assert.ok(
+    errors.some((e) => e.includes("is after today")),
+    `expected a future-date violation, got ${JSON.stringify(errors)}`,
+  );
 });
 
 test("validateIncident accepts a well-formed row", () => {
