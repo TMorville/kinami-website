@@ -357,14 +357,18 @@
     else { phone.style.width = pw + 'px'; phone.style.height = ph + 'px'; phone.style.transform = 'scale(' + Math.min((h - 22) / ph, (w - 22) / pw, 1.3) + ')'; }
   }
   window.addEventListener('resize', fit);
+  // Inside the deck the phone pulses until the first touch, and again after the slide is left and re-entered.
+  function call(on) { if (window.parent !== window) $('phone').classList.toggle('call', on); }
+  ['pointerdown', 'keydown', 'wheel'].forEach(function (t) { document.addEventListener(t, function () { call(false); }, { capture: true, passive: true }); });
   window.addEventListener('message', function (e) {
     if (e.source !== window.parent || !e.data || e.data.type !== 'omfavn-deck') return;
     if (e.data.cmd === 'beat' && [0, 1, 2, 3].indexOf(e.data.n) >= 0) setBeat(e.data.n);
-    else if (e.data.cmd === 'deactivate') { stopAll(); render(); }
+    else if (e.data.cmd === 'deactivate') { stopAll(); render(); call(true); }
     else if (e.data.cmd === 'hello') { window.parent.postMessage({ type: 'omfavn-app', evt: 'ready' }, '*'); announce(true); }
   });
 
   fit();
+  call(true);
   var m = /beat=(\d)/.exec(location.hash); setBeat(m ? +m[1] : 0);
   if (window.parent !== window) window.parent.postMessage({ type: 'omfavn-app', evt: 'ready' }, '*');
 })();

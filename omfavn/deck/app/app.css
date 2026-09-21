@@ -14,6 +14,9 @@ html, body { height:100%; background:transparent; overflow:hidden; font-family:v
 .phone { width:390px; height:844px; flex:none; position:relative; background:var(--paper); border-radius:54px; overflow:hidden;
   border:1px solid var(--line-strong); box-shadow:0 0 0 9px #2A2520, 0 0 0 10px rgba(42,37,32,.5); transform-origin:center center; }
 body.bare .phone { border-radius:0; border:0; box-shadow:none; }
+/* Inside the deck the bezel breathes to sienna until the viewer first touches the phone, like the enso on the clip slide. */
+.phone.call { animation:phone-call 1.4s ease-in-out infinite alternate; }
+@keyframes phone-call { to { box-shadow:0 0 0 9px var(--sienna), 0 0 0 10px rgba(160,82,45,.5); } }
 
 .status { position:absolute; top:0; left:0; right:0; height:60px; z-index:6; background:linear-gradient(var(--bg, var(--paper)) 72%, transparent); transition:background .5s ease; display:flex; align-items:center; justify-content:space-between; padding:14px 34px 0;
   font-weight:600; font-size:16px; pointer-events:none; }

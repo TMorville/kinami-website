@@ -26,7 +26,7 @@ function show(n) {
 }
 reading.addEventListener('change', () => show(i));
 
-// Phones get a one-tap notice over slide 1 before the scrolling page.
+// Phones get a one-tap notice over the cover (reading mode hides the intro) before the scrolling page.
 const deskNote = document.getElementById('desk-note');
 if (deskNote && reading.matches) {
   const deckEl = document.querySelector('.deck');
@@ -51,6 +51,37 @@ window.addEventListener('click', (e) => { if (reading.matches || e.target.closes
 
 const start = parseInt(location.hash.slice(1), 10);
 show(Number.isFinite(start) && start > 0 ? start - 1 : 0);
+
+// --- Intro: the painted mark from omfavn.app plays, the word and its gloss rise, then the deck moves to the cover ---
+// The painting is 2.6 s of frames and then holds its last one; the text finishes rising at 3.5 s. A new URL restarts
+// the painting from its first frame when the intro is shown again. Reading mode hides the intro (CSS), and reduced
+// motion shows the finished mark. Leaving early (a key or a click) cancels the move.
+(function () {
+  const slide = document.getElementById('intro');
+  if (!slide) return;
+  const img = slide.querySelector('.intro-paint');
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let timer = 0, plays = 0, on = false;
+  const advance = () => { if (slides[i] === slide) show(i + 1); };
+  const run = hold => { slide.classList.add('run'); timer = setTimeout(advance, hold); };
+  function stop() { clearTimeout(timer); img.onload = img.onerror = null; }
+  function play() {
+    stop();
+    slide.classList.remove('run');
+    if (calm.matches) { img.src = 'assets/ink.webp'; run(1800); return; }
+    img.onload = () => { img.onload = img.onerror = null; run(4300); };
+    img.onerror = () => { img.onload = img.onerror = null; img.src = 'assets/ink.webp'; run(1800); };
+    img.src = 'assets/paint.webp' + (plays++ ? '?replay=' + plays : '');
+  }
+  const sync = () => {
+    const now = slide.classList.contains('active') && !reading.matches;
+    if (now === on) return;
+    on = now; if (on) play(); else stop();
+  };
+  new MutationObserver(sync).observe(slide, { attributes: true, attributeFilter: ['class'] });
+  reading.addEventListener('change', sync);
+  sync();
+})();
 
 // --- Demo slide: the enso plays a real clip; transcript and pitch reveal in sync; then Oline ---
 (function () {
@@ -145,21 +176,21 @@ show(Number.isFinite(start) && start > 0 ? start - 1 : 0);
   const firstEntry = seed && seed.journal && seed.journal[0] ? seed.journal[0].date : null;
   // One label, one headline, at most one sentence per screen. Quotes are verbatim from the seed (build_app_seed.py checks them).
   const SCREENS = {
-    today: ['Today', 'A question only this family gets.', 'Oline picks one child and writes from that child\u2019s profile, the week\u2019s entries and the recordings.'],
-    journal: ['The journal', 'A moment in three steps.', 'How the day felt, what was in it, and a few lines. She reads all three.'],
-    entry: ['The journal', 'The moment is saved.', 'Oline reads it beside the recordings and the rest of the week. She is offline in this demo for text you type.'],
-    reflection: ['Oline writes back', 'A reply to this moment.', 'She names the child, works from what he did this week and points to one article. That is the whole reply, with no general advice in it.'],
+    today: ['Today', 'Oline asks a tailored question.', 'Oline picks one child and writes from that child\u2019s profile, the week\u2019s entries and the recordings.'],
+    journal: ['The journal', 'Log a moment in 3 steps.', 'Rate the day, pick the feelings and add a few lines. Oline reads all three.'],
+    entry: ['The journal', 'The moment is saved.', 'Oline reads it with the recordings and other entries that week. She cannot reply to text typed in this demo.'],
+    reflection: ['Oline writes back', 'Oline replies to this.', 'Her reply names the child and uses what he did this week. It links to one article and includes no general advice.'],
     record: ['Record', 'Or record the moment itself.', 'Up to thirty minutes at the table. Each voice is matched to a family member, so she knows who said what. Recording is off in this demo.'],
-    session: ['A recording', 'What a recording adds.', 'The words, who spoke, and how it sounded. All of it is read together with the journal.'],
+    session: ['A recording', 'Recordings add detail.', 'Oline reads the words with the journal. She also uses who spoke and how it sounded.'],
     oline: ['Ask Oline', 'A question gets one answer.', 'She answers from this family\u2019s own entries, recordings and child profiles. General advice is not in it.'],
-    letter: ['Sunday', 'The week in one letter.', 'Oline writes it from the week just passed: what went well, one thing to try, and a question to sit with.'],
-    grow: ['Grow', 'A library on child development.', '25 articles, every one narrated in the app (four play in this demo). Oline knows them all and points to the one that fits the entry she just read.'],
-    article: ['Grow', 'Read it, or listen.', 'When Oline writes back, the article she points to comes from this library.'],
-    settings: ['Settings', 'One household, both parents.', 'The family and their profiles, reminders, and the subscription.'],
-    family: ['Settings', 'Each child’s profile grows.','Every entry and every recording adds to what Oline knows about that child. Each member enrols a voice, so Oline can tell who spoke in a recording.'],
-    sub: ['Settings', 'One subscription per household.', 'One plan covers both parents.'],
+    letter: ['Sunday', 'Read the weekly letter.', 'Oline uses the past week. The letter covers what went well and one thing to try. It asks a question.'],
+    grow: ['Grow', 'Read about child development.', 'All 25 articles have audio in the app (four play in this demo). Oline can use any article and links to one that fits your entry.'],
+    article: ['Grow', 'Read or listen.', 'When Oline writes back, the article she points to comes from this library.'],
+    settings: ['Settings', 'Both parents share access.', 'Manage family profiles, reminders and your subscription.'],
+    family: ['Settings', 'Each child’s profile grows.','Each entry and recording helps Oline learn about that child. Each family member records a voice sample so Oline can identify who spoke.'],
+    sub: ['Settings', 'One plan covers the household.', 'One plan covers both parents.'],
     notif: ['Settings', 'Reminders.', 'A nudge to write or record.'],
-    about: ['Settings', 'What is real here.', 'The household is invented. Oline\u2019s words and the dinner recording are real.'],
+    about: ['Settings', 'See what is real.', 'The household is invented. Oline\u2019s words and the dinner recording are real.'],
   };
   let ready = false, shown = '';
   function follow(name) {
