@@ -16,7 +16,7 @@ import { applyPing, syncMap } from "../../dronereporter/map/src/maprender.js";
 
 const NOW = Date.parse("2026-09-03T12:00:00Z");
 const DAY = 86_400_000;
-const palette = { amber: "#E8A33D", amberDim: "#8a6b3a", background: "#0A0907" };
+const palette = { report: "#FFFFFF", reportDim: "#9AA3B6", incident: "#FF3B30", clusterFill: "#1C2640", clusterText: "#EEF1F7", land: "#23304D", water: "#34466C", road: "#2D3B5A", label: "#BCC3D2", labelHalo: "#23304D" };
 
 const incident = (date) => ({
   id: "x-1",
@@ -68,7 +68,7 @@ test("pingLayer is a circle layer on the incident source, filtered to fresh rows
   assert.equal(layer.type, "circle");
   assert.equal(layer.source, INCIDENT_SOURCE_ID);
   assert.deepEqual(layer.filter, ["==", ["get", "fresh"], true]);
-  assert.equal(layer.paint["circle-stroke-color"], palette.amber);
+  assert.equal(layer.paint["circle-stroke-color"], palette.incident);
   // A ring, not a disc: the fill is off.
   assert.equal(layer.paint["circle-opacity"], 0);
 });

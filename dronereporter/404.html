@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="st-blue">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,75 +7,60 @@
   <meta name="robots" content="noindex">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="/assets/logo/favicon.ico">
-  <meta name="theme-color" content="#0A0907">
+  <meta name="theme-color" content="#152342">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --void:#0A0907; --text:#EDE7DA; --text-dim:#9A9180;
-      --line:rgba(220,180,100,0.10); --line-strong:rgba(220,180,100,0.24);
-      --signal:#E8A33D;
-      --serif:'Cormorant Infant', serif; --mono:'DM Mono', monospace;
+    /* Inline, not ../assets/live-sky.css: Pages serves this file at any depth,
+       so a relative stylesheet link would miss. Tokens are the st-blue block
+       from assets/live-sky.css. */
+    .st-blue {
+      --sky:linear-gradient(180deg,#152342 0%,#34466C 42%,#7A7C92 72%,#C98A68 100%);
+      --sky-flat:#34466C;
+      --fg:#EEF1F7; --fg2:rgba(238,241,247,.72); --fg3:rgba(238,241,247,.5);
+      --rep:#FFFFFF; --repglow:0 0 0 5px rgba(255,255,255,.14),0 0 14px 4px rgba(255,255,255,.5);
+      --beacon:#FF3B30;
     }
-    body {
-      background: var(--void); color: var(--text);
-      font-family: var(--serif);
-      min-height: 100svh;
-      display: flex; flex-direction: column; justify-content: center;
-      padding: 0 8vw;
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html {
+      background:var(--sky-flat); color:var(--fg);
+      font-family:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      font-variant-numeric:tabular-nums; -webkit-font-smoothing:antialiased;
     }
-    body::before {
-      content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background-image: repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 80px);
-      opacity: 0.5;
-    }
-    .mono {
-      font-family: var(--mono); font-weight: 300;
-      text-transform: uppercase; letter-spacing: 0.14em;
-    }
-    .topbar {
-      position: fixed; top: 26px; left: 8vw; right: 8vw; z-index: 3;
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 11px; color: var(--text-dim);
-    }
-    .topbar .code { color: var(--signal); }
-    main { position: relative; z-index: 2; max-width: 720px; }
-    h1 {
-      font-weight: 300; font-size: clamp(30px, 4.4vw, 56px);
-      line-height: 1.14; letter-spacing: 0.01em; margin-bottom: 20px;
-    }
-    p {
-      font-size: clamp(16px, 1.5vw, 19px); line-height: 1.6;
-      color: rgba(237,231,218,0.62); max-width: 46ch;
-    }
-    nav {
-      margin-top: 44px; padding-top: 22px;
-      border-top: 1px solid var(--line-strong);
-      display: flex; flex-wrap: wrap; gap: 28px;
-    }
-    nav a {
-      font-size: 11px; color: var(--text-dim);
-      text-decoration: none; transition: color 0.2s ease;
-    }
-    nav a:hover, nav a:focus-visible { color: var(--signal); outline: none; }
+    body { min-height:100svh; padding:28px 8vw; }
+    .sky-bg { position:fixed; inset:0; z-index:-1; background:var(--sky); pointer-events:none; }
+    :focus-visible { outline:2px solid var(--fg); outline-offset:3px; }
+    .wm { display:inline-flex; align-items:center; font-weight:600; letter-spacing:-.02em; line-height:1; color:var(--fg); text-decoration:none; }
+    .wm .pair { position:relative; flex:none; width:.4em; height:.4em; border-radius:50%; background:var(--rep); box-shadow:var(--repglow); margin-right:.93em; }
+    .wm .pair::after { content:""; position:absolute; left:.61em; top:-.04em; width:.25em; height:.25em; border-radius:50%; background:var(--beacon); }
+    .topbar { display:flex; justify-content:space-between; align-items:center; min-height:44px; }
+    .topbar .wm { font-size:22px; }
+    .topbar .code { font-size:15px; font-weight:500; color:var(--fg2); }
+    /* Text sits high on the sky: the blue sky's lower third is the peach
+       horizon, where light text drops under 3:1. */
+    main { margin-top:14svh; max-width:720px; }
+    h1 { font-size:clamp(34px, 4.4vw, 56px); font-weight:700; line-height:1.08; letter-spacing:-.02em; margin-bottom:16px; }
+    p { font-size:17px; line-height:1.5; color:var(--fg2); max-width:46ch; }
+    nav { margin-top:32px; display:flex; flex-wrap:wrap; gap:10px 24px; }
+    nav a { font-size:17px; font-weight:600; color:var(--fg); text-decoration:underline; text-decoration-color:var(--fg3); text-underline-offset:.2em; }
+    nav a:hover { text-decoration-color:var(--fg); }
     @media (max-width: 768px) {
-      body { padding: 0 7vw; }
-      .topbar { left: 7vw; right: 7vw; font-size: 10px; }
-      nav { gap: 18px; }
+      body { padding:16px 16px; }
+      main { margin-top:10svh; }
     }
   </style>
 </head>
 <body>
-  <div class="topbar mono">
-    <span>Drone Reporter</span>
+  <div class="sky-bg" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="wm" href="/" data-root><span class="pair" aria-hidden="true"></span>drone reporter</a>
     <span class="code">Error 404</span>
-  </div>
+  </header>
 
   <main>
     <h1>This page does not exist.</h1>
     <p>The address may be mistyped, or the page may have moved. The links below still work.</p>
-    <nav class="mono">
+    <nav>
       <a href="/" data-root>Home</a>
       <a href="/privacy/" data-root>Privacy</a>
       <a href="/terms/" data-root>Terms</a>

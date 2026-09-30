@@ -50,7 +50,7 @@ const geo = (n) => ({
 });
 
 const rs = (cells, incidents) => ({
-  palette: { amber: "#E8A33D", amberDim: "#8a6b3a", background: "#0A0907" },
+  palette: { report: "#FFFFFF", reportDim: "#9AA3B6", incident: "#FF3B30", clusterFill: "#1C2640", clusterText: "#EEF1F7", land: "#23304D", water: "#34466C", road: "#2D3B5A", label: "#BCC3D2", labelHalo: "#23304D" },
   cells,
   incidents,
 });
@@ -111,4 +111,16 @@ test("repeat syncs update data without duplicating layers, and paint rides addLa
   const dots = map.layers.find((l) => l.id === CELL_LAYER_ID);
   assert.equal(dots.paint["circle-color"][0], "step");
   assert.equal(Object.keys(map.paint).length, 0);
+});
+
+test("sync recolours the basemap layers it finds and skips the ones it does not", () => {
+  const map = fakeMap();
+  // Two basemap layers present; every other entry in basemapPaint is absent,
+  // as it would be after a style revision renamed it.
+  map.layers.push({ id: "background" }, { id: "water" });
+  const state = rs(geo(1), geo(1));
+  syncMap(map, state);
+  assert.equal(map.paint["background/background-color"], state.palette.land);
+  assert.equal(map.paint["water/fill-color"], state.palette.water);
+  assert.equal(map.paint["place_city/text-color"], undefined);
 });
