@@ -1,0 +1,166 @@
+/* Live Sky: the Drone Reporter design system on dronereporter.io.
+
+   Sections 1 and 2 are copied from the locked kit (livesky.css, 2026-09-24,
+   SPEC Revision 1) and match the shipped app (app/lib/theme/live_sky.dart).
+   Do not edit one value without the others in its state. The investor deck
+   copies the same blocks, so the two surfaces draw the same colours.
+
+   The site does not follow the visitor's sun. st-blue is the brand's fixed
+   image; a page picks its state with a class on <html>.
+
+   Text follows the sky. On st-blue, --fg holds 4.5:1 only down to 63 % of the
+   viewport and the peach horizon fails, so long text sits on --panel-solid. */
+
+/* ---------- 1. Sky states ---------- */
+.st-day{
+  --sky:linear-gradient(180deg,#5E97CF 0%,#9CC3E6 48%,#D9E8F4 100%);
+  --sky-flat:#9CC3E6;
+  --fg:#0E1C30; --fg2:#3E5270; --fg3:#6A7C96;
+  --land:rgba(255,255,255,.62); --landline:rgba(14,28,48,.2); --water:transparent;
+  --rep:#0E1C30; --repglow:0 0 0 3px #FFFFFF;
+  --beacon:#E0302A; --incglow:0 0 0 3px #FFFFFF;
+  --panel:rgba(255,255,255,.76); --panel-solid:#F3F7FB; --panelline:rgba(14,28,48,.07); --sep:rgba(14,28,48,.1);
+  --btnbg:#0E1C30; --btnfg:#FFFFFF; --btnline:#0E1C30;
+  --btn2bg:rgba(14,28,48,.06); --btn2fg:#0E1C30; --btn2line:rgba(14,28,48,.25);
+  --field:rgba(255,255,255,.9); --scrim:rgba(14,28,48,.28);
+  --on:#34C759; --off:rgba(14,28,48,.16);
+  --tabbar:rgba(243,247,251,.86);
+}
+.st-golden{
+  --sky:linear-gradient(180deg,#46679A 0%,#8C9DB6 40%,#D6A887 78%,#F0B67C 100%);
+  --sky-flat:#8C9DB6;
+  --fg:#FFFFFF; --fg2:rgba(255,255,255,.82); --fg3:rgba(255,255,255,.62);
+  --land:rgba(22,32,54,.28); --landline:rgba(255,255,255,.3); --water:transparent;
+  --rep:#FFFFFF; --repglow:0 0 0 4px rgba(255,255,255,.2),0 0 10px 3px rgba(255,255,255,.45);
+  --beacon:#FF3B30; --incglow:0 0 0 2px rgba(20,26,44,.9),0 0 10px 3px rgba(255,59,48,.35);
+  --panel:rgba(32,40,62,.58); --panel-solid:#3A4764; --panelline:rgba(255,255,255,.12); --sep:rgba(255,255,255,.12);
+  --btnbg:#FFFFFF; --btnfg:#1E2A44; --btnline:#FFFFFF;
+  --btn2bg:rgba(255,255,255,.1); --btn2fg:#FFFFFF; --btn2line:rgba(255,255,255,.85);
+  --field:rgba(255,255,255,.14); --scrim:rgba(20,26,44,.4);
+  --on:#34C759; --off:rgba(255,255,255,.25);
+  --tabbar:rgba(40,50,76,.72);
+}
+.st-blue{
+  --sky:linear-gradient(180deg,#152342 0%,#34466C 42%,#7A7C92 72%,#C98A68 100%);
+  --sky-flat:#34466C;
+  --fg:#EEF1F7; --fg2:rgba(238,241,247,.72); --fg3:rgba(238,241,247,.5);
+  --land:rgba(14,22,40,.45); --landline:rgba(160,178,210,.25); --water:transparent;
+  --rep:#FFFFFF; --repglow:0 0 0 5px rgba(255,255,255,.14),0 0 14px 4px rgba(255,255,255,.5);
+  --beacon:#FF3B30; --incglow:0 0 12px 3px rgba(255,59,48,.55);
+  --panel:rgba(20,28,46,.72); --panel-solid:#1C2640; --panelline:rgba(255,255,255,.08); --sep:rgba(255,255,255,.09);
+  --btnbg:#EEF1F7; --btnfg:#152342; --btnline:#EEF1F7;
+  --btn2bg:rgba(255,255,255,.06); --btn2fg:#FFFFFF; --btn2line:rgba(255,255,255,.85);
+  --field:rgba(255,255,255,.08); --scrim:rgba(6,10,20,.5);
+  --on:#34C759; --off:rgba(255,255,255,.22);
+  --tabbar:rgba(18,26,44,.8);
+}
+.st-night{
+  --sky:linear-gradient(180deg,#03060C 0%,#08101E 60%,#0E1829 100%);
+  --sky-flat:#08101E;
+  --fg:#DCE2EC; --fg2:#8C97AC; --fg3:#5E6A80;
+  --land:#0B1322; --landline:#1F2B42; --water:transparent;
+  --rep:#FFFFFF; --repglow:0 0 0 5px rgba(255,255,255,.12),0 0 14px 4px rgba(255,255,255,.45);
+  --beacon:#FF3B30; --incglow:0 0 12px 3px rgba(255,59,48,.55);
+  --panel:rgba(14,20,34,.84); --panel-solid:#101828; --panelline:rgba(255,255,255,.06); --sep:rgba(255,255,255,.07);
+  --btnbg:#DCE2EC; --btnfg:#08101E; --btnline:#DCE2EC;
+  --btn2bg:rgba(255,255,255,.05); --btn2fg:#FFFFFF; --btn2line:rgba(255,255,255,.8);
+  --field:rgba(255,255,255,.06); --scrim:rgba(0,0,0,.55);
+  --on:#34C759; --off:rgba(255,255,255,.18);
+  --tabbar:rgba(10,15,26,.88);
+}
+.st-darken{
+  --sky:#000000; --sky-flat:#000000;
+  --fg:#E8483A; --fg2:#D8402F; --fg3:#5A1712;
+  --land:#3A0D09; --landline:#3A0D09; --water:transparent;
+  --rep:transparent; --repglow:0 0 0 2px #E8483A;
+  --beacon:#E0402F; --incglow:none;
+  --panel:#050101; --panel-solid:#050101; --panelline:#3A0D09; --sep:#2A0906;
+  --btnbg:transparent; --btnfg:#E8483A; --btnline:#E8483A;
+  --btn2bg:transparent; --btn2fg:#E8483A; --btn2line:#5A1712;
+  --field:#0A0201; --scrim:rgba(0,0,0,.7);
+  --on:#E8483A; --off:#2A0906;
+  --tabbar:#050101;
+}
+
+/* ---------- 2. Type scale (px on the web, pt in the app) ---------- */
+.t-large{font-size:34px; font-weight:700; letter-spacing:-.02em; line-height:1.1}
+.t-title{font-size:28px; font-weight:600; letter-spacing:-.02em; line-height:1.12}
+.t-head{font-size:22px; font-weight:600; letter-spacing:-.01em; line-height:1.2}
+.t-body{font-size:17px; font-weight:400; line-height:1.4}
+.t-sub{font-size:15px; font-weight:400; line-height:1.4; color:var(--fg2)}
+.t-cap{font-size:13px; font-weight:500; line-height:1.35; color:var(--fg2)}
+
+/* ---------- 3. Base ---------- */
+*{margin:0; padding:0; box-sizing:border-box}
+html{background:var(--sky-flat); color:var(--fg);
+  font-family:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-variant-numeric:tabular-nums; -webkit-font-smoothing:antialiased; -webkit-text-size-adjust:100%}
+body{background:transparent}
+/* The sky, pinned to the viewport. A fixed layer rather than
+   background-attachment:fixed, which iOS Safari ignores. */
+.sky-bg{position:fixed; inset:0; z-index:-1; background:var(--sky); pointer-events:none}
+:focus-visible{outline:2px solid var(--fg); outline-offset:3px}
+
+/* ---------- 4. Wordmark ---------- */
+/* The kit's .wm in em, so the light pair scales with the text: strobe .4em,
+   beacon .25em at .61em right of the strobe's left edge and .04em above its
+   top, .93em gap to the text. At 28px this is the kit's 11 / 7 / 17 / 26 px. */
+.wm{display:inline-flex; align-items:center; font-weight:600; letter-spacing:-.02em; line-height:1; color:var(--fg); text-decoration:none}
+.wm .pair{position:relative; flex:none; width:.4em; height:.4em; border-radius:50%; background:var(--rep); box-shadow:var(--repglow); margin-right:.93em}
+.wm .pair::after{content:""; position:absolute; left:.61em; top:-.04em; width:.25em; height:.25em; border-radius:50%; background:var(--beacon)}
+
+/* ---------- 5. Actions ---------- */
+.btn, .btn2{display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:52px; padding:0 22px;
+  border-radius:18px; font-family:inherit; font-size:17px; font-weight:600; line-height:1.2; text-decoration:none; cursor:pointer;
+  transition:opacity .2s ease, background-color .2s ease}
+.btn{background:var(--btnbg); color:var(--btnfg); border:1.5px solid var(--btnline)}
+.btn2{background:var(--btn2bg); color:var(--btn2fg); border:1.5px solid var(--btn2line)}
+.btn:hover{opacity:.9}
+.btn2:hover{background:var(--panel)}
+/* Store buttons: the platform glyph and a two-line label. */
+.store-badges{display:flex; flex-wrap:wrap; gap:12px}
+.store-badge{padding:0 22px 0 18px; gap:12px; min-height:56px}
+.store-badge svg{width:22px; height:22px; flex:none; fill:currentColor}
+.store-badge .sb-text{display:flex; flex-direction:column; align-items:flex-start; line-height:1.1; text-align:left}
+.store-badge .sb-top{font-size:13px; font-weight:500; opacity:.8}
+.store-badge .sb-name{font-size:17px; font-weight:600; margin-top:2px}
+
+/* ---------- 6. Reading pages: about, privacy, terms, delete account ---------- */
+/* A pushed screen: the header sits high on the sky, the text on a solid
+   group, as the app's Settings and legal screens do. */
+.page{min-height:100svh; padding:28px 24px 64px}
+.page .site-head{max-width:720px; margin:0 auto 28px; display:flex; align-items:center; min-height:44px}
+.page .site-head .wm{font-size:22px}
+.container{max-width:720px; margin:0 auto; background:var(--panel-solid); border:1px solid var(--panelline);
+  border-radius:30px; padding:40px 48px 44px}
+.back-link{display:inline-block; margin-bottom:28px; font-size:15px; font-weight:500; color:var(--fg2); text-decoration:none}
+.back-link:hover{color:var(--fg); text-decoration:underline}
+.container h1{font-size:34px; font-weight:700; letter-spacing:-.02em; line-height:1.1; margin-bottom:8px}
+.subtitle{font-size:15px; color:var(--fg2); margin-bottom:36px}
+.container h2{font-size:22px; font-weight:600; letter-spacing:-.01em; line-height:1.2; margin:40px 0 14px}
+.container h3{font-size:17px; font-weight:600; line-height:1.35; margin:26px 0 8px}
+.container p, .container li{font-size:17px; line-height:1.5; color:var(--fg)}
+.container p{margin-bottom:12px}
+.container strong{font-weight:600}
+.container ul, .container ol{list-style:none; margin-bottom:14px}
+.container li{position:relative; padding-left:18px; margin-bottom:6px}
+.container ul li::before{content:""; position:absolute; left:2px; top:.66em; width:5px; height:5px; border-radius:50%; background:var(--fg3)}
+.container ol{counter-reset:step}
+.container ol li{padding-left:26px; counter-increment:step}
+.container ol li::before{content:counter(step) "."; position:absolute; left:0; top:0; font-weight:600; color:var(--fg2)}
+.container a{color:var(--fg); text-decoration:underline; text-decoration-color:var(--fg3); text-underline-offset:.15em}
+.container a:hover{text-decoration-color:var(--fg)}
+.container table{width:100%; border-collapse:collapse; margin:16px 0 20px}
+.container th{font-size:13px; font-weight:600; color:var(--fg2); text-align:left; padding:8px 12px 8px 0; border-bottom:1px solid var(--sep)}
+.container td{font-size:15px; line-height:1.4; padding:10px 12px 10px 0; border-bottom:1px solid var(--sep); vertical-align:top}
+.container .footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--sep)}
+.container .footer p{font-size:15px; color:var(--fg2); margin:0}
+@media (max-width:640px){
+  .page{padding:16px 16px 40px}
+  .page .site-head{margin-bottom:16px}
+  .container{border-radius:24px; padding:24px 20px 28px}
+  .container h1{font-size:28px}
+  .container h2{margin-top:32px}
+  /* Wide tables scroll inside the group rather than widening the page. */
+  .container table{display:block; overflow-x:auto}
+}
