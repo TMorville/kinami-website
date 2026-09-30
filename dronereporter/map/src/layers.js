@@ -252,7 +252,7 @@ export const INCIDENT_GLOW_LAYER_ID = "incident-glow";
  * basemap bench against real tiles, design spec section 5.3a.
  *
  * Three of these are deliberate rather than obvious. ROAD NAMES GO BUT ROADS
- * STAY, so streets read as texture and never as labels competing with amber.
+ * STAY, so streets read as texture and never as labels competing with the data.
  * AIRPORTS STAY IN FULL, because an airport is the setting for the incursions
  * this map exists to show. BORDERS GO ENTIRELY, YET COUNTRIES STAY NAMED: the
  * kept country layers cap at zoom 8, so the Europe-framed view is anchored by
@@ -308,12 +308,69 @@ export function readPalette(root = document.documentElement) {
   const read = (name, fallback) => styles.getPropertyValue(name).trim() || fallback;
 
   // Fallbacks matter: a stylesheet that has not loaded yet would otherwise
-  // yield empty strings and an invalid paint expression.
+  // yield empty strings and an invalid paint expression. They are Live Sky's
+  // st-blue values, the brand state this map is drawn in.
   return {
-    amber: read("--map-amber", "#E8A33D"),
-    amberDim: read("--map-amber-dim", "#8a6b3a"),
-    background: read("--map-bg", "#0A0907"),
+    // The strobe: reports from people. Dim past RECENT_HOURS.
+    report: read("--map-report", "#FFFFFF"),
+    reportDim: read("--map-report-dim", "#8C95A8"),
+    // The beacon: documented incidents only.
+    incident: read("--map-incident", "#FF3B30"),
+    clusterFill: read("--map-cluster-fill", "#1C2640"),
+    clusterText: read("--map-cluster-text", "#EEF1F7"),
+    land: read("--map-land", "#23304D"),
+    water: read("--map-water", "#34466C"),
+    road: read("--map-road", "#2D3B5A"),
+    label: read("--map-label", "#BCC3D2"),
+    labelHalo: read("--map-label-halo", "#23304D"),
   };
+}
+
+/**
+ * Basemap paint overrides: the OpenFreeMap dark style recoloured into the
+ * palette, applied with `setPaintProperty` next to HIDDEN_BASEMAP_LAYERS.
+ *
+ * In this style the land is the background layer and the sea is the `water`
+ * fill, so the land cannot be drawn over a transparent sea. Both are flat
+ * colours from the page: the land is Live Sky's --land composited over the
+ * sky, the sea is --sky-flat. Roads and runways stay faint texture; the
+ * kept place labels take the secondary text colour on a land-coloured halo.
+ *
+ * A layer missing from a future style revision is skipped, as with hiding.
+ */
+export function basemapPaint(palette) {
+  const label = [
+    ["text-color", palette.label],
+    ["text-halo-color", palette.labelHalo],
+  ];
+  const road = [["line-color", palette.road]];
+  const entries = {
+    background: [["background-color", palette.land]],
+    water: [["fill-color", palette.water]],
+    "aeroway-area": [["fill-color", palette.road]],
+    "aeroway-taxiway": road,
+    "aeroway-runway-casing": road,
+    "aeroway-runway": road,
+    road_area_pier: [["fill-color", palette.land]],
+    road_pier: [["line-color", palette.land]],
+    highway_path: road,
+    highway_minor: road,
+    highway_major_casing: road,
+    highway_major_inner: road,
+    highway_major_subtle: road,
+    highway_motorway_casing: road,
+    highway_motorway_inner: road,
+    highway_motorway_subtle: road,
+    place_city: label,
+    place_city_large: label,
+    place_country_minor: label,
+    place_country_major: label,
+  };
+  const out = [];
+  for (const [id, props] of Object.entries(entries)) {
+    for (const [key, value] of props) out.push([id, key, value]);
+  }
+  return out;
 }
 
 /**
@@ -340,7 +397,7 @@ export const CELL_SOURCE_OPTIONS = {
 };
 
 /**
- * Recency is two tones, not a ramp: bright amber under RECENT_HOURS, dim
+ * Recency is two tones, not a ramp: the bright strobe under RECENT_HOURS, dim
  * past it. A step reads at a glance and needs no on-screen scale; the
  * continuous window-rescaled ramp it replaced needed a legend to be honest.
  * Age is measured against the snapshot's own generated_at, so the boundary
@@ -349,12 +406,12 @@ export const CELL_SOURCE_OPTIONS = {
 export const RECENT_HOURS = 24;
 
 export function recencyColour(palette) {
-  return ["step", ["get", "age_h"], palette.amber, RECENT_HOURS, palette.amberDim];
+  return ["step", ["get", "age_h"], palette.report, RECENT_HOURS, palette.reportDim];
 }
 
 /** The dots' two tones keyed on the cluster's freshest member. */
 export function clusterRecencyColour(palette) {
-  return ["step", ["get", "min_age_h"], palette.amber, RECENT_HOURS, palette.amberDim];
+  return ["step", ["get", "min_age_h"], palette.report, RECENT_HOURS, palette.reportDim];
 }
 
 export function cellCirclePaint(palette) {
@@ -371,10 +428,10 @@ export function cellCirclePaint(palette) {
     "circle-color": recencyColour(palette),
     "circle-opacity": 0.85,
     "circle-blur": 0.2,
-    // Visibility floor: a hairline amber rim keeps old (dim-filled) dots
-    // findable against the near-black basemap without reheating their fill.
+    // Visibility floor: a hairline strobe rim keeps old (dim-filled) dots
+    // findable against the basemap without reheating their fill.
     "circle-stroke-width": 1,
-    "circle-stroke-color": palette.amber,
+    "circle-stroke-color": palette.report,
     "circle-stroke-opacity": 0.35,
   };
 }
@@ -387,12 +444,13 @@ export function clusterLayer(palette) {
     filter: ["has", "point_count"],
     paint: {
       "circle-radius": ["interpolate", ["linear"], ["get", "sum_count"], 2, 10, 50, 16, 500, 24],
-      "circle-color": clusterRecencyColour(palette),
-      "circle-opacity": 0.85,
-      "circle-blur": 0.2,
-      "circle-stroke-width": 1,
-      "circle-stroke-color": palette.amber,
-      "circle-stroke-opacity": 0.35,
+      // Live Sky's cluster: a solid disc with the count, ringed in the
+      // strobe. The ring carries the recency tone.
+      "circle-color": palette.clusterFill,
+      "circle-opacity": 0.92,
+      "circle-stroke-width": 1.5,
+      "circle-stroke-color": clusterRecencyColour(palette),
+      "circle-stroke-opacity": 1,
     },
   };
 }
@@ -409,7 +467,7 @@ export function clusterCountLayer(palette) {
       "text-size": 11,
       "text-allow-overlap": true,
     },
-    paint: { "text-color": palette.background },
+    paint: { "text-color": palette.clusterText },
   };
 }
 
@@ -431,7 +489,7 @@ export function curatedGlowLayer(palette) {
     source: INCIDENT_SOURCE_ID,
     paint: {
       "circle-radius": ["case", ["==", ["get", "category"], "airport-closure"], 9, 8],
-      "circle-color": palette.amber,
+      "circle-color": palette.incident,
       "circle-blur": 1,
       "circle-opacity": 0.55,
     },
@@ -452,7 +510,7 @@ export function curatedDotLayer(palette) {
       "icon-ignore-placement": true,
     },
     paint: {
-      "icon-color": palette.amber,
+      "icon-color": palette.incident,
       "icon-opacity": 1,
     },
   };
@@ -493,10 +551,10 @@ export function pingLayer(palette) {
     filter: ["==", ["get", "fresh"], true],
     paint: {
       ...pingPaint(0),
-      "circle-color": palette.amber,
+      "circle-color": palette.incident,
       "circle-opacity": 0,
       "circle-stroke-width": 1.5,
-      "circle-stroke-color": palette.amber,
+      "circle-stroke-color": palette.incident,
     },
   };
 }
@@ -613,6 +671,6 @@ export function fallbackStyle(palette) {
     version: 8,
     glyphs: "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
     sources: {},
-    layers: [{ id: "bg", type: "background", paint: { "background-color": palette.background } }],
+    layers: [{ id: "bg", type: "background", paint: { "background-color": palette.water } }],
   };
 }

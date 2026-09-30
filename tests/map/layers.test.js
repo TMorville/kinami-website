@@ -18,6 +18,7 @@ import {
   markIcons,
   markLayer,
   RECENT_HOURS,
+  basemapPaint,
   clusterRecencyColour,
   recencyColour,
   wedgeIcon,
@@ -25,7 +26,7 @@ import {
 } from "../../dronereporter/map/src/layers.js";
 import { MAX_HALF_ANGLE_DEG, MIN_HALF_ANGLE_DEG } from "../../dronereporter/map/src/cells.js";
 
-const palette = { amber: "#E8A33D", amberDim: "#8a6b3a", background: "#0A0907" };
+const palette = { report: "#FFFFFF", reportDim: "#9AA3B6", incident: "#FF3B30", clusterFill: "#1C2640", clusterText: "#EEF1F7", land: "#23304D", water: "#34466C", road: "#2D3B5A", label: "#BCC3D2", labelHalo: "#23304D" };
 
 test("bucket grid covers the clamp range and never widens a wedge", () => {
   assert.equal(HALF_ANGLE_BUCKETS[0], MIN_HALF_ANGLE_DEG);
@@ -40,16 +41,16 @@ test("recency is a two-tone step at 24 h, for dots and clusters alike", () => {
   assert.deepEqual(recencyColour(palette), [
     "step",
     ["get", "age_h"],
-    palette.amber,
+    palette.report,
     RECENT_HOURS,
-    palette.amberDim,
+    palette.reportDim,
   ]);
   assert.deepEqual(clusterRecencyColour(palette), [
     "step",
     ["get", "min_age_h"],
-    palette.amber,
+    palette.report,
     RECENT_HOURS,
-    palette.amberDim,
+    palette.reportDim,
   ]);
 });
 
@@ -104,7 +105,7 @@ test("curated incidents are diamonds over a circular glow, sized by category", (
   ]);
   assert.equal(core.layout["icon-allow-overlap"], true);
   assert.equal(core.layout["icon-ignore-placement"], true);
-  assert.equal(core.paint["icon-color"], palette.amber);
+  assert.equal(core.paint["icon-color"], palette.incident);
   const glow = curatedGlowLayer(palette);
   assert.equal(glow.type, "circle");
   assert.equal(glow.paint["circle-blur"], 1);
@@ -151,4 +152,28 @@ test("clusters aggregate report counts and freshest age, and never draw marks", 
   const counts = clusterCountLayer(palette);
   assert.deepEqual(counts.filter, ["has", "point_count"]);
   assert.ok(fallbackStyle(palette).glyphs);
+});
+
+test("reports and incidents never share a colour: strobe for people, beacon for incidents", () => {
+  const colours = (layer) => JSON.stringify(layer.paint);
+  // Every live-report layer is drawn in report tones, none in the beacon.
+  for (const layer of [{ paint: cellCirclePaint(palette) }, clusterLayer(palette), markLayer(palette)]) {
+    assert.ok(!colours(layer).includes(palette.incident), colours(layer));
+    assert.ok(colours(layer).includes(palette.report));
+  }
+  // Every incident layer is drawn in the beacon, none in a report tone.
+  for (const layer of [curatedDotLayer(palette), curatedGlowLayer(palette)]) {
+    assert.ok(colours(layer).includes(palette.incident));
+    assert.ok(!colours(layer).includes(palette.report), colours(layer));
+  }
+});
+
+test("basemap paint sets the land and the sea from the palette, never a literal", () => {
+  const byLayer = new Map(basemapPaint(palette).map(([id, key, value]) => [`${id}/${key}`, value]));
+  assert.equal(byLayer.get("background/background-color"), palette.land);
+  assert.equal(byLayer.get("water/fill-color"), palette.water);
+  const allowed = new Set(Object.values(palette));
+  for (const value of byLayer.values()) assert.ok(allowed.has(value), value);
+  // A basemap outage still draws the sky state, not black.
+  assert.equal(fallbackStyle(palette).layers[0].paint["background-color"], palette.water);
 });
