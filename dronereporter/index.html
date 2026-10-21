@@ -73,7 +73,12 @@
       border:1px solid var(--panelline); border-radius:30px; padding:24px 24px 20px;
     }
     #threat h2 { font-size:clamp(24px,2.4vw,30px); font-weight:600; line-height:1.12; letter-spacing:-.02em; margin-bottom:18px; }
-    #threat .cta { margin:0 0 20px; }
+    /* The live-map button sits large in the middle of the map, right of the
+       panel. The layer ignores the pointer so the map's tooltips still work. */
+    #threat .map-cta { position:absolute; z-index:3; top:0; bottom:0; right:0;
+      left:calc(8vw + clamp(320px,34vw,440px)); display:flex; align-items:center; justify-content:center; pointer-events:none; }
+    #threat .map-cta .btn { pointer-events:auto; min-height:68px; padding:0 34px; border-radius:22px; font-size:21px;
+      box-shadow:0 10px 30px rgba(6,10,20,.45); }
     #threat p { font-size:16px; line-height:1.5; color:var(--fg); margin-bottom:16px; }
     #threat .threat-stats { display:grid; grid-template-columns:1fr 1fr; gap:1px; margin-top:4px;
       border-radius:16px; overflow:hidden; background:var(--sep); }
@@ -100,6 +105,9 @@
     @media (max-width:768px){
       #threat .threat-box { left:16px; right:36px; width:auto; max-width:520px; top:auto; bottom:24px; transform:none; max-height:60svh; padding:20px 18px 16px; border-radius:26px; }
       #threat .threat-stat-value { font-size:21px; }
+      /* The panel can reach 60svh from the bottom, so the button centres in the map above it. */
+      #threat .map-cta { left:16px; right:36px; bottom:auto; height:calc(40svh - 24px); }
+      #threat .map-cta .btn { min-height:58px; padding:0 26px; border-radius:20px; font-size:18px; }
     }
 
     /* ---- View 3: what it is, what you can do ----------------------------- */
@@ -189,9 +197,11 @@
     <canvas id="threat-canvas" class="threat-canvas" aria-hidden="true"></canvas>
     <div class="threat-box">
       <h2>The sky over Europe is contested.</h2>
-      <a class="btn cta" href="map/">Open the live map</a>
-      <p>Since 2022, unidentified drones have shut airports and circled nuclear sites across Europe. The 2025 wave has not receded: in 2026 NATO jets downed four drones over Alliance soil.</p>
+      <p>Since 2022, unidentified drones have shut airports and circled nuclear sites across Europe. The 2025 wave has not receded: in 2026 NATO forces shot down ten drones over Alliance soil.</p>
       <div class="threat-stats" id="threat-stats"></div>
+    </div>
+    <div class="map-cta">
+      <a class="btn" href="map/">Open the live map <span aria-hidden="true">→</span></a>
     </div>
   </section>
 
