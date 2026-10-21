@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-21",
+  "updated": "2026-10-21",
   "stats": [
     {
       "value": "800 g",
@@ -670,6 +670,150 @@
       "category": "airport-closure",
       "description": "Luxembourg Airport detected several unauthorised drones near and then over the aerodrome on the evening of 18 September and suspended all flight operations as a precaution until the early hours of the next day. The airport said it did not know where the drones came from or who flew them, and an inbound flight from London diverted to Liege.",
       "source": "https://www.euronews.com/my-europe/2026/09/19/operations-resume-at-luxembourg-airport-after-unauthorised-drones-halt-flights"
+    },
+    {
+      "id": "germany-ber-2026-09",
+      "label": "Drone report halts Berlin Brandenburg Airport",
+      "country": "Germany",
+      "site": "Berlin Brandenburg Airport, Schoenefeld",
+      "lat": 52.3667,
+      "lng": 13.5033,
+      "date": "2026-09-23",
+      "category": "airport-closure",
+      "description": "Airport staff reported a drone on the evening of 23 September and German air traffic control closed both runways, with flights resuming at about 21:05 and several arrivals diverted to Dresden. Federal police searched the area but could not confirm a drone.",
+      "source": "https://aviation.direct/en/flugbetrieb-unterbrochen-drohnensichtung-am-flughafen-berlin-brandenburg-fuehrt-zu-umleitungen"
+    },
+    {
+      "id": "moldova-cernita-2026-09",
+      "label": "Drone explodes at a farm near Cernita",
+      "country": "Moldova",
+      "site": "Cernita village, Floresti district",
+      "lat": 47.9662,
+      "lng": 28.4656,
+      "date": "2026-09-24",
+      "category": "sighting",
+      "description": "Moldova's Ministry of Defence reported four drones crossing the border from Ukraine during a Russian attack, and one crashed and exploded near a farm in Cernita. The ministry closed airspace over northern Moldova until 07:46.",
+      "source": "https://www.ziarulnational.md/ministerul-apararii-patru-drone-au-patruns-in-spatiul-aerian-al-republicii-moldova-zona-de-nord-inchisa/"
+    },
+    {
+      "id": "romania-solca-2026-09",
+      "label": "Small drone crashes near Solca",
+      "country": "Romania",
+      "site": "Near Solca, Suceava County, close to the Ukrainian border",
+      "lat": 47.7,
+      "lng": 25.8374,
+      "date": "2026-09-24",
+      "category": "sighting",
+      "description": "The defence ministry said a small drone entered Romanian airspace through northern Botosani County, flew for about four minutes and crashed near Solca with no victims or damage. Two F-16s took off from Borcea, an alert went to Suceava and Botosani counties, and local schools delayed classes until 10:00.",
+      "source": "https://www.newsbucovina.ro/actualitate/450291/mapn-drona-prabusita-langa-solca-dupa-patru-minute-in-spatiul-aerian-romanesc-nu-sunt-victime"
+    },
+    {
+      "id": "moldova-branesti-2026-09",
+      "label": "Drone explodes beside a highway near Branesti",
+      "country": "Moldova",
+      "site": "Near Branesti, Orhei district, beside a highway",
+      "lat": 47.304,
+      "lng": 28.9271,
+      "date": "2026-09-30",
+      "category": "sighting",
+      "description": "A drone that crossed the border at 20:45 exploded after hitting a tree line next to a highway near Branesti, leaving craters and damaged trees within 30 metres. Police said it had the characteristics of a jet-powered Geran, and the defence ministry closed airspace over central Moldova until 21:09.",
+      "source": "https://www.pravda.com.ua/eng/news/2026/10/01/8055947/"
+    },
+    {
+      "id": "moldova-hirbovat-2026-09",
+      "label": "Drone hits a telecom mast at Hirbovat",
+      "country": "Moldova",
+      "site": "Hirbovat village, Anenii Noi district",
+      "lat": 46.8411,
+      "lng": 29.3592,
+      "date": "2026-09-30",
+      "category": "infrastructure",
+      "description": "A jet-powered drone that crossed from Ukraine hit a telecommunications mast at about 40 metres and exploded near Hirbovat, police said. The defence ministry closed airspace over northern and central Moldova during the drone flights that day.",
+      "source": "https://www.pravda.com.ua/eng/news/2026/09/30/8055754/"
+    },
+    {
+      "id": "france-toulon-2026-10",
+      "label": "Unauthorised drones over Toulon naval base",
+      "country": "France",
+      "site": "Toulon naval base, a DGA site in Toulon and the 54th Artillery Regiment at Hyeres",
+      "lat": 43.12,
+      "lng": 5.93,
+      "date": "2026-10-09",
+      "category": "military-site",
+      "description": "Several large unauthorised drones overflew the Toulon naval base, a defence procurement site and an artillery regiment between 9 and 13 October, during the Typhon exercise. The maritime prefecture confirmed they were not exercise drones, none was recovered despite jamming, and the Toulon prosecutor opened an inquiry.",
+      "source": "https://www.franceinfo.fr/societe/armee-securite-defense/info-radio-france-plusieurs-sites-militaires-sensibles-dont-la-base-navale-de-toulon-ont-ete-survoles-par-des-drones-non-autorises_8246773.html"
+    },
+    {
+      "id": "germany-nuremberg-2026-10",
+      "label": "Drone report disrupts Nuremberg Airport",
+      "country": "Germany",
+      "site": "Nuremberg Airport, Bavaria",
+      "lat": 49.4987,
+      "lng": 11.0669,
+      "date": "2026-10-13",
+      "category": "airport-closure",
+      "description": "Three pilots independently reported a possible drone near the airport between 02:00 and 04:00, and take-offs and landings were suspended during a federal police search with a helicopter. Two arrivals diverted to Cologne and Prague and six flights were delayed, but police could not confirm a drone.",
+      "source": "https://www.infranken.de/lk/nuernberg/blaulicht/flughafen-nuernberg-moegliche-drohnensichtung-sprecher-schildert-details-art-6403002"
+    },
+    {
+      "id": "netherlands-eemshaven-2026-10",
+      "label": "Unknown drones over Eemshaven port",
+      "country": "Netherlands",
+      "site": "Eemshaven port, Groningen",
+      "lat": 53.4484,
+      "lng": 6.8465,
+      "date": "2026-10-13",
+      "category": "infrastructure",
+      "description": "Security staff at companies in the Eemshaven port reported drones over the site, which needs a permit to overfly, and police attended and saw the drones themselves over a weekend and again on Tuesday evening 13 October. Police could not say where they came from, and received more reports on the following weekend.",
+      "source": "https://omroephethogeland.nl/2026/10/15/drones-boven-de-eemshaven-politie-doet-onderzoek/"
+    },
+    {
+      "id": "romania-sulina-tankers-2026-10",
+      "label": "Drones set two tankers ablaze off Sulina",
+      "country": "Romania",
+      "site": "Black Sea in Romanian territorial waters, about 24 km southeast of Sulina. Marker at Sulina.",
+      "lat": 45.1558,
+      "lng": 29.655,
+      "date": "2026-10-15",
+      "category": "infrastructure",
+      "description": "Fire broke out on the tanker Yara J on the evening of 14 October and on the tanker Wine Trader on the morning of 15 October, and seven of the Wine Trader's twelve crew were missing. President Nicusor Dan said two drones hit them, and Romania's naval authority ran the search.",
+      "source": "https://www.aljazeera.com/news/2026/10/15/ship-catches-fire-in-romanias-waters-amid-rising-attacks-in-the-black-sea"
+    },
+    {
+      "id": "romania-sulina-shootdown-2026-10",
+      "label": "Romanian F-16s shoot down two drones off Sulina",
+      "country": "Romania",
+      "site": "Black Sea south-east and east of Sulina, Tulcea County. Marker at Sulina.",
+      "lat": 45.1558,
+      "lng": 29.655,
+      "date": "2026-10-17",
+      "category": "military-site",
+      "description": "Two F-16s from the 86th Air Base shot down two drones within about four minutes of each other, at 18:01 and 18:05, south-east and east of Sulina. The defence ministry identified them as jet-powered drones of the Geran family, and Romania asked for a special North Atlantic Council session.",
+      "source": "https://euromaidanpress.com/2026/10/18/romania-downs-two-russian-jet-drones-near-sulina-days-before-nato-allies-meet-on-black-sea-security/"
+    },
+    {
+      "id": "lithuania-juodzionys-2026-10",
+      "label": "Drone explodes near Juodzionys",
+      "country": "Lithuania",
+      "site": "Juodzionys village, Pasvalys district",
+      "lat": 56.1531,
+      "lng": 24.5371,
+      "date": "2026-10-18",
+      "category": "sighting",
+      "description": "A drone that Lithuania said came in over Poland exploded near Juodzionys, and its debris hit a passing car with no injuries. Residents in several districts were sent to shelters, Italian Eurofighters were scrambled but could not identify it in cloud, and Ukraine apologised and said Russian jamming may have diverted its drone.",
+      "source": "https://kyivindependent.com/nato-jets-scramble-as-drone-explodes-in-lithuanian-airspace/"
+    },
+    {
+      "id": "lithuania-kaunas-2026-10",
+      "label": "Kaunas Airport closes during drone alert",
+      "country": "Lithuania",
+      "site": "Kaunas Airport, Karmelava",
+      "lat": 54.9646,
+      "lng": 24.0881,
+      "date": "2026-10-18",
+      "category": "airport-closure",
+      "description": "Kaunas Airport closed during the national air alert over the drone crossing Lithuania on the morning of 18 October and traffic resumed at 07:49. Lithuania's National Crisis Management Centre ran the alert while NATO fighters were scrambled.",
+      "source": "https://www.airwaysmag.com/new-post/kaunas-airport-reopens-suspected-drone-alert"
     }
   ]
 }
