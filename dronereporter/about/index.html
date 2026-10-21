@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="st-blue">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,136 +7,29 @@
   <meta name="description" content="Who builds Drone Reporter: Tobias Morville, founder, in Denmark.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/live-sky.css?v=1">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: #0c0a04;
-      font-family: 'Cormorant Infant', serif;
-      color: rgba(220, 180, 100, 0.82);
-      min-height: 100vh;
-      padding: 60px 24px;
-    }
-
-    .container {
-      max-width: 640px;
-      margin: 0 auto;
-    }
-
-    .back-link {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: rgba(220, 180, 100, 0.55);
-      text-decoration: none;
-      transition: color 0.3s ease;
-      display: inline-block;
-      margin-bottom: 48px;
-    }
-
-    .back-link:hover {
-      color: rgba(220, 180, 100, 0.88);
-    }
-
-    h1 {
-      font-size: 36px;
-      font-weight: 400;
-      color: rgba(220, 180, 100, 0.92);
-      margin-bottom: 12px;
-    }
-
-    .subtitle {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: rgba(220, 180, 100, 0.55);
-      margin-bottom: 48px;
-    }
-
-    h2 {
-      font-size: 22px;
-      font-weight: 400;
-      color: rgba(220, 180, 100, 0.88);
-      margin-top: 40px;
-      margin-bottom: 16px;
-    }
-
-    p {
-      font-size: 16px;
-      line-height: 1.6;
-      color: rgba(220, 180, 100, 0.82);
-      margin-bottom: 12px;
-    }
-
-    strong {
-      font-weight: 400;
-      color: rgba(220, 180, 100, 0.92);
-    }
-
-    a {
-      color: rgba(220, 180, 100, 0.82);
-      text-decoration: underline;
-      text-decoration-color: rgba(220, 180, 100, 0.2);
-      transition: all 0.3s ease;
-    }
-
-    a:hover {
-      color: rgba(220, 180, 100, 0.92);
-      text-decoration-color: rgba(220, 180, 100, 0.5);
-    }
-
     /* Profile links. Google's startup programme asks for founder information on the
        domain that a reviewer can verify through third-party public links, so these
        two are load-bearing and should not be removed. */
-    .profiles {
-      list-style: none;
-      margin: 16px 0 0;
-      padding: 0;
-    }
-
-    .profiles li {
-      font-family: 'DM Mono', monospace;
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .profiles .label {
-      display: inline-block;
-      min-width: 92px;
-      font-size: 10px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: rgba(220, 180, 100, 0.55);
-    }
-
+    .profiles { margin: 14px 0 0; }
+    .container .profiles li { padding-left: 0; margin-bottom: 10px; }
+    .container .profiles li::before { content: none; }
+    .profiles .label { display: inline-block; min-width: 92px; font-size: 15px; color: var(--fg2); }
     /* Below ~480px the longer handle no longer fits beside its label, and one row
        wraps while the other does not. Stack both the same way instead. */
     @media (max-width: 480px) {
-      .profiles li { margin-bottom: 14px; }
+      .container .profiles li { margin-bottom: 14px; }
       .profiles .label { display: block; min-width: 0; margin-bottom: 2px; }
     }
-
-    .footer {
-      margin-top: 60px;
-      padding-top: 24px;
-      border-top: 1px solid rgba(220, 180, 100, 0.06);
-    }
-
-    .footer p {
-      font-size: 14px;
-      color: rgba(220, 180, 100, 0.55);
-    }
   </style>
+  <meta name="theme-color" content="#152342">
 </head>
-<body>
-  <div class="container">
+<body class="page">
+  <div class="sky-bg" aria-hidden="true"></div>
+  <header class="site-head"><a class="wm" href="../"><span class="pair" aria-hidden="true"></span>drone reporter</a></header>
+  <main class="container">
     <a href="../" class="back-link">&larr; dronereporter.io</a>
 
     <h1>About</h1>
@@ -164,6 +57,6 @@
     <div class="footer">
       <p>Last updated: September 21, 2026</p>
     </div>
-  </div>
+  </main>
 </body>
 </html>

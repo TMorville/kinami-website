@@ -1,4 +1,4 @@
-// Threat map — bespoke dark Europe map with sourced drone incidents.
+// Threat map: a Europe map with sourced drone incidents, in the host page's colours.
 // Vanilla; renders country polygons + incident markers to a <canvas>.
 // Exposes nothing global beyond init(), run on DOMContentLoaded.
 
@@ -15,10 +15,45 @@
   // not used directly in the math but documents the intended right edge.
   void LON1;
 
-  // Colours (mirror the CSS design tokens; canvas can't read CSS vars cheaply)
-  const LAND_FILL = 'rgba(220,180,100,0.05)';
-  const LAND_STROKE = 'rgba(220,180,100,0.18)';
-  const SIGNAL = '#E8A33D';
+  // Colours come from the host page: --land, --landline and --beacon on the
+  // canvas or an ancestor (a Live Sky state class, for example st-night).
+  // They are read once per resize. The fallbacks are the pre-Live Sky amber
+  // values, kept only so a page that sets none of the three still draws as it
+  // did: the live deck's encrypted HTML loads this same file from
+  // deck/assets/ until it is republished in Live Sky. Remove them after that.
+  const FALLBACK = {
+    land: 'rgba(220,180,100,0.05)',
+    landline: 'rgba(220,180,100,0.18)',
+    beacon: '#E8A33D',
+    glowAlpha: 0.9,
+  };
+  let colours = FALLBACK;
+
+  function readColours(el) {
+    const st = getComputedStyle(el);
+    const read = (name) => st.getPropertyValue(name).trim();
+    const beacon = read('--beacon');
+    return {
+      land: read('--land') || FALLBACK.land,
+      landline: read('--landline') || FALLBACK.landline,
+      beacon: beacon || FALLBACK.beacon,
+      // Live Sky's incident glow is the beacon at 55 % (--incglow).
+      glowAlpha: beacon ? 0.55 : FALLBACK.glowAlpha,
+    };
+  }
+
+  // '#RRGGBB' or 'rgb(...)' / 'rgba(...)' at a new alpha. Anything else is
+  // returned unchanged.
+  function withAlpha(colour, a) {
+    const hex = /^#([0-9a-f]{6})$/i.exec(colour);
+    if (hex) {
+      const n = parseInt(hex[1], 16);
+      return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+    }
+    const rgb = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/i.exec(colour);
+    if (rgb) return 'rgba(' + rgb[1] + ',' + rgb[2] + ',' + rgb[3] + ',' + a + ')';
+    return colour;
+  }
 
   let canvas, ctx, tooltip;
   let geojson = null;
@@ -89,8 +124,8 @@
 
   function drawLand(g, project) {
     if (!geojson) return;
-    g.fillStyle = LAND_FILL;
-    g.strokeStyle = LAND_STROKE;
+    g.fillStyle = colours.land;
+    g.strokeStyle = colours.landline;
     g.lineWidth = 0.75;
     g.lineJoin = 'round';
     const feats = geojson.features || [];
@@ -127,7 +162,7 @@
     const alpha = PING_OPACITY * (1 - p);
     if (alpha <= 0) return;
     ctx.save();
-    ctx.strokeStyle = 'rgba(232,163,61,' + alpha.toFixed(3) + ')';
+    ctx.strokeStyle = withAlpha(colours.beacon, alpha.toFixed(3));
     ctx.lineWidth = 1.5;
     for (let i = 0; i < fresh.length; i++) {
       const inc = fresh[i];
@@ -162,18 +197,18 @@
         ctx.closePath();
       }
 
-      // Soft amber glow
+      // Soft glow in the beacon colour
       ctx.save();
-      ctx.shadowColor = 'rgba(232,163,61,0.9)';
+      ctx.shadowColor = withAlpha(colours.beacon, colours.glowAlpha);
       ctx.shadowBlur = 10;
       diamondPath();
-      ctx.fillStyle = SIGNAL;
+      ctx.fillStyle = colours.beacon;
       ctx.fill();
       ctx.restore();
 
       // Solid core (no shadow, crisp)
       diamondPath();
-      ctx.fillStyle = SIGNAL;
+      ctx.fillStyle = colours.beacon;
       ctx.fill();
 
       markers.push({ x: p.x, y: p.y, r: r, incident: inc });
@@ -200,6 +235,7 @@
     canvas.width = Math.round(cssW * dpr);
     canvas.height = Math.round(cssH * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // draw in CSS px
+    colours = readColours(canvas);
     paintLand(buildProjection(cssW, cssH));
     render(currentPhase());
   }

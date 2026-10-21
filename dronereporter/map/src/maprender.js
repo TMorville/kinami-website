@@ -10,6 +10,7 @@ import {
   INCIDENT_PING_LAYER_ID,
   INCIDENT_SOURCE_ID,
   MARK_LAYER_ID,
+  basemapPaint,
   cellCirclePaint,
   clusterCountLayer,
   clusterLayer,
@@ -48,6 +49,9 @@ export function syncMap(map, renderState) {
   // revision renaming a layer must be a no-op here, not a throw.
   for (const id of HIDDEN_BASEMAP_LAYERS) {
     if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", "none");
+  }
+  for (const [id, key, value] of basemapPaint(palette)) {
+    if (map.getLayer(id)) map.setPaintProperty(id, key, value);
   }
 
   // Icons must exist before the layer that names them, or MapLibre logs a
