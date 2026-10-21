@@ -41,19 +41,21 @@
     /* ---- View 1: hero ---------------------------------------------------- */
     #hero video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; }
     /* Navy scrim, 62 % on the text side to 20 % on the far side (guide,
-       Photography), plus a band at the top for the header. */
+       Photography), plus a band at the top for the header and one at the
+       bottom for the headline. */
     #hero .scrim { position:absolute; inset:0; z-index:2;
       background:
         linear-gradient(180deg, rgba(10,16,32,0.45) 0%, rgba(10,16,32,0) 22%),
+        linear-gradient(0deg, rgba(10,16,32,0.55) 0%, rgba(10,16,32,0) 50%),
         linear-gradient(90deg, rgba(10,16,32,0.62) 0%, rgba(10,16,32,0.5) 45%, rgba(10,16,32,0.2) 100%); }
     #hero .topbar { position:relative; z-index:3; display:flex; justify-content:space-between; align-items:center; min-height:44px; margin-top:24px; }
     #hero .topbar .wm { font-size:22px; }
     .sound-toggle { background:transparent; border:none; cursor:pointer; padding:8px 0;
       font-family:inherit; font-size:15px; font-weight:500; color:var(--fg); }
     .sound-toggle:hover { text-decoration:underline; text-underline-offset:.2em; }
-    /* Headline high on the sky, left-aligned, never over the person or the
-       road at the bottom of the frame. */
-    #hero .line { position:relative; z-index:3; margin-top:clamp(40px, 13svh, 150px); max-width:900px; }
+    /* Headline and badges at the bottom, left-aligned, just above the
+       scroll cue. The auto top margin falls to zero on a short screen. */
+    #hero .line { position:relative; z-index:3; margin-top:auto; margin-bottom:72px; max-width:900px; }
     #hero h1 { font-size:clamp(36px, 5.2vw, 76px); font-weight:600; line-height:1.05; letter-spacing:-.025em; }
     #hero h1 .sub { display:block; margin-top:.4em; font-size:.48em; font-weight:500; line-height:1.2; letter-spacing:-.01em; }
     #hero .store-badges { margin-top:32px; }
@@ -147,7 +149,7 @@
       .view { padding:0 16px; }
       #hero { padding-right:36px; }
       #hero .topbar { margin-top:12px; }
-      #hero .line { margin-top:clamp(28px, 9svh, 80px); }
+      #hero .line { margin-bottom:60px; }
       #hero .scrim { background:
         linear-gradient(180deg, rgba(10,16,32,0.62) 0%, rgba(10,16,32,0.5) 55%, rgba(10,16,32,0.45) 100%); }
       .scroll-cue { left:16px; }
