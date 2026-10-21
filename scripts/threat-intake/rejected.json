@@ -21,6 +21,20 @@
       "source": "https://eestinen.fi/2026/09/soome-tuumajaama-lahedal-margati-drooni-politsei-uurib-asja/",
       "reason": "East Uusimaa police investigated a drone flying inside the Loviisa nuclear power plant restriction zone, questioned the operator, and concluded it was a hobbyist with no hybrid intent and no threat to the plant. Nothing was disrupted and the cause was identified as benign.",
       "rejected": "2026-09-21"
+    },
+    {
+      "id": "romania-sulina-airspace-2026-10",
+      "date": "2026-10-14",
+      "source": "https://agerpres.ro/english/2026/10/14/mapn-drone-enters-national-airspace-near-sulina-two-f-16-aicraft-scrambled--1602830",
+      "reason": "A brief airspace entry east of Sulina with no coordinate. It shares one Sulina marker with the 15 and 17 October rows, which carry the same story with stronger facts, so it adds a duplicate pin and no information.",
+      "rejected": "2026-10-21"
+    },
+    {
+      "id": "poland-lublin-rzeszow-2026-10",
+      "date": "2026-10-20",
+      "source": "https://radio.rzeszow.pl/366574/rosyjskie-ataki-na-ukraine-wojsko-polskie-poderwalo-lotnictwo-alert-rcb-na-podkarpaciu/",
+      "reason": "Both airports stopped for Polish military flights during a Russian strike on west Ukraine. No drone approached or entered Poland, and the source does not mention one, so it is not a drone incident.",
+      "rejected": "2026-10-21"
     }
   ]
 }
